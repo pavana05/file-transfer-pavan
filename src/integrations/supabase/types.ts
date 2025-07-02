@@ -9,13 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      uploaded_files: {
+        Row: {
+          download_count: number
+          file_size: number
+          file_type: string
+          filename: string
+          id: string
+          original_name: string
+          share_token: string
+          storage_path: string
+          upload_date: string
+        }
+        Insert: {
+          download_count?: number
+          file_size: number
+          file_type: string
+          filename: string
+          id?: string
+          original_name: string
+          share_token: string
+          storage_path: string
+          upload_date?: string
+        }
+        Update: {
+          download_count?: number
+          file_size?: number
+          file_type?: string
+          filename?: string
+          id?: string
+          original_name?: string
+          share_token?: string
+          storage_path?: string
+          upload_date?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_share_token: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

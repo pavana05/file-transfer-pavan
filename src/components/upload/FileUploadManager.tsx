@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Search, Filter, Grid, List, FolderPlus, Trash2, Download } from 'lucide-react';
+import { Search, Filter, Grid, List, FolderPlus, Trash2, Download, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,6 +12,7 @@ import { UploadStats } from './UploadStats';
 import { UploadedFile, UploadConfig, UploadCallbacks } from '@/types/upload';
 import { calculateUploadStats, generateFilePreview, detectDuplicateFiles } from '@/lib/file-utils';
 import { useToast } from '@/hooks/use-toast';
+import { UploadService } from '@/services/uploadService';
 
 interface FileUploadManagerProps {
   config?: UploadConfig;
@@ -81,52 +82,69 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     // Auto-upload if enabled
     if (config.autoUpload) {
       filesWithPreviews.forEach(file => {
-        simulateUpload(file.id);
+        realUpload(file.id);
       });
     }
   }, [files, config, callbacks, toast]);
 
-  // Simulate file upload (replace with actual upload logic)
-  const simulateUpload = useCallback((fileId: string) => {
+  // Real file upload to Supabase
+  const realUpload = useCallback(async (fileId: string) => {
+    const file = files.find(f => f.id === fileId);
+    if (!file) return;
+
     setFiles(prev => prev.map(f => 
       f.id === fileId ? { ...f, status: 'uploading' as const } : f
     ));
 
-    callbacks.onUploadStart?.(files.find(f => f.id === fileId)!);
+    callbacks.onUploadStart?.(file);
 
-    // Simulate progress
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 15;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-        
+    try {
+      const result = await UploadService.uploadFile(file, (progress) => {
+        setFiles(prev => prev.map(f => 
+          f.id === fileId ? { ...f, progress } : f
+        ));
+        callbacks.onUploadProgress?.(file, progress);
+      });
+
+      if (result.success) {
         setFiles(prev => prev.map(f => 
           f.id === fileId ? { 
             ...f, 
             status: 'completed' as const, 
             progress: 100,
-            uploadedAt: new Date()
+            uploadedAt: new Date(),
+            url: result.shareUrl
           } : f
         ));
 
-        const completedFile = files.find(f => f.id === fileId);
-        if (completedFile) {
-          callbacks.onUploadComplete?.(completedFile);
-        }
-      } else {
-        setFiles(prev => prev.map(f => 
-          f.id === fileId ? { ...f, progress } : f
-        ));
+        const completedFile = { ...file, url: result.shareUrl };
+        callbacks.onUploadComplete?.(completedFile);
 
-        const progressFile = files.find(f => f.id === fileId);
-        if (progressFile) {
-          callbacks.onUploadProgress?.(progressFile, progress);
-        }
+        toast({
+          title: "Upload successful!",
+          description: "File uploaded and share link generated.",
+        });
+      } else {
+        throw new Error(result.error || 'Upload failed');
       }
-    }, 200);
-  }, [files, callbacks]);
+    } catch (error) {
+      setFiles(prev => prev.map(f => 
+        f.id === fileId ? { 
+          ...f, 
+          status: 'error' as const,
+          error: error instanceof Error ? error.message : 'Upload failed'
+        } : f
+      ));
+
+      callbacks.onUploadError?.(file, error instanceof Error ? error.message : 'Upload failed');
+
+      toast({
+        title: "Upload failed",
+        description: error instanceof Error ? error.message : 'Upload failed',
+        variant: "destructive"
+      });
+    }
+  }, [files, callbacks, toast]);
 
   // Handle file removal
   const handleRemoveFile = useCallback((fileId: string) => {
@@ -143,16 +161,16 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
   }, []);
 
   const handleResumeFile = useCallback((fileId: string) => {
-    simulateUpload(fileId);
-  }, [simulateUpload]);
+    realUpload(fileId);
+  }, [realUpload]);
 
   // Handle retry
   const handleRetryFile = useCallback((fileId: string) => {
     setFiles(prev => prev.map(f => 
       f.id === fileId ? { ...f, status: 'pending' as const, error: undefined } : f
     ));
-    simulateUpload(fileId);
-  }, [simulateUpload]);
+    realUpload(fileId);
+  }, [realUpload]);
 
   // Bulk operations
   const handleSelectAll = useCallback(() => {
@@ -165,6 +183,15 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     });
     setSelectedFiles([]);
   }, [selectedFiles, handleRemoveFile]);
+
+  const handleUploadAll = useCallback(() => {
+    const pendingFiles = files.filter(f => f.status === 'pending');
+    pendingFiles.forEach(file => {
+      realUpload(file.id);
+    });
+  }, [files, realUpload]);
+
+  const pendingCount = files.filter(f => f.status === 'pending').length;
 
   return (
     <div className={cn("w-full max-w-6xl mx-auto space-y-6", className)}>
@@ -231,6 +258,23 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
               </Button>
             </div>
           </div>
+
+          {/* Upload All Button */}
+          {!config.autoUpload && pendingCount > 0 && (
+            <div className="flex items-center gap-2 p-3 bg-upload-zone rounded-lg mb-4">
+              <span className="text-sm text-muted-foreground">
+                {pendingCount} file(s) ready to upload
+              </span>
+              <Button
+                onClick={handleUploadAll}
+                size="sm"
+                className="ml-auto"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Upload All
+              </Button>
+            </div>
+          )}
 
           {/* Bulk Actions */}
           {selectedFiles.length > 0 && (

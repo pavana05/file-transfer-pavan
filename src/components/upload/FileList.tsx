@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Pause, Play, RotateCcw, Check, AlertCircle, File } from 'lucide-react';
+import { X, Pause, Play, RotateCcw, Check, AlertCircle, File, Share, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card } from '@/components/ui/card';
@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { UploadedFile } from '@/types/upload';
 import { formatFileSize, formatDuration, getFileTypeColor } from '@/lib/file-utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface FileListProps {
   files: UploadedFile[];
@@ -27,6 +28,15 @@ export const FileList: React.FC<FileListProps> = ({
   showProgress = true,
   className
 }) => {
+  const { toast } = useToast();
+
+  const copyShareLink = (url: string) => {
+    navigator.clipboard.writeText(url);
+    toast({
+      title: "Link copied!",
+      description: "Share link copied to clipboard.",
+    });
+  };
   const getStatusIcon = (file: UploadedFile) => {
     switch (file.status) {
       case 'completed':
@@ -148,6 +158,28 @@ export const FileList: React.FC<FileListProps> = ({
                       <span>Uploading...</span>
                     )}
                   </div>
+                </div>
+              )}
+
+              {/* Share Link */}
+              {file.status === 'completed' && file.url && (
+                <div className="mt-2 flex items-center gap-2 p-2 bg-success/5 rounded text-xs">
+                  <Share className="w-3 h-3 text-success" />
+                  <span className="text-success font-medium">Ready to share:</span>
+                  <input 
+                    type="text" 
+                    value={file.url} 
+                    readOnly 
+                    className="flex-1 bg-transparent border-none outline-none text-muted-foreground"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyShareLink(file.url!)}
+                    className="h-6 w-6 p-0"
+                  >
+                    <Copy className="w-3 h-3" />
+                  </Button>
                 </div>
               )}
 
