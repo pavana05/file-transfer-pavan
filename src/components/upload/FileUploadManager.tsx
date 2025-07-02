@@ -1,0 +1,282 @@
+import React, { useState, useCallback, useEffect } from 'react';
+import { Search, Filter, Grid, List, FolderPlus, Trash2, Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { FileUploadZone } from './FileUploadZone';
+import { FileList } from './FileList';
+import { UploadStats } from './UploadStats';
+import { UploadedFile, UploadConfig, UploadCallbacks } from '@/types/upload';
+import { calculateUploadStats, generateFilePreview, detectDuplicateFiles } from '@/lib/file-utils';
+import { useToast } from '@/hooks/use-toast';
+
+interface FileUploadManagerProps {
+  config?: UploadConfig;
+  callbacks?: UploadCallbacks;
+  className?: string;
+}
+
+export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
+  config = {},
+  callbacks = {},
+  className
+}) => {
+  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const { toast } = useToast();
+
+  // Calculate upload statistics
+  const stats = calculateUploadStats(files);
+
+  // Filter files based on search and filter criteria
+  const filteredFiles = files.filter(file => {
+    const matchesSearch = file.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = filterType === 'all' || 
+      (filterType === 'images' && file.type.startsWith('image/')) ||
+      (filterType === 'documents' && (file.type.includes('document') || file.type.includes('pdf'))) ||
+      (filterType === 'videos' && file.type.startsWith('video/')) ||
+      (filterType === 'completed' && file.status === 'completed') ||
+      (filterType === 'pending' && file.status === 'pending') ||
+      (filterType === 'error' && file.status === 'error');
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  // Handle file addition with preview generation
+  const handleFilesAdded = useCallback(async (newFiles: UploadedFile[]) => {
+    // Generate previews for image files
+    const filesWithPreviews = await Promise.all(
+      newFiles.map(async (file) => {
+        if (file.type.startsWith('image/')) {
+          const preview = await generateFilePreview(file.file);
+          return { ...file, preview };
+        }
+        return file;
+      })
+    );
+
+    // Check for duplicates if enabled
+    if (config.enableDuplicateDetection) {
+      const allFiles = [...files, ...filesWithPreviews];
+      const duplicateIds = detectDuplicateFiles(allFiles);
+      
+      if (duplicateIds.length > 0) {
+        toast({
+          title: "Duplicate files detected",
+          description: `${duplicateIds.length} duplicate file(s) found. They will be marked for review.`,
+          variant: "destructive"
+        });
+      }
+    }
+
+    setFiles(prev => [...prev, ...filesWithPreviews]);
+    callbacks.onFileAdd?.(filesWithPreviews);
+
+    // Auto-upload if enabled
+    if (config.autoUpload) {
+      filesWithPreviews.forEach(file => {
+        simulateUpload(file.id);
+      });
+    }
+  }, [files, config, callbacks, toast]);
+
+  // Simulate file upload (replace with actual upload logic)
+  const simulateUpload = useCallback((fileId: string) => {
+    setFiles(prev => prev.map(f => 
+      f.id === fileId ? { ...f, status: 'uploading' as const } : f
+    ));
+
+    callbacks.onUploadStart?.(files.find(f => f.id === fileId)!);
+
+    // Simulate progress
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        
+        setFiles(prev => prev.map(f => 
+          f.id === fileId ? { 
+            ...f, 
+            status: 'completed' as const, 
+            progress: 100,
+            uploadedAt: new Date()
+          } : f
+        ));
+
+        const completedFile = files.find(f => f.id === fileId);
+        if (completedFile) {
+          callbacks.onUploadComplete?.(completedFile);
+        }
+      } else {
+        setFiles(prev => prev.map(f => 
+          f.id === fileId ? { ...f, progress } : f
+        ));
+
+        const progressFile = files.find(f => f.id === fileId);
+        if (progressFile) {
+          callbacks.onUploadProgress?.(progressFile, progress);
+        }
+      }
+    }, 200);
+  }, [files, callbacks]);
+
+  // Handle file removal
+  const handleRemoveFile = useCallback((fileId: string) => {
+    setFiles(prev => prev.filter(f => f.id !== fileId));
+    setSelectedFiles(prev => prev.filter(id => id !== fileId));
+    callbacks.onFileRemove?.(fileId);
+  }, [callbacks]);
+
+  // Handle pause/resume
+  const handlePauseFile = useCallback((fileId: string) => {
+    setFiles(prev => prev.map(f => 
+      f.id === fileId ? { ...f, status: 'paused' as const } : f
+    ));
+  }, []);
+
+  const handleResumeFile = useCallback((fileId: string) => {
+    simulateUpload(fileId);
+  }, [simulateUpload]);
+
+  // Handle retry
+  const handleRetryFile = useCallback((fileId: string) => {
+    setFiles(prev => prev.map(f => 
+      f.id === fileId ? { ...f, status: 'pending' as const, error: undefined } : f
+    ));
+    simulateUpload(fileId);
+  }, [simulateUpload]);
+
+  // Bulk operations
+  const handleSelectAll = useCallback(() => {
+    setSelectedFiles(filteredFiles.map(f => f.id));
+  }, [filteredFiles]);
+
+  const handleDeleteSelected = useCallback(() => {
+    selectedFiles.forEach(fileId => {
+      handleRemoveFile(fileId);
+    });
+    setSelectedFiles([]);
+  }, [selectedFiles, handleRemoveFile]);
+
+  return (
+    <div className={cn("w-full max-w-6xl mx-auto space-y-6", className)}>
+      {/* Upload Zone */}
+      <FileUploadZone
+        config={config}
+        onFilesAdded={handleFilesAdded}
+        className="mb-6"
+      />
+
+      {/* Upload Stats */}
+      {files.length > 0 && (
+        <UploadStats stats={stats} />
+      )}
+
+      {/* File Management */}
+      {files.length > 0 && (
+        <Card className="p-6">
+          {/* Controls Bar */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search files..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            {/* Filter */}
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="w-full sm:w-48">
+                <Filter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Filter files" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Files</SelectItem>
+                <SelectItem value="images">Images</SelectItem>
+                <SelectItem value="documents">Documents</SelectItem>
+                <SelectItem value="videos">Videos</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="error">Failed</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* View Mode */}
+            <div className="flex gap-1">
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="w-4 h-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Bulk Actions */}
+          {selectedFiles.length > 0 && (
+            <div className="flex items-center gap-2 p-3 bg-muted rounded-lg mb-4">
+              <span className="text-sm text-muted-foreground">
+                {selectedFiles.length} file(s) selected
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDeleteSelected}
+                className="ml-auto"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Selected
+              </Button>
+            </div>
+          )}
+
+          {/* File List */}
+          <Tabs value="files" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="files">Files ({filteredFiles.length})</TabsTrigger>
+              <TabsTrigger value="folders">Folders</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="files" className="mt-6">
+              <FileList
+                files={filteredFiles}
+                onRemoveFile={handleRemoveFile}
+                onPauseFile={handlePauseFile}
+                onResumeFile={handleResumeFile}
+                onRetryFile={handleRetryFile}
+                showProgress={true}
+              />
+            </TabsContent>
+            
+            <TabsContent value="folders" className="mt-6">
+              <div className="text-center py-12 text-muted-foreground">
+                <FolderPlus className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Folder management coming soon</p>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </Card>
+      )}
+    </div>
+  );
+};
