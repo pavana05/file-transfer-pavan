@@ -1,7 +1,7 @@
 import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from "lucide-react"
+import { X, Check, AlertCircle, Info, AlertTriangle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -115,9 +115,9 @@ ToastDescription.displayName = ToastPrimitives.Description.displayName
 // Icon component for toasts
 const ToastIcon = ({ variant }: { variant?: "default" | "destructive" | "success" | "warning" | "info" }) => {
   const iconMap = {
-    default: Info,
+    default: Check,
     destructive: AlertCircle,
-    success: CheckCircle,
+    success: Check,
     warning: AlertTriangle,
     info: Info,
   }
@@ -125,9 +125,9 @@ const ToastIcon = ({ variant }: { variant?: "default" | "destructive" | "success
   const Icon = iconMap[variant || "default"]
   
   const iconColorMap = {
-    default: "text-primary",
+    default: "text-green-500",
     destructive: "text-destructive",
-    success: "text-success", 
+    success: "text-green-500", 
     warning: "text-warning",
     info: "text-primary",
   }
