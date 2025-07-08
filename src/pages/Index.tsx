@@ -96,7 +96,7 @@ const Index = () => {
         </div>
         <div className="text-center mb-16 animate-fade-in">
           <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow animate-float">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
               <Upload className="w-8 h-8 text-white drop-shadow-lg" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
