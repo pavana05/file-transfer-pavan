@@ -121,13 +121,14 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         className={cn(
           "relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-500",
           "bg-gradient-upload backdrop-blur-sm",
-          "border-border/60 hover:border-primary/70",
-          "shadow-card hover:shadow-upload",
-          "before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-mesh before:opacity-50",
+          "border-border/60 hover:border-primary/70 dark:border-border/40 dark:hover:border-primary/80",
+          "shadow-card hover:shadow-upload dark:shadow-glass dark:hover:shadow-glow",
+          "before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-mesh before:opacity-50 dark:before:opacity-70",
+          "after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-br after:from-background/10 after:to-transparent dark:after:from-background/20",
           "group overflow-hidden",
           !disabled && "cursor-pointer hover:scale-[1.02]",
-          isDragActive && !isDragReject && "border-primary/80 bg-primary/5 animate-pulse-glow scale-[1.02]",
-          isDragReject && "border-destructive bg-destructive/5",
+          isDragActive && !isDragReject && "border-primary/80 bg-primary/5 animate-pulse-glow scale-[1.02] dark:bg-primary/10 dark:border-primary",
+          isDragReject && "border-destructive bg-destructive/5 dark:bg-destructive/10",
           disabled && "opacity-50 cursor-not-allowed"
         )}
       >
@@ -136,11 +137,13 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         {/* Upload Icon */}
         <div className={cn(
           "relative w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center transition-all duration-500",
-          "bg-gradient-primary shadow-glow",
+          "bg-gradient-primary shadow-glow dark:shadow-glow",
+          "ring-2 ring-primary/20 dark:ring-primary/40",
           "group-hover:animate-float",
           isDragActive && !isDragReject && "scale-110 animate-pulse-glow"
         )}>
-          <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-20 animate-glow"></div>
+          <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-20 animate-glow dark:opacity-30"></div>
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent dark:from-white/10"></div>
           {isDragActive && !isDragReject ? (
             <FileCheck className="relative w-10 h-10 text-white animate-scale-in drop-shadow-lg" />
           ) : (
@@ -181,10 +184,10 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         </div>
 
         {/* File Format Info */}
-        <div className="relative z-10 mt-6 p-4 rounded-xl bg-background/50 backdrop-blur border border-border/50">
+        <div className="relative z-10 mt-6 p-4 rounded-xl bg-background/50 dark:bg-background/70 backdrop-blur border border-border/50 dark:border-border/30">
           <div className="text-sm text-muted-foreground space-y-2">
             <p className="font-medium text-foreground">Supported formats:</p>
-            <p className="text-primary font-mono">{getSupportedFormats()}</p>
+            <p className="text-primary font-mono dark:text-primary-glow">{getSupportedFormats()}</p>
             {config.maxFileSize && (
               <p>Maximum file size: <span className="text-foreground font-medium">{(config.maxFileSize / 1024 / 1024).toFixed(1)}MB</span></p>
             )}
