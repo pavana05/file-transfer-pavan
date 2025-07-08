@@ -160,6 +160,13 @@ const Index = () => {
             </div>
           </div>
         </Card>
+
+        {/* Credit */}
+        <div className="mt-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            This project is made by PAVAN
+          </p>
+        </div>
       </div>
     </div>;
 };
