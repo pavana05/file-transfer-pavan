@@ -4,6 +4,7 @@ import { Download, File, ArrowLeft, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { formatFileSize } from '@/lib/file-utils';
 import { UploadService } from '@/services/uploadService';
 import { useToast } from '@/hooks/use-toast';
@@ -59,10 +60,13 @@ const FileShare = () => {
       // Increment download count
       await UploadService.incrementDownloadCount(fileInfo.share_token);
       
-      // Trigger download
+      // Trigger direct download to system
       const link = document.createElement('a');
       link.href = url;
       link.download = fileInfo.original_name;
+      link.setAttribute('download', fileInfo.original_name);
+      // Force download behavior
+      link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -121,6 +125,11 @@ const FileShare = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      {/* Theme Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+      
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         {/* Header */}
         <div className="mb-8">

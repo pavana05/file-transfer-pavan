@@ -2,6 +2,7 @@ import { FileUploadManager } from '@/components/upload/FileUploadManager';
 import { Upload, Shield, Zap, Users } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const Index = () => {
   const uploadConfig = {
@@ -46,6 +47,10 @@ const Index = () => {
       
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-12">
+        {/* Theme Toggle */}
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
         <div className="text-center mb-16 animate-fade-in">
           <div className="inline-flex items-center gap-4 mb-6">
             <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow animate-float">
