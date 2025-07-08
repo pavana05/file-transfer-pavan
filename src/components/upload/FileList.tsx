@@ -95,28 +95,30 @@ export const FileList: React.FC<FileListProps> = ({
   }
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn("space-y-4", className)}>
       {files.map((file) => (
         <Card 
           key={file.id} 
-          className="p-4 animate-fade-in transition-all duration-200 hover:shadow-hover"
+          className="p-6 animate-fade-in transition-all duration-300 hover:shadow-glass border border-border/50 bg-background/80 backdrop-blur-sm rounded-xl group"
         >
           <div className="flex items-center gap-3">
             {/* File Icon & Preview */}
             <div className="flex-shrink-0">
               {file.preview ? (
-                <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted">
+                <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted shadow-inner ring-2 ring-border/20">
                   <img 
                     src={file.preview} 
                     alt={file.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               ) : (
                 <div className={cn(
-                  "w-12 h-12 rounded-lg flex items-center justify-center",
-                  getFileTypeColor(file.type)
+                  "w-16 h-16 rounded-xl flex items-center justify-center shadow-inner relative",
+                  getFileTypeColor(file.type),
+                  "group-hover:scale-105 transition-transform duration-300"
                 )}>
+                  <div className="absolute inset-0 rounded-xl bg-gradient-glass opacity-50"></div>
                   {getStatusIcon(file)}
                 </div>
               )}
@@ -147,15 +149,15 @@ export const FileList: React.FC<FileListProps> = ({
 
               {/* Progress Bar */}
               {showProgress && (file.status === 'uploading' || file.status === 'paused') && (
-                <div className="mt-2">
+                <div className="mt-3 p-3 rounded-lg bg-upload-zone/50 border border-border/30">
                   <Progress 
                     value={file.progress} 
-                    className="h-2"
+                    className="h-3 bg-muted/50"
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>{file.progress}%</span>
+                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                    <span className="font-medium">{file.progress}%</span>
                     {file.status === 'uploading' && (
-                      <span>Uploading...</span>
+                      <span className="animate-pulse">Uploading...</span>
                     )}
                   </div>
                 </div>
@@ -163,22 +165,26 @@ export const FileList: React.FC<FileListProps> = ({
 
               {/* Share Link */}
               {file.status === 'completed' && file.url && (
-                <div className="mt-2 flex items-center gap-2 p-2 bg-success/5 rounded text-xs">
-                  <Share className="w-3 h-3 text-success" />
-                  <span className="text-success font-medium">Ready to share:</span>
-                  <input 
-                    type="text" 
-                    value={file.url} 
-                    readOnly 
-                    className="flex-1 bg-transparent border-none outline-none text-muted-foreground"
-                  />
+                <div className="mt-3 flex items-center gap-3 p-4 bg-gradient-success rounded-xl border border-success/20">
+                  <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
+                    <Share className="w-4 h-4 text-success" />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-success font-semibold text-sm block mb-1">Ready to share!</span>
+                    <input 
+                      type="text" 
+                      value={file.url} 
+                      readOnly 
+                      className="w-full bg-transparent border-none outline-none text-muted-foreground text-xs font-mono"
+                    />
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => copyShareLink(file.url!)}
-                    className="h-6 w-6 p-0"
+                    className="h-8 w-8 p-0 hover:bg-success/20 rounded-lg"
                   >
-                    <Copy className="w-3 h-3" />
+                    <Copy className="w-4 h-4" />
                   </Button>
                 </div>
               )}

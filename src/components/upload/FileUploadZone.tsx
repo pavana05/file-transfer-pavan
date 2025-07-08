@@ -119,12 +119,14 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       <div
         {...getRootProps()}
         className={cn(
-          "relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300",
-          "bg-upload-zone hover:bg-upload-zone-hover",
-          "border-border hover:border-primary/50",
-          "shadow-card hover:shadow-hover",
-          !disabled && "cursor-pointer",
-          isDragActive && !isDragReject && "border-primary bg-upload-zone-active animate-pulse-glow",
+          "relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-500",
+          "bg-gradient-upload backdrop-blur-sm",
+          "border-border/60 hover:border-primary/70",
+          "shadow-card hover:shadow-upload",
+          "before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-mesh before:opacity-50",
+          "group overflow-hidden",
+          !disabled && "cursor-pointer hover:scale-[1.02]",
+          isDragActive && !isDragReject && "border-primary/80 bg-primary/5 animate-pulse-glow scale-[1.02]",
           isDragReject && "border-destructive bg-destructive/5",
           disabled && "opacity-50 cursor-not-allowed"
         )}
@@ -133,63 +135,74 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         
         {/* Upload Icon */}
         <div className={cn(
-          "w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-all duration-300",
-          "bg-gradient-upload",
-          isDragActive && !isDragReject && "scale-110"
+          "relative w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center transition-all duration-500",
+          "bg-gradient-primary shadow-glow",
+          "group-hover:animate-float",
+          isDragActive && !isDragReject && "scale-110 animate-pulse-glow"
         )}>
+          <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-20 animate-glow"></div>
           {isDragActive && !isDragReject ? (
-            <FileCheck className="w-8 h-8 text-primary animate-scale-in" />
+            <FileCheck className="relative w-10 h-10 text-white animate-scale-in drop-shadow-lg" />
           ) : (
-            <Upload className="w-8 h-8 text-primary" />
+            <Upload className="relative w-10 h-10 text-white drop-shadow-lg" />
           )}
         </div>
 
         {/* Main Text */}
-        <h3 className="text-lg font-semibold text-foreground mb-2">
-          {isDragActive && !isDragReject
-            ? "Drop your files here"
-            : "Upload your files"
-          }
-        </h3>
+        <div className="relative z-10 space-y-4">
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            {isDragActive && !isDragReject
+              ? "Drop your files here"
+              : "Upload your files"
+            }
+          </h3>
 
-        {/* Description */}
-        <p className="text-muted-foreground mb-4">
-          {isDragActive && !isDragReject
-            ? "Release to upload"
-            : "Drag and drop files here, or click to browse"
-          }
-        </p>
+          {/* Description */}
+          <p className="text-muted-foreground text-lg leading-relaxed">
+            {isDragActive && !isDragReject
+              ? "Release to upload your files"
+              : "Drag and drop files here, or click to browse"
+            }
+          </p>
+        </div>
 
         {/* Browse Button */}
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleBrowseClick}
-          disabled={disabled}
-          className="mb-4"
-        >
-          Browse Files
-        </Button>
+        <div className="relative z-10 mt-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleBrowseClick}
+            disabled={disabled}
+            className="relative px-8 py-3 rounded-full border-primary/30 bg-background/80 backdrop-blur hover:bg-primary/10 hover:border-primary hover:shadow-glow transition-all duration-300 group"
+          >
+            <span className="relative z-10 font-medium">Browse Files</span>
+            <div className="absolute inset-0 rounded-full bg-gradient-primary opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+          </Button>
+        </div>
 
         {/* File Format Info */}
-        <div className="text-sm text-muted-foreground space-y-1">
-          <p>Supported formats: {getSupportedFormats()}</p>
-          {config.maxFileSize && (
-            <p>Maximum file size: {(config.maxFileSize / 1024 / 1024).toFixed(1)}MB</p>
-          )}
-          {config.maxFiles && config.maxFiles > 1 && (
-            <p>Maximum files: {config.maxFiles}</p>
-          )}
+        <div className="relative z-10 mt-6 p-4 rounded-xl bg-background/50 backdrop-blur border border-border/50">
+          <div className="text-sm text-muted-foreground space-y-2">
+            <p className="font-medium text-foreground">Supported formats:</p>
+            <p className="text-primary font-mono">{getSupportedFormats()}</p>
+            {config.maxFileSize && (
+              <p>Maximum file size: <span className="text-foreground font-medium">{(config.maxFileSize / 1024 / 1024).toFixed(1)}MB</span></p>
+            )}
+            {config.maxFiles && config.maxFiles > 1 && (
+              <p>Maximum files: <span className="text-foreground font-medium">{config.maxFiles}</span></p>
+            )}
+          </div>
         </div>
 
         {/* Error State */}
         {isDragReject && (
-          <div className="absolute inset-0 flex items-center justify-center bg-destructive/5 rounded-xl">
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-destructive/10 flex items-center justify-center">
-                <FileText className="w-6 h-6 text-destructive" />
+          <div className="absolute inset-0 flex items-center justify-center bg-destructive/10 backdrop-blur-sm rounded-2xl border-2 border-dashed border-destructive">
+            <div className="text-center animate-scale-in">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/20 flex items-center justify-center">
+                <FileText className="w-8 h-8 text-destructive" />
               </div>
-              <p className="text-destructive font-medium">Invalid file type</p>
+              <p className="text-destructive font-semibold text-lg">Invalid file type</p>
+              <p className="text-destructive/70 text-sm mt-1">Please upload a supported file format</p>
             </div>
           </div>
         )}

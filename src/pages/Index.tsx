@@ -38,67 +38,72 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
-              <Upload className="w-6 h-6 text-white" />
+    <div className="min-h-screen bg-gradient-mesh relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-background/90"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
+      
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 py-12">
+        <div className="text-center mb-16 animate-fade-in">
+          <div className="inline-flex items-center gap-4 mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow animate-float">
+              <Upload className="w-8 h-8 text-white drop-shadow-lg" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
               Enterprise File Upload
             </h1>
           </div>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
             Advanced file management with drag-and-drop, progress tracking, and enterprise-grade security features
           </p>
           
           {/* Feature Badges */}
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <Shield className="w-3 h-3" />
-              Secure Upload
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
+              <Shield className="w-4 h-4" />
+              <span className="font-medium">Secure Upload</span>
             </Badge>
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <Zap className="w-3 h-3" />
-              Resume Support
+            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
+              <Zap className="w-4 h-4" />
+              <span className="font-medium">Resume Support</span>
             </Badge>
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <Users className="w-3 h-3" />
-              Multi-user Ready
+            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
+              <Users className="w-4 h-4" />
+              <span className="font-medium">Multi-user Ready</span>
             </Badge>
           </div>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <Card className="p-6 text-center hover:shadow-hover transition-all duration-300">
-            <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center mx-auto mb-4">
-              <Upload className="w-6 h-6 text-blue-600" />
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
+              <Upload className="w-8 h-8 text-white" />
             </div>
-            <h3 className="font-semibold mb-2">Drag & Drop Interface</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-xl font-bold mb-3 text-foreground">Drag & Drop Interface</h3>
+            <p className="text-muted-foreground leading-relaxed">
               Intuitive drag-and-drop with visual feedback and hover states
             </p>
           </Card>
 
-          <Card className="p-6 text-center hover:shadow-hover transition-all duration-300">
-            <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center mx-auto mb-4">
-              <Zap className="w-6 h-6 text-green-600" />
+          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-secondary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
+              <Zap className="w-8 h-8 text-white" />
             </div>
-            <h3 className="font-semibold mb-2">Progress Tracking</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-xl font-bold mb-3 text-foreground">Progress Tracking</h3>
+            <p className="text-muted-foreground leading-relaxed">
               Real-time progress bars with pause/resume functionality
             </p>
           </Card>
 
-          <Card className="p-6 text-center hover:shadow-hover transition-all duration-300">
-            <div className="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-6 h-6 text-purple-600" />
+          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
+              <Shield className="w-8 h-8 text-white" />
             </div>
-            <h3 className="font-semibold mb-2">File Validation</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-xl font-bold mb-3 text-foreground">File Validation</h3>
+            <p className="text-muted-foreground leading-relaxed">
               Type checking, size limits, and security scanning
             </p>
           </Card>
@@ -111,8 +116,8 @@ const Index = () => {
         />
 
         {/* Technical Specifications */}
-        <Card className="mt-12 p-6">
-          <h3 className="text-lg font-semibold mb-4">Technical Specifications</h3>
+        <Card className="mt-16 p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass">
+          <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Technical Specifications</h3>
           <div className="grid md:grid-cols-2 gap-6 text-sm">
             <div>
               <h4 className="font-medium mb-2">Upload Features</h4>

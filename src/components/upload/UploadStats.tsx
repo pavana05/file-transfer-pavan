@@ -25,37 +25,50 @@ export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) =>
   } = stats;
 
   return (
-    <Card className={cn("p-6", className)}>
-      <div className="space-y-4">
+    <Card className={cn("p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass", className)}>
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-foreground">Upload Progress</h3>
-          <Badge variant={overallProgress === 100 ? "default" : "secondary"}>
+          <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Upload Progress</h3>
+          <Badge 
+            variant={overallProgress === 100 ? "default" : "secondary"}
+            className={cn(
+              "px-3 py-1 rounded-full font-medium",
+              overallProgress === 100 && "bg-gradient-success text-white shadow-glow"
+            )}
+          >
             {completedFiles}/{totalFiles} files
           </Badge>
         </div>
 
         {/* Overall Progress */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Overall Progress</span>
-            <span className="font-medium">{Math.round(overallProgress)}%</span>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground font-medium">Overall Progress</span>
+            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">{Math.round(overallProgress)}%</span>
           </div>
-          <Progress 
-            value={overallProgress} 
-            className="h-3"
-          />
+          <div className="relative">
+            <Progress 
+              value={overallProgress} 
+              className="h-4 bg-muted/50 rounded-full shadow-inner"
+            />
+            <div className="absolute top-0 left-0 h-4 bg-gradient-primary rounded-full shadow-glow opacity-20 animate-pulse" 
+                 style={{ width: `${overallProgress}%` }}
+            ></div>
+          </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-6">
           {/* Total Size */}
-          <div className="space-y-1">
+          <div className="space-y-2 p-4 rounded-xl bg-upload-zone/30 border border-border/30">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Upload className="w-4 h-4" />
-              <span>Total Size</span>
+              <div className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Upload className="w-3 h-3 text-primary" />
+              </div>
+              <span className="font-medium">Total Size</span>
             </div>
-            <div className="text-lg font-semibold">
+            <div className="text-lg font-bold text-foreground">
               {formatFileSize(uploadedSize)} / {formatFileSize(totalSize)}
             </div>
           </div>
