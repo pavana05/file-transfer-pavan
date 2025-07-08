@@ -20,6 +20,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 }) => {
   const [isDragActive, setIsDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
 
   const validateFile = useCallback((file: File): FileValidationResult => {
     const errors: string[] = [];
@@ -118,6 +119,10 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
     fileInputRef.current?.click();
   }, []);
 
+  const handleFolderClick = useCallback(() => {
+    folderInputRef.current?.click();
+  }, []);
+
   const getFileTypeIcon = (type: string) => {
     if (type.startsWith('image/')) return Image;
     if (type.startsWith('video/')) return Video;
@@ -204,6 +209,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
           <div className="relative">
             <input
               type="file"
+              ref={folderInputRef}
               onChange={handleFolderUpload}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               {...({ webkitdirectory: "" } as any)}
@@ -213,6 +219,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
             <Button
               type="button"
               variant="secondary"
+              onClick={handleFolderClick}
               disabled={disabled}
               className="relative px-8 py-3 rounded-full bg-background/80 backdrop-blur hover:bg-secondary/80 transition-all duration-300"
             >
