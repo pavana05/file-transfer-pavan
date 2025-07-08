@@ -3,72 +3,48 @@ import { Upload, Shield, Zap, Users } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-
 const Index = () => {
   const uploadConfig = {
-    maxFileSize: 500 * 1024 * 1024, // 500MB for large files and folders
-    maxFiles: 50, // Allow multiple files
+    maxFileSize: 500 * 1024 * 1024,
+    // 500MB for large files and folders
+    maxFiles: 50,
+    // Allow multiple files
     acceptedTypes: [
-      // Images
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
-      
-      // Documents
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-      'application/vnd.ms-powerpoint',
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
-      'text/plain', // .txt
-      'text/csv',
-      'application/rtf',
-      
-      // Code files
-      'text/html', 'text/css', 'text/javascript', 'application/javascript',
-      'application/json', 'text/xml', 'application/xml',
-      'text/markdown', 'application/x-python-code', 'text/x-python',
-      'text/x-java-source', 'text/x-c', 'text/x-c++src',
-      'text/x-csharp', 'text/x-php', 'text/x-ruby',
-      'text/x-go', 'text/x-rust', 'text/x-swift',
-      'application/typescript', 'text/typescript',
-      'application/x-yaml', 'text/yaml',
-      
-      // Media
-      'video/mp4', 'video/webm', 'video/mov', 'video/avi',
-      'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/aac',
-      
-      // Archives
-      'application/zip', 'application/x-rar-compressed', 'application/x-tar',
-      'application/gzip', 'application/x-7z-compressed'
-    ],
+    // Images
+    'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
+    // Documents
+    'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    // .docx
+    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // .xlsx
+    'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    // .pptx
+    'text/plain',
+    // .txt
+    'text/csv', 'application/rtf',
+    // Code files
+    'text/html', 'text/css', 'text/javascript', 'application/javascript', 'application/json', 'text/xml', 'application/xml', 'text/markdown', 'application/x-python-code', 'text/x-python', 'text/x-java-source', 'text/x-c', 'text/x-c++src', 'text/x-csharp', 'text/x-php', 'text/x-ruby', 'text/x-go', 'text/x-rust', 'text/x-swift', 'application/typescript', 'text/typescript', 'application/x-yaml', 'text/yaml',
+    // Media
+    'video/mp4', 'video/webm', 'video/mov', 'video/avi', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/aac',
+    // Archives
+    'application/zip', 'application/x-rar-compressed', 'application/x-tar', 'application/gzip', 'application/x-7z-compressed'],
     allowedExtensions: [
-      // Documents
-      'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf', 'csv',
-      
-      // Code files
-      'html', 'htm', 'css', 'js', 'ts', 'jsx', 'tsx', 'json', 'xml',
-      'py', 'java', 'c', 'cpp', 'cc', 'cxx', 'h', 'hpp',
-      'cs', 'php', 'rb', 'go', 'rs', 'swift', 'kt', 'scala',
-      'sql', 'md', 'yaml', 'yml', 'ini', 'cfg', 'conf',
-      'sh', 'bat', 'ps1', 'r', 'dart', 'lua', 'perl', 'pl',
-      
-      // Images
-      'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff', 'ico',
-      
-      // Media
-      'mp4', 'webm', 'mov', 'avi', 'mkv', 'mp3', 'wav', 'ogg', 'aac', 'm4a',
-      
-      // Archives
-      'zip', 'rar', 'tar', 'gz', '7z', 'bz2'
-    ],
+    // Documents
+    'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf', 'csv',
+    // Code files
+    'html', 'htm', 'css', 'js', 'ts', 'jsx', 'tsx', 'json', 'xml', 'py', 'java', 'c', 'cpp', 'cc', 'cxx', 'h', 'hpp', 'cs', 'php', 'rb', 'go', 'rs', 'swift', 'kt', 'scala', 'sql', 'md', 'yaml', 'yml', 'ini', 'cfg', 'conf', 'sh', 'bat', 'ps1', 'r', 'dart', 'lua', 'perl', 'pl',
+    // Images
+    'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff', 'ico',
+    // Media
+    'mp4', 'webm', 'mov', 'avi', 'mkv', 'mp3', 'wav', 'ogg', 'aac', 'm4a',
+    // Archives
+    'zip', 'rar', 'tar', 'gz', '7z', 'bz2'],
     enableChunkedUpload: true,
     enableResume: true,
     enablePreview: true,
     autoUpload: false,
     enableDuplicateDetection: true
   };
-
   const uploadCallbacks = {
     onFileAdd: (files: any[]) => {
       console.log('Files added:', files);
@@ -80,13 +56,13 @@ const Index = () => {
       console.error('Upload error:', file, error);
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-mesh relative overflow-hidden">
+  return <div className="min-h-screen bg-gradient-mesh relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-background/90"></div>
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{
+      animationDelay: '1s'
+    }}></div>
       
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-12">
@@ -99,9 +75,7 @@ const Index = () => {
             <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
               <Upload className="w-8 h-8 text-white drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
-              Enterprise File Upload
-            </h1>
+            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent"> File Transfer Online</h1>
           </div>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
             Advanced file management with drag-and-drop, progress tracking, and enterprise-grade security features
@@ -158,10 +132,7 @@ const Index = () => {
         </div>
 
         {/* Main Upload Component */}
-        <FileUploadManager
-          config={uploadConfig}
-          callbacks={uploadCallbacks}
-        />
+        <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
 
         {/* Technical Specifications */}
         <Card className="mt-16 p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass">
@@ -190,8 +161,6 @@ const Index = () => {
           </div>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
