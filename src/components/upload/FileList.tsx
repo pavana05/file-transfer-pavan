@@ -165,26 +165,27 @@ export const FileList: React.FC<FileListProps> = ({
 
               {/* Share Link */}
               {file.status === 'completed' && file.url && (
-                <div className="mt-3 flex items-center gap-3 p-4 bg-gradient-success rounded-xl border border-success/20">
+                <div className="mt-3 flex items-center gap-3 p-4 bg-muted/50 rounded-xl border border-border/50">
                   <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
                     <Share className="w-4 h-4 text-success" />
                   </div>
                   <div className="flex-1">
-                    <span className="text-success font-semibold text-sm block mb-1">Ready to share!</span>
+                    <span className="text-foreground font-semibold text-sm block mb-1">Ready to share!</span>
                     <input 
                       type="text" 
                       value={file.url} 
                       readOnly 
-                      className="w-full bg-transparent border-none outline-none text-muted-foreground text-xs font-mono"
+                      className="w-full bg-transparent border-none outline-none text-foreground text-xs font-mono"
                     />
                   </div>
                   <Button
-                    variant="ghost"
-                    size="sm"
+                    variant="outline"
+                    size="default"
                     onClick={() => copyShareLink(file.url!)}
-                    className="h-8 w-8 p-0 hover:bg-success/20 rounded-lg"
+                    className="h-10 px-4 hover:bg-accent"
                   >
-                    <Copy className="w-4 h-4" />
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
                   </Button>
                 </div>
               )}
