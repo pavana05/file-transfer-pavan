@@ -76,3 +76,38 @@ export interface FolderStructure {
   createdAt: Date;
   modifiedAt: Date;
 }
+
+export interface FileCollection {
+  id: string;
+  collection_name: string;
+  share_token: string;
+  created_date: string;
+  download_count: number;
+  description?: string;
+  collection_size: number;
+  files: DatabaseFile[];
+}
+
+export interface DatabaseFile {
+  id: string;
+  filename: string;
+  original_name: string;
+  file_size: number;
+  file_type: string;
+  storage_path: string;
+  share_token: string;
+  upload_date: string;
+  download_count: number;
+  collection_id?: string;
+}
+
+export interface CollectionInfo {
+  id: string;
+  collection_name: string;
+  share_token: string;
+  created_date: string;
+  download_count: number;
+  description?: string;
+  collection_size: number;
+  file_count: number;
+}

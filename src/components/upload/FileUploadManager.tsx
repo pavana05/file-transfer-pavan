@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Search, Filter, Grid, List, FolderPlus, Trash2, Download, Upload } from 'lucide-react';
+import { Search, Filter, Grid, List, FolderPlus, Trash2, Download, Upload, Share, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -191,6 +191,84 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     });
   }, [files, realUpload]);
 
+  // Handle collection upload
+  const handleUploadAsCollection = useCallback(async () => {
+    const pendingFiles = files.filter(f => f.status === 'pending');
+    if (pendingFiles.length === 0) return;
+
+    // Mark all files as uploading
+    setFiles(prev => prev.map(f => 
+      pendingFiles.some(pf => pf.id === f.id) 
+        ? { ...f, status: 'uploading' as const } 
+        : f
+    ));
+
+    try {
+      const collectionName = `Collection ${new Date().toLocaleDateString()}`;
+      const result = await UploadService.uploadFileCollection(
+        pendingFiles, 
+        collectionName,
+        `Collection of ${pendingFiles.length} files`,
+        (fileIndex, progress) => {
+          // Update progress for current file
+          if (pendingFiles[fileIndex]) {
+            setFiles(prev => prev.map(f => 
+              f.id === pendingFiles[fileIndex].id ? { ...f, progress } : f
+            ));
+          }
+        }
+      );
+
+      if (result.success) {
+        // Mark all files as completed
+        setFiles(prev => prev.map(f => 
+          pendingFiles.some(pf => pf.id === f.id) 
+            ? { 
+                ...f, 
+                status: 'completed' as const, 
+                progress: 100,
+                uploadedAt: new Date(),
+                url: result.shareUrl
+              } 
+            : f
+        ));
+
+        toast({
+          title: "Collection uploaded successfully!",
+          description: `${pendingFiles.length} files uploaded as a collection.`,
+        });
+
+        // Copy share link to clipboard
+        if (result.shareUrl) {
+          navigator.clipboard.writeText(result.shareUrl);
+          toast({
+            title: "Collection link copied!",
+            description: "Share link copied to clipboard.",
+          });
+        }
+      } else {
+        throw new Error(result.error || 'Collection upload failed');
+      }
+    } catch (error) {
+      // Mark files as error
+      setFiles(prev => prev.map(f => 
+        pendingFiles.some(pf => pf.id === f.id) 
+          ? { 
+              ...f, 
+              status: 'error' as const,
+              error: error instanceof Error ? error.message : 'Collection upload failed'
+            } 
+          : f
+      ));
+
+      toast({
+        title: "Collection upload failed",
+        description: error instanceof Error ? error.message : 'Collection upload failed',
+        variant: "destructive"
+      });
+    }
+  }, [files, toast]);
+
   const pendingCount = files.filter(f => f.status === 'pending').length;
 
   return (
@@ -259,20 +337,31 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
             </div>
           </div>
 
-          {/* Upload All Button */}
+          {/* Upload Buttons */}
           {!config.autoUpload && pendingCount > 0 && (
             <div className="flex items-center gap-2 p-3 bg-upload-zone rounded-lg mb-4">
               <span className="text-sm text-muted-foreground">
                 {pendingCount} file(s) ready to upload
               </span>
-              <Button
-                onClick={handleUploadAll}
-                size="sm"
-                className="ml-auto"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Upload All
-              </Button>
+              <div className="flex gap-2 ml-auto">
+                <Button
+                  onClick={handleUploadAll}
+                  size="sm"
+                  variant="outline"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload Individual
+                </Button>
+                {pendingCount > 1 && (
+                  <Button
+                    onClick={handleUploadAsCollection}
+                    size="sm"
+                  >
+                    <Package className="w-4 h-4 mr-2" />
+                    Upload as Collection
+                  </Button>
+                )}
+              </div>
             </div>
           )}
 

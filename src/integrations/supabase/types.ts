@@ -14,8 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      file_collections: {
+        Row: {
+          collection_name: string
+          collection_size: number
+          created_date: string
+          description: string | null
+          download_count: number
+          id: string
+          share_token: string
+        }
+        Insert: {
+          collection_name?: string
+          collection_size?: number
+          created_date?: string
+          description?: string | null
+          download_count?: number
+          id?: string
+          share_token?: string
+        }
+        Update: {
+          collection_name?: string
+          collection_size?: number
+          created_date?: string
+          description?: string | null
+          download_count?: number
+          id?: string
+          share_token?: string
+        }
+        Relationships: []
+      }
       uploaded_files: {
         Row: {
+          collection_id: string | null
           download_count: number
           file_size: number
           file_type: string
@@ -27,6 +58,7 @@ export type Database = {
           upload_date: string
         }
         Insert: {
+          collection_id?: string | null
           download_count?: number
           file_size: number
           file_type: string
@@ -38,6 +70,7 @@ export type Database = {
           upload_date?: string
         }
         Update: {
+          collection_id?: string | null
           download_count?: number
           file_size?: number
           file_type?: string
@@ -48,7 +81,15 @@ export type Database = {
           storage_path?: string
           upload_date?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "uploaded_files_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "file_collections"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

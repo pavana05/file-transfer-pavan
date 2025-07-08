@@ -95,6 +95,25 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       undefined
   });
 
+  const handleFolderUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      const validFiles: UploadedFile[] = [];
+      
+      fileArray.forEach(file => {
+        const validation = validateFile(file);
+        if (validation.isValid) {
+          validFiles.push(createUploadedFile(file));
+        }
+      });
+
+      if (validFiles.length > 0) {
+        onFilesAdded(validFiles);
+      }
+    }
+  }, [validateFile, createUploadedFile, onFilesAdded]);
+
   const handleBrowseClick = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
@@ -169,8 +188,8 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
           </p>
         </div>
 
-        {/* Browse Button */}
-        <div className="relative z-10 mt-6">
+        {/* Upload Buttons */}
+        <div className="relative z-10 mt-6 flex flex-col sm:flex-row gap-3 justify-center">
           <Button
             type="button"
             variant="outline"
@@ -181,6 +200,25 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
             <span className="relative z-10 font-medium">Browse Files</span>
             <div className="absolute inset-0 rounded-full bg-gradient-primary opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
           </Button>
+          
+          <div className="relative">
+            <input
+              type="file"
+              onChange={handleFolderUpload}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              {...({ webkitdirectory: "" } as any)}
+              multiple
+              disabled={disabled}
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={disabled}
+              className="relative px-8 py-3 rounded-full bg-background/80 backdrop-blur hover:bg-secondary/80 transition-all duration-300"
+            >
+              <span className="font-medium">Upload Folder</span>
+            </Button>
+          </div>
         </div>
 
         {/* File Format Info */}

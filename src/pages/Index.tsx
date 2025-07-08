@@ -6,18 +6,61 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const Index = () => {
   const uploadConfig = {
-    maxFileSize: 100 * 1024 * 1024, // 100MB
-    maxFiles: 10,
+    maxFileSize: 500 * 1024 * 1024, // 500MB for large files and folders
+    maxFiles: 50, // Allow multiple files
     acceptedTypes: [
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'image/webp',
+      // Images
+      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
+      
+      // Documents
       'application/pdf',
       'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'video/mp4',
-      'video/webm'
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
+      'text/plain', // .txt
+      'text/csv',
+      'application/rtf',
+      
+      // Code files
+      'text/html', 'text/css', 'text/javascript', 'application/javascript',
+      'application/json', 'text/xml', 'application/xml',
+      'text/markdown', 'application/x-python-code', 'text/x-python',
+      'text/x-java-source', 'text/x-c', 'text/x-c++src',
+      'text/x-csharp', 'text/x-php', 'text/x-ruby',
+      'text/x-go', 'text/x-rust', 'text/x-swift',
+      'application/typescript', 'text/typescript',
+      'application/x-yaml', 'text/yaml',
+      
+      // Media
+      'video/mp4', 'video/webm', 'video/mov', 'video/avi',
+      'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/aac',
+      
+      // Archives
+      'application/zip', 'application/x-rar-compressed', 'application/x-tar',
+      'application/gzip', 'application/x-7z-compressed'
+    ],
+    allowedExtensions: [
+      // Documents
+      'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf', 'csv',
+      
+      // Code files
+      'html', 'htm', 'css', 'js', 'ts', 'jsx', 'tsx', 'json', 'xml',
+      'py', 'java', 'c', 'cpp', 'cc', 'cxx', 'h', 'hpp',
+      'cs', 'php', 'rb', 'go', 'rs', 'swift', 'kt', 'scala',
+      'sql', 'md', 'yaml', 'yml', 'ini', 'cfg', 'conf',
+      'sh', 'bat', 'ps1', 'r', 'dart', 'lua', 'perl', 'pl',
+      
+      // Images
+      'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff', 'ico',
+      
+      // Media
+      'mp4', 'webm', 'mov', 'avi', 'mkv', 'mp3', 'wav', 'ogg', 'aac', 'm4a',
+      
+      // Archives
+      'zip', 'rar', 'tar', 'gz', '7z', 'bz2'
     ],
     enableChunkedUpload: true,
     enableResume: true,
