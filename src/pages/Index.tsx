@@ -164,7 +164,7 @@ const Index = () => {
         {/* Credit */}
         <div className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            This project is made by PAVAN
+            This project is made by <a href="https://pavan-05.framer.ai/" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:text-primary/80 transition-colors">PAVAN</a>
           </p>
         </div>
       </div>
