@@ -20,7 +20,7 @@ export class UploadService {
     return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 
-  // Upload single file (existing functionality)
+  // Upload single file with progress simulation
   static async uploadFile(file: UploadedFile, onProgress?: (progress: number) => void): Promise<FileUploadResult> {
     try {
       const shareToken = this.generateShareToken();
@@ -28,43 +28,61 @@ export class UploadService {
       const filename = `${shareToken}.${fileExtension}`;
       const storagePath = `files/${filename}`;
 
-      // Upload file to Supabase storage with progress tracking
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('uploads')
-        .upload(storagePath, file.file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+      // Simulate progress updates during upload
+      let progress = 0;
+      const progressInterval = setInterval(() => {
+        if (progress < 95) {
+          progress += Math.random() * 10;
+          progress = Math.min(progress, 95);
+          onProgress?.(Math.round(progress));
+        }
+      }, 100);
 
-      if (uploadError) {
-        throw new Error(`Upload failed: ${uploadError.message}`);
+      try {
+        // Upload file to Supabase storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('uploads')
+          .upload(storagePath, file.file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) {
+          throw new Error(`Upload failed: ${uploadError.message}`);
+        }
+
+        // Complete progress
+        clearInterval(progressInterval);
+        onProgress?.(100);
+
+        // Save file metadata to database
+        const { error: dbError } = await supabase
+          .from('uploaded_files')
+          .insert({
+            filename,
+            original_name: file.name,
+            file_size: file.size,
+            file_type: file.type,
+            storage_path: storagePath,
+            share_token: shareToken
+          });
+
+        if (dbError) {
+          // Clean up uploaded file if database insert fails
+          await supabase.storage.from('uploads').remove([storagePath]);
+          throw new Error(`Database error: ${dbError.message}`);
+        }
+
+        // Generate shareable URL
+        const shareUrl = `${window.location.origin}/share/${shareToken}`;
+
+        return {
+          success: true,
+          shareUrl
+        };
+      } finally {
+        clearInterval(progressInterval);
       }
-
-      // Save file metadata to database
-      const { error: dbError } = await supabase
-        .from('uploaded_files')
-        .insert({
-          filename,
-          original_name: file.name,
-          file_size: file.size,
-          file_type: file.type,
-          storage_path: storagePath,
-          share_token: shareToken
-        });
-
-      if (dbError) {
-        // Clean up uploaded file if database insert fails
-        await supabase.storage.from('uploads').remove([storagePath]);
-        throw new Error(`Database error: ${dbError.message}`);
-      }
-
-      // Generate shareable URL
-      const shareUrl = `${window.location.origin}/share/${shareToken}`;
-
-      return {
-        success: true,
-        shareUrl
-      };
     } catch (error) {
       return {
         success: false,
@@ -107,40 +125,53 @@ export class UploadService {
           const filename = `${shareToken}.${fileExtension}`;
           const storagePath = `collections/${collectionId}/${filename}`;
 
-          // Upload file to storage
-          const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('uploads')
-            .upload(storagePath, file.file, {
-              cacheControl: '3600',
-              upsert: false
-            });
+          // Simulate progress for this file
+          let fileProgress = 0;
+          const progressInterval = setInterval(() => {
+            if (fileProgress < 95) {
+              fileProgress += Math.random() * 15;
+              fileProgress = Math.min(fileProgress, 95);
+              onProgress?.(i, Math.round(fileProgress));
+            }
+          }, 100);
 
-          if (uploadError) {
-            throw new Error(`Upload failed for ${file.name}: ${uploadError.message}`);
-          }
+          try {
+            // Upload file to storage
+            const { data: uploadData, error: uploadError } = await supabase.storage
+              .from('uploads')
+              .upload(storagePath, file.file, {
+                cacheControl: '3600',
+                upsert: false
+              });
 
-          uploadedFiles.push(storagePath);
+            if (uploadError) {
+              throw new Error(`Upload failed for ${file.name}: ${uploadError.message}`);
+            }
 
-          // Save file metadata linked to collection
-          const { error: dbError } = await supabase
-            .from('uploaded_files')
-            .insert({
-              filename,
-              original_name: file.name,
-              file_size: file.size,
-              file_type: file.type,
-              storage_path: storagePath,
-              share_token: shareToken,
-              collection_id: collectionId
-            });
+            // Complete this file's progress
+            clearInterval(progressInterval);
+            onProgress?.(i, 100);
 
-          if (dbError) {
-            throw new Error(`Database error for ${file.name}: ${dbError.message}`);
-          }
+            uploadedFiles.push(storagePath);
 
-          // Report progress
-          if (onProgress) {
-            onProgress(i, ((i + 1) / files.length) * 100);
+            // Save file metadata linked to collection
+            const { error: dbError } = await supabase
+              .from('uploaded_files')
+              .insert({
+                filename,
+                original_name: file.name,
+                file_size: file.size,
+                file_type: file.type,
+                storage_path: storagePath,
+                share_token: shareToken,
+                collection_id: collectionId
+              });
+
+            if (dbError) {
+              throw new Error(`Database error for ${file.name}: ${dbError.message}`);
+            }
+          } finally {
+            clearInterval(progressInterval);
           }
 
         } catch (fileError) {
