@@ -67,78 +67,67 @@ const Index = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-12">
         {/* Theme Toggle */}
-        <div className="fixed top-4 right-4 z-50 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <div className="bg-gradient-glass border border-border/50 backdrop-blur-xl rounded-full p-1 shadow-glass hover:shadow-glow transition-all duration-300 hover:scale-110">
-            <ThemeToggle />
-          </div>
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
         </div>
         <div className="text-center mb-16 animate-fade-in">
-          <div className="inline-flex items-center gap-4 mb-6 animate-slide-up">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow hover:shadow-hover transition-all duration-500 hover:scale-110 animate-bounce-gentle">
+          <div className="inline-flex items-center gap-4 mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
               <Upload className="w-8 h-8 text-white drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent animate-slide-in-right"> File Transfer Online</h1>
+            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent"> File Transfer Online</h1>
           </div>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed animate-slide-in-left" style={{ animationDelay: '0.2s' }}>
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
             Advanced file management with drag-and-drop, progress tracking, and enterprise-grade security features
           </p>
           
           {/* Feature Badges */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm hover:bg-gradient-glass-hover hover:scale-105 transition-all duration-300 shadow-glass hover:shadow-glow">
-              <Shield className="w-4 h-4 text-primary" />
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
+              <Shield className="w-4 h-4" />
               <span className="font-medium">Secure Upload</span>
             </Badge>
-            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm hover:bg-gradient-glass-hover hover:scale-105 transition-all duration-300 shadow-glass hover:shadow-glow" style={{ animationDelay: '0.1s' }}>
-              <Zap className="w-4 h-4 text-primary" />
+            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
+              <Zap className="w-4 h-4" />
               <span className="font-medium">Resume Support</span>
             </Badge>
-            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm hover:bg-gradient-glass-hover hover:scale-105 transition-all duration-300 shadow-glass hover:shadow-glow" style={{ animationDelay: '0.2s' }}>
-              <Users className="w-4 h-4 text-primary" />
+            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
+              <Users className="w-4 h-4" />
               <span className="font-medium">Multi-user Ready</span>
             </Badge>
           </div>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-          <Card className="p-8 text-center hover:shadow-glow transition-all duration-500 bg-gradient-glass border border-gradient-glass-border backdrop-blur-xl rounded-2xl group hover:scale-105 hover:bg-gradient-glass-hover animate-slide-in-left relative overflow-hidden" style={{ animationDelay: '0.1s' }}>
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative z-10">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:shadow-hover group-hover:animate-bounce-gentle transition-all duration-500">
-                <Upload className="w-8 h-8 text-white drop-shadow-lg" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors duration-300">Drag & Drop Interface</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Intuitive drag-and-drop with visual feedback and hover states
-              </p>
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
+              <Upload className="w-8 h-8 text-white" />
             </div>
+            <h3 className="text-xl font-bold mb-3 text-foreground">Drag & Drop Interface</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              Intuitive drag-and-drop with visual feedback and hover states
+            </p>
           </Card>
 
-          <Card className="p-8 text-center hover:shadow-glow transition-all duration-500 bg-gradient-glass border border-gradient-glass-border backdrop-blur-xl rounded-2xl group hover:scale-105 hover:bg-gradient-glass-hover animate-slide-up relative overflow-hidden" style={{ animationDelay: '0.2s' }}>
-            <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative z-10">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-secondary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:shadow-hover group-hover:animate-bounce-gentle transition-all duration-500">
-                <Zap className="w-8 h-8 text-white drop-shadow-lg" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors duration-300">Progress Tracking</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Real-time progress bars with pause/resume functionality
-              </p>
+          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-secondary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
+              <Zap className="w-8 h-8 text-white" />
             </div>
+            <h3 className="text-xl font-bold mb-3 text-foreground">Progress Tracking</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              Real-time progress bars with pause/resume functionality
+            </p>
           </Card>
 
-          <Card className="p-8 text-center hover:shadow-glow transition-all duration-500 bg-gradient-glass border border-gradient-glass-border backdrop-blur-xl rounded-2xl group hover:scale-105 hover:bg-gradient-glass-hover animate-slide-in-right relative overflow-hidden" style={{ animationDelay: '0.3s' }}>
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative z-10">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:shadow-hover group-hover:animate-bounce-gentle transition-all duration-500">
-                <Shield className="w-8 h-8 text-white drop-shadow-lg" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors duration-300">File Validation</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Type checking, size limits, and security scanning
-              </p>
+          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
+              <Shield className="w-8 h-8 text-white" />
             </div>
+            <h3 className="text-xl font-bold mb-3 text-foreground">File Validation</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              Type checking, size limits, and security scanning
+            </p>
           </Card>
         </div>
 
@@ -146,42 +135,37 @@ const Index = () => {
         <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
 
         {/* Technical Specifications */}
-        <Card className="mt-16 p-8 bg-gradient-glass border border-gradient-glass-border backdrop-blur-xl rounded-2xl shadow-glass hover:shadow-glow transition-all duration-500 hover:bg-gradient-glass-hover animate-fade-in relative overflow-hidden" style={{ animationDelay: '1s' }}>
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-accent/3 opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
-          <div className="relative z-10">
-            <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent animate-slide-in-left">Technical Specifications</h3>
-            <div className="grid md:grid-cols-2 gap-6 text-sm">
-              <div className="animate-slide-in-left" style={{ animationDelay: '1.2s' }}>
-                <h4 className="font-medium mb-2 text-foreground">Upload Features</h4>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li className="hover:text-foreground transition-colors duration-200">• Chunked upload for large files (&gt;100MB)</li>
-                  <li className="hover:text-foreground transition-colors duration-200">• Resume capability for interrupted uploads</li>
-                  <li className="hover:text-foreground transition-colors duration-200">• Concurrent upload limiting</li>
-                  <li className="hover:text-foreground transition-colors duration-200">• Duplicate file detection</li>
-                  <li className="hover:text-foreground transition-colors duration-200">• File compression options</li>
-                </ul>
-              </div>
-              <div className="animate-slide-in-right" style={{ animationDelay: '1.4s' }}>
-                <h4 className="font-medium mb-2 text-foreground">Integration Ready</h4>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li className="hover:text-foreground transition-colors duration-200">• Supabase storage integration</li>
-                  <li className="hover:text-foreground transition-colors duration-200">• Authentication context support</li>
-                  <li className="hover:text-foreground transition-colors duration-200">• CDN optimization planning</li>
-                  <li className="hover:text-foreground transition-colors duration-200">• Backup and versioning system</li>
-                  <li className="hover:text-foreground transition-colors duration-200">• TypeScript interfaces included</li>
-                </ul>
-              </div>
+        <Card className="mt-16 p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass">
+          <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Technical Specifications</h3>
+          <div className="grid md:grid-cols-2 gap-6 text-sm">
+            <div>
+              <h4 className="font-medium mb-2">Upload Features</h4>
+              <ul className="space-y-1 text-muted-foreground">
+                <li>• Chunked upload for large files (&gt;100MB)</li>
+                <li>• Resume capability for interrupted uploads</li>
+                <li>• Concurrent upload limiting</li>
+                <li>• Duplicate file detection</li>
+                <li>• File compression options</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">Integration Ready</h4>
+              <ul className="space-y-1 text-muted-foreground">
+                <li>• Supabase storage integration</li>
+                <li>• Authentication context support</li>
+                <li>• CDN optimization planning</li>
+                <li>• Backup and versioning system</li>
+                <li>• TypeScript interfaces included</li>
+              </ul>
             </div>
           </div>
         </Card>
 
         {/* Credit */}
-        <div className="mt-8 text-center animate-fade-in" style={{ animationDelay: '1.6s' }}>
-          <div className="inline-block bg-gradient-glass border border-border/30 backdrop-blur-sm rounded-full px-6 py-3 shadow-glass hover:shadow-glow transition-all duration-300 hover:scale-105">
-            <p className="text-sm text-muted-foreground">
-              This project is made by <a href="https://pavan-05.framer.ai/" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:text-primary-glow transition-all duration-300 hover:scale-110 inline-block">PAVAN</a>
-            </p>
-          </div>
+        <div className="mt-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            This project is made by <a href="https://pavan-05.framer.ai/" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:text-primary/80 transition-colors">PAVAN</a>
+          </p>
         </div>
       </div>
     </div>;
