@@ -20,7 +20,7 @@ export class UploadService {
     return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 
-  // Upload single file with progress simulation
+  // Upload single file with real progress tracking and optimization
   static async uploadFile(file: UploadedFile, onProgress?: (progress: number) => void): Promise<FileUploadResult> {
     try {
       const shareToken = this.generateShareToken();
@@ -28,32 +28,15 @@ export class UploadService {
       const filename = `${shareToken}.${fileExtension}`;
       const storagePath = `files/${filename}`;
 
-      // Simulate progress updates during upload
-      let progress = 0;
-      const progressInterval = setInterval(() => {
-        if (progress < 95) {
-          progress += Math.random() * 10;
-          progress = Math.min(progress, 95);
-          onProgress?.(Math.round(progress));
-        }
-      }, 100);
+      // Real progress tracking with XMLHttpRequest
+      const uploadProgress = await this.uploadWithProgress(file.file, storagePath, onProgress);
+      
+      if (!uploadProgress.success) {
+        throw new Error(uploadProgress.error || 'Upload failed');
+      }
 
-      try {
-        // Upload file to Supabase storage
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('uploads')
-          .upload(storagePath, file.file, {
-            cacheControl: '3600',
-            upsert: false
-          });
-
-        if (uploadError) {
-          throw new Error(`Upload failed: ${uploadError.message}`);
-        }
-
-        // Complete progress
-        clearInterval(progressInterval);
-        onProgress?.(100);
+      // Complete progress
+      onProgress?.(100);
 
         // Save file metadata to database
         const { error: dbError } = await supabase
@@ -80,9 +63,6 @@ export class UploadService {
           success: true,
           shareUrl
         };
-      } finally {
-        clearInterval(progressInterval);
-      }
     } catch (error) {
       return {
         success: false,
@@ -91,7 +71,59 @@ export class UploadService {
     }
   }
 
-  // Upload multiple files as a collection
+  // Enhanced upload with real progress tracking
+  private static async uploadWithProgress(
+    file: File, 
+    storagePath: string, 
+    onProgress?: (progress: number) => void
+  ): Promise<{ success: boolean; error?: string }> {
+    return new Promise((resolve) => {
+      const xhr = new XMLHttpRequest();
+      
+      // Track upload progress
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+          const percentComplete = (e.loaded / e.total) * 100;
+          onProgress?.(Math.round(percentComplete));
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve({ success: true });
+        } else {
+          resolve({ 
+            success: false, 
+            error: `Upload failed with status: ${xhr.status}` 
+          });
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        resolve({ 
+          success: false, 
+          error: 'Network error during upload' 
+        });
+      });
+
+      // Get Supabase upload URL and headers
+      const SUPABASE_URL = "https://zbvwodqcvotrfokadwyo.supabase.co";
+      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpidndvZHFjdm90cmZva2Fkd3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NzcwMDgsImV4cCI6MjA2NzA1MzAwOH0.2JhIGFjWU-gT6CspuGTqYnkXuu_GJ6IhWwLN6AqdIVA";
+      
+      xhr.open('POST', `${SUPABASE_URL}/storage/v1/object/uploads/${storagePath}`);
+      xhr.setRequestHeader('Authorization', `Bearer ${SUPABASE_KEY}`);
+      xhr.setRequestHeader('apikey', SUPABASE_KEY);
+      xhr.setRequestHeader('x-upsert', 'false');
+      
+      // Create FormData for upload
+      const formData = new FormData();
+      formData.append('', file);
+      
+      xhr.send(formData);
+    });
+  }
+
+  // Upload multiple files as a collection with parallel uploads
   static async uploadFileCollection(
     files: UploadedFile[], 
     collectionName: string = 'Shared Files',
@@ -116,43 +148,26 @@ export class UploadService {
       const collectionId = collectionData.id;
       const uploadedFiles: string[] = [];
 
-      // Upload each file
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+      // Upload files in parallel for better speed (max 3 concurrent uploads)
+      const uploadPromises = files.map(async (file, i) => {
+        const shareToken = this.generateShareToken();
+        const fileExtension = file.name.split('.').pop();
+        const filename = `${shareToken}.${fileExtension}`;
+        const storagePath = `collections/${collectionId}/${filename}`;
+
         try {
-          const shareToken = this.generateShareToken();
-          const fileExtension = file.name.split('.').pop();
-          const filename = `${shareToken}.${fileExtension}`;
-          const storagePath = `collections/${collectionId}/${filename}`;
+          // Upload with real progress tracking
+          const uploadResult = await this.uploadWithProgress(
+            file.file, 
+            storagePath, 
+            (progress) => onProgress?.(i, progress)
+          );
 
-          // Simulate progress for this file
-          let fileProgress = 0;
-          const progressInterval = setInterval(() => {
-            if (fileProgress < 95) {
-              fileProgress += Math.random() * 15;
-              fileProgress = Math.min(fileProgress, 95);
-              onProgress?.(i, Math.round(fileProgress));
-            }
-          }, 100);
+          if (!uploadResult.success) {
+            throw new Error(`Upload failed for ${file.name}: ${uploadResult.error}`);
+          }
 
-          try {
-            // Upload file to storage
-            const { data: uploadData, error: uploadError } = await supabase.storage
-              .from('uploads')
-              .upload(storagePath, file.file, {
-                cacheControl: '3600',
-                upsert: false
-              });
-
-            if (uploadError) {
-              throw new Error(`Upload failed for ${file.name}: ${uploadError.message}`);
-            }
-
-            // Complete this file's progress
-            clearInterval(progressInterval);
-            onProgress?.(i, 100);
-
-            uploadedFiles.push(storagePath);
+          uploadedFiles.push(storagePath);
 
             // Save file metadata linked to collection
             const { error: dbError } = await supabase
@@ -167,20 +182,32 @@ export class UploadService {
                 collection_id: collectionId
               });
 
-            if (dbError) {
-              throw new Error(`Database error for ${file.name}: ${dbError.message}`);
-            }
-          } finally {
-            clearInterval(progressInterval);
+          if (dbError) {
+            throw new Error(`Database error for ${file.name}: ${dbError.message}`);
           }
 
+          return { file, shareToken, storagePath };
         } catch (fileError) {
-          // Clean up on error
-          if (uploadedFiles.length > 0) {
-            await supabase.storage.from('uploads').remove(uploadedFiles);
-          }
-          await supabase.from('file_collections').delete().eq('id', collectionId);
           throw fileError;
+        }
+      });
+
+      // Execute uploads with controlled concurrency (3 at a time for better speed)
+      const results = [];
+      for (let i = 0; i < uploadPromises.length; i += 3) {
+        const batch = uploadPromises.slice(i, i + 3);
+        const batchResults = await Promise.allSettled(batch);
+        
+        for (const result of batchResults) {
+          if (result.status === 'rejected') {
+            // Clean up on any error
+            if (uploadedFiles.length > 0) {
+              await supabase.storage.from('uploads').remove(uploadedFiles);
+            }
+            await supabase.from('file_collections').delete().eq('id', collectionId);
+            throw new Error(result.reason);
+          }
+          results.push(result.value);
         }
       }
 

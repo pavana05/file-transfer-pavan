@@ -48,19 +48,28 @@ const CollectionShare = () => {
       // Increment download count for individual file
       await UploadService.incrementDownloadCount(file.share_token);
       
-      // Trigger download
+      // Enhanced download with blob handling
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch file');
+      }
+      
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      
       const link = document.createElement('a');
-      link.href = url;
+      link.href = downloadUrl;
       link.download = file.original_name;
       link.setAttribute('download', file.original_name);
-      link.style.display = 'none';
+      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
 
       toast({
-        title: "Download started",
-        description: `${file.original_name} download has begun.`,
+        title: "Download completed",
+        description: `${file.original_name} has been downloaded.`,
       });
     } catch (err) {
       toast({
@@ -81,14 +90,16 @@ const CollectionShare = () => {
       // Increment collection download count
       await UploadService.incrementCollectionDownloadCount(collection.share_token);
       
-      // Download each file sequentially with progress
-      for (let i = 0; i < collection.files.length; i++) {
-        const file = collection.files[i];
+      // Download files in parallel for faster download (3 at a time)
+      const downloadPromises = collection.files.map(async (file, index) => {
         await handleDownloadFile(file);
-        setDownloadProgress(((i + 1) / collection.files.length) * 100);
-        
-        // Small delay between downloads
-        await new Promise(resolve => setTimeout(resolve, 500));
+        setDownloadProgress(((index + 1) / collection.files.length) * 100);
+      });
+
+      // Execute downloads in batches of 3 for better performance
+      for (let i = 0; i < downloadPromises.length; i += 3) {
+        const batch = downloadPromises.slice(i, i + 3);
+        await Promise.all(batch);
       }
 
       // Update download count in UI

@@ -60,23 +60,34 @@ const FileShare = () => {
       // Increment download count
       await UploadService.incrementDownloadCount(fileInfo.share_token);
       
-      // Trigger direct download to system
+      // Enhanced direct download with better compatibility
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch file');
+      }
+      
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      
       const link = document.createElement('a');
-      link.href = url;
+      link.href = downloadUrl;
       link.download = fileInfo.original_name;
       link.setAttribute('download', fileInfo.original_name);
-      // Force download behavior
-      link.style.display = 'none';
+      
+      // Better cross-browser support
       document.body.appendChild(link);
       link.click();
+      
+      // Cleanup
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
 
       // Update download count in UI
       setFileInfo(prev => prev ? { ...prev, download_count: prev.download_count + 1 } : null);
 
       toast({
-        title: "Download started",
-        description: "Your file download has begun.",
+        title: "Download completed",
+        description: "File has been downloaded to your system.",
       });
     } catch (err) {
       toast({
