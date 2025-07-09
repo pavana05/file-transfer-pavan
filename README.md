@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/673a16ab-cb50-4453-b2fd-eabb2e035c39
+**URL**: https://file-transfer-pavan.lovable.app/
 
 ## How can I edit this code?
 
