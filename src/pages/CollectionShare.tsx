@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Download, File, ArrowLeft, Share2, Folder, Archive } from 'lucide-react';
+import { Download, File, ArrowLeft, Share2, Folder, Archive, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -132,6 +132,42 @@ const CollectionShare = () => {
     });
   };
 
+  // Component for file preview with image thumbnails
+  const FilePreview: React.FC<{ file: DatabaseFile }> = ({ file }) => {
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [imageError, setImageError] = useState(false);
+
+    useEffect(() => {
+      if (file.file_type.startsWith('image/')) {
+        UploadService.getFileUrl(file.storage_path)
+          .then(url => setImageUrl(url))
+          .catch(() => setImageError(true));
+      }
+    }, [file]);
+
+    if (file.file_type.startsWith('image/') && imageUrl && !imageError) {
+      return (
+        <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0 ring-1 ring-border">
+          <img 
+            src={imageUrl} 
+            alt={file.original_name}
+            className="w-full h-full object-cover animate-fade-in"
+            onError={() => setImageError(true)}
+          />
+        </div>
+      );
+    }
+
+    // Fallback to emoji icons for non-images or failed image loads
+    return (
+      <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 ring-1 ring-border">
+        <span className="text-lg">
+          {getFileIcon(file.file_type)}
+        </span>
+      </div>
+    );
+  };
+
   const getFileIcon = (fileType: string) => {
     if (fileType.startsWith('image/')) return '🖼️';
     if (fileType.startsWith('video/')) return '🎥';
@@ -260,9 +296,7 @@ const CollectionShare = () => {
             <Card key={file.id} className="p-4 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                  <div className="text-2xl flex-shrink-0">
-                    {getFileIcon(file.file_type)}
-                  </div>
+                  <FilePreview file={file} />
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium text-foreground truncate">
                       {file.original_name}
