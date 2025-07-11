@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Pause, Play, RotateCcw, Check, AlertCircle, File, Share, Copy } from 'lucide-react';
+import { X, Pause, Play, RotateCcw, Check, AlertCircle, File, Share, Copy, Code, FileText, Image, Video, Music, Archive, Database, Braces, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card } from '@/components/ui/card';
@@ -52,6 +52,64 @@ export const FileList: React.FC<FileListProps> = ({
       default:
         return <File className="w-4 h-4 text-muted-foreground" />;
     }
+  };
+
+  const getFileTypeIcon = (file: UploadedFile) => {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    const type = file.type.toLowerCase();
+    
+    // HTML Files
+    if (extension === 'html' || extension === 'htm' || type === 'text/html') {
+      return <Globe className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // JavaScript/TypeScript
+    if (['js', 'jsx', 'ts', 'tsx'].includes(extension || '') || type.includes('javascript') || type.includes('typescript')) {
+      return <Braces className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // CSS
+    if (extension === 'css' || type === 'text/css') {
+      return <Code className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // JSON/XML
+    if (['json', 'xml', 'yaml', 'yml'].includes(extension || '') || type.includes('json') || type.includes('xml') || type.includes('yaml')) {
+      return <Database className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // Programming languages
+    if (['py', 'java', 'c', 'cpp', 'cs', 'php', 'rb', 'go', 'rs', 'swift', 'kt', 'scala', 'sql', 'r', 'dart', 'lua', 'perl', 'pl'].includes(extension || '')) {
+      return <Code className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // Images
+    if (type.startsWith('image/')) {
+      return <Image className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // Videos
+    if (type.startsWith('video/')) {
+      return <Video className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // Audio
+    if (type.startsWith('audio/')) {
+      return <Music className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // Archives
+    if (['zip', 'rar', 'tar', 'gz', '7z', 'bz2'].includes(extension || '') || type.includes('zip') || type.includes('rar') || type.includes('tar') || type.includes('gzip')) {
+      return <Archive className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // Documents
+    if (['pdf', 'doc', 'docx', 'txt', 'rtf', 'md'].includes(extension || '') || type.includes('pdf') || type.includes('document') || type === 'text/plain') {
+      return <FileText className="w-8 h-8 text-white drop-shadow-lg" />;
+    }
+    
+    // Default
+    return <File className="w-8 h-8 text-white drop-shadow-lg" />;
   };
 
   const getStatusBadge = (status: UploadedFile['status']) => {
@@ -119,7 +177,7 @@ export const FileList: React.FC<FileListProps> = ({
                   "group-hover:scale-105 transition-transform duration-300"
                 )}>
                   <div className="absolute inset-0 rounded-xl bg-gradient-glass opacity-50"></div>
-                  {getStatusIcon(file)}
+                  {getFileTypeIcon(file)}
                 </div>
               )}
             </div>
