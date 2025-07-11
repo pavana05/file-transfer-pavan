@@ -30,6 +30,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
   const [filterType, setFilterType] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [showUploadGlow, setShowUploadGlow] = useState(false);
   const { toast } = useToast();
 
   // Calculate upload statistics
@@ -79,7 +80,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     setFiles(prev => [...prev, ...filesWithPreviews]);
     callbacks.onFileAdd?.(filesWithPreviews);
 
-    // Auto-scroll to show uploaded files
+    // Auto-scroll to show uploaded files and show upload button glow
     setTimeout(() => {
       const fileListElement = document.querySelector('[data-file-list]');
       if (fileListElement) {
@@ -87,6 +88,13 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
       } else {
         // Fallback: scroll to bottom of page
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }
+      
+      // Show glow effect on upload button
+      if (!config.autoUpload) {
+        setShowUploadGlow(true);
+        // Remove glow after 5 seconds
+        setTimeout(() => setShowUploadGlow(false), 5000);
       }
     }, 100);
 
@@ -359,6 +367,10 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                   onClick={handleUploadAll}
                   size="sm"
                   variant="outline"
+                  className={cn(
+                    "transition-all duration-300",
+                    showUploadGlow && "ring-2 ring-primary ring-offset-2 bg-primary/10 shadow-glow animate-pulse"
+                  )}
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   Upload Individual
