@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Search, Filter, Grid, List, FolderPlus, Trash2, Download, Upload, Share, Package, Folder, FileX, Edit2, Plus } from 'lucide-react';
+import { Search, Filter, Grid, List, FolderPlus, Trash2, Download, Upload, Share, Package, Folder, FileX, Edit2, Plus, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -15,6 +15,7 @@ import { UploadedFile, UploadConfig, UploadCallbacks } from '@/types/upload';
 import { calculateUploadStats, generateFilePreview, detectDuplicateFiles } from '@/lib/file-utils';
 import { useToast } from '@/hooks/use-toast';
 import { UploadService } from '@/services/uploadService';
+import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 
 interface FileFolder {
   id: string;
@@ -479,6 +480,15 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                     Upload as Collection
                   </Button>
                 )}
+                <NearbyShareDialog
+                  trigger={
+                    <Button size="sm" variant="outline" className="gap-2">
+                      <Smartphone className="w-4 h-4" />
+                      Nearby Share
+                    </Button>
+                  }
+                  files={files.filter(f => f.status === 'pending').map(f => f.file)}
+                />
               </div>
             </div>
           )}

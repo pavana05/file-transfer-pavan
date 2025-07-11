@@ -1,8 +1,10 @@
 import { FileUploadManager } from '@/components/upload/FileUploadManager';
-import { Upload, Shield, Zap, Users } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
+import { Button } from '@/components/ui/button';
 const Index = () => {
   const uploadConfig = {
     maxFileSize: 10 * 1024 * 1024 * 1024,
@@ -131,6 +133,28 @@ const Index = () => {
           </Card>
         </div>
 
+        {/* Nearby Share Section */}
+        <Card className="p-8 text-center bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-secondary flex items-center justify-center mx-auto mb-6 shadow-glow">
+            <Smartphone className="w-8 h-8 text-white" />
+          </div>
+          <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            Nearby Share
+          </h3>
+          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+            Share files directly with nearby devices without uploading to the cloud. 
+            Create a room or scan a QR code to start peer-to-peer file sharing.
+          </p>
+          <NearbyShareDialog
+            trigger={
+              <Button size="lg" className="gap-2">
+                <Smartphone className="w-5 h-5" />
+                Start Nearby Share
+              </Button>
+            }
+          />
+        </Card>
+
         {/* Main Upload Component */}
         <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
 
@@ -145,16 +169,16 @@ const Index = () => {
                 <li>• Resume capability for interrupted uploads</li>
                 <li>• Concurrent upload limiting</li>
                 <li>• Duplicate file detection</li>
-                <li>• File compression options</li>
+                <li>• Nearby share with WebRTC P2P transfer</li>
               </ul>
             </div>
             <div>
               <h4 className="font-medium mb-2">Integration Ready</h4>
               <ul className="space-y-1 text-muted-foreground">
                 <li>• Supabase storage integration</li>
-                <li>• Authentication context support</li>
-                <li>• CDN optimization planning</li>
-                <li>• Backup and versioning system</li>
+                <li>• QR code room joining</li>
+                <li>• Real-time device discovery</li>
+                <li>• WebRTC peer-to-peer connections</li>
                 <li>• TypeScript interfaces included</li>
               </ul>
             </div>
