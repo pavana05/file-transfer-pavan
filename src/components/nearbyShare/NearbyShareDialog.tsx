@@ -180,228 +180,246 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Smartphone className="w-5 h-5" />
-            Nearby Share
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent className="w-[95vw] max-w-4xl h-[90vh] max-h-[800px] p-0 overflow-hidden">
+        <div className="flex flex-col h-full">
+          <DialogHeader className="p-6 pb-4 border-b">
+            <DialogTitle className="flex items-center gap-2">
+              <Smartphone className="w-5 h-5" />
+              Nearby Share
+            </DialogTitle>
+          </DialogHeader>
 
-        <Tabs defaultValue="setup" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="setup">Setup</TabsTrigger>
-            <TabsTrigger value="devices">Devices</TabsTrigger>
-            <TabsTrigger value="transfers">Transfers</TabsTrigger>
-          </TabsList>
+          <div className="flex-1 overflow-hidden">
+            <Tabs defaultValue="setup" className="w-full h-full flex flex-col">
+              <TabsList className="grid w-full grid-cols-3 mx-6 mt-4">
+                <TabsTrigger value="setup">Setup</TabsTrigger>
+                <TabsTrigger value="devices">Devices</TabsTrigger>
+                <TabsTrigger value="transfers">Transfers</TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="setup" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Device Setup</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">Device Name</label>
-                  <Input
-                    value={deviceName}
-                    onChange={(e) => setDeviceName(e.target.value)}
-                    placeholder="Enter your device name"
-                    className="mt-1"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {isConnected ? (
-                    <Badge variant="default" className="flex items-center gap-1">
-                      <Wifi className="w-3 h-3" />
-                      Connected
-                    </Badge>
-                  ) : (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      <WifiOff className="w-3 h-3" />
-                      Disconnected
-                    </Badge>
-                  )}
-                  {currentRoom && (
-                    <Badge variant="outline">Room: {currentRoom}</Badge>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Join or Create Room</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <Button 
-                    onClick={createRoom} 
-                    disabled={isCreatingRoom || !deviceName.trim()}
-                    className="flex items-center gap-2"
-                  >
-                    <Users className="w-4 h-4" />
-                    {isCreatingRoom ? 'Creating...' : 'Create Room'}
-                  </Button>
-                  
-                  <Button 
-                    onClick={() => setShowScanner(true)}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                  >
-                    <QrCode className="w-4 h-4" />
-                    Scan QR Code
-                  </Button>
-                </div>
-
-                <div className="flex gap-2">
-                  <Input
-                    value={roomId}
-                    onChange={(e) => setRoomId(e.target.value.toUpperCase())}
-                    placeholder="Enter room ID"
-                    className="flex-1"
-                  />
-                  <Button 
-                    onClick={() => joinRoom(roomId)}
-                    disabled={!roomId.trim() || !deviceName.trim()}
-                  >
-                    Join
-                  </Button>
-                </div>
-
-                {showQRCode && currentRoom && (
-                  <Card>
-                    <CardContent className="pt-6 text-center">
-                      <QRCodeGenerator 
-                        data={getRoomQRData()} 
-                        size={200}
-                      />
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Scan this QR code to join room {currentRoom}
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="devices" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Available Devices ({connectedDevices.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-64">
-                  {connectedDevices.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No devices found. Create or join a room to start sharing.
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {connectedDevices.map((device) => (
-                        <div
-                          key={device.id}
-                          className="flex items-center justify-between p-3 border rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                              <Smartphone className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <p className="font-medium">{device.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {device.status}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex gap-2">
-                            {files.map((file, index) => (
-                              <Button
-                                key={index}
-                                size="sm"
-                                onClick={() => handleSendFile(file, device.id)}
-                                disabled={device.status !== 'connected'}
-                                className="flex items-center gap-1"
-                              >
-                                <Send className="w-3 h-3" />
-                                Send {file.name}
-                              </Button>
-                            ))}
-                            {files.length === 0 && (
-                              <Badge variant="outline">No files selected</Badge>
-                            )}
-                          </div>
+              <TabsContent value="setup" className="flex-1 m-0 p-6 overflow-y-auto">
+                <ScrollArea className="h-full">
+                  <div className="space-y-4 pr-4"
+                    >
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Device Setup</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <label className="text-sm font-medium">Device Name</label>
+                          <Input
+                            value={deviceName}
+                            onChange={(e) => setDeviceName(e.target.value)}
+                            placeholder="Enter your device name"
+                            className="mt-1"
+                          />
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
-          <TabsContent value="transfers" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Active Transfers</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-64">
-                  {activeTransfers.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No active transfers
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {activeTransfers.map((transfer) => (
-                        <div key={transfer.id} className="border rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              {transfer.fromDevice === deviceName ? (
-                                <Upload className="w-4 h-4 text-blue-500" />
-                              ) : (
-                                <Download className="w-4 h-4 text-green-500" />
-                              )}
-                              <span className="font-medium">{transfer.fileName}</span>
-                            </div>
-                            <Badge 
-                              variant={
-                                transfer.status === 'completed' ? 'default' :
-                                transfer.status === 'failed' ? 'destructive' :
-                                'secondary'
-                              }
-                            >
-                              {transfer.status}
+                        <div className="flex flex-wrap items-center gap-2">
+                          {isConnected ? (
+                            <Badge variant="default" className="flex items-center gap-1">
+                              <Wifi className="w-3 h-3" />
+                              Connected
                             </Badge>
-                          </div>
-                          
-                          <div className="text-sm text-muted-foreground mb-2">
-                            {transfer.fromDevice === deviceName ? 
-                              `To: ${transfer.toDevice}` : 
-                              `From: ${transfer.fromDevice}`
-                            }
-                          </div>
-                          
-                          <Progress value={transfer.progress} className="mb-2" />
-                          
-                          <div className="text-xs text-muted-foreground">
-                            {transfer.progress}% • {(transfer.fileSize / 1024 / 1024).toFixed(1)} MB
-                          </div>
+                          ) : (
+                            <Badge variant="secondary" className="flex items-center gap-1">
+                              <WifiOff className="w-3 h-3" />
+                              Disconnected
+                            </Badge>
+                          )}
+                          {currentRoom && (
+                            <Badge variant="outline">Room: {currentRoom}</Badge>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Join or Create Room</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <Button 
+                            onClick={createRoom} 
+                            disabled={isCreatingRoom || !deviceName.trim()}
+                            className="flex items-center gap-2 w-full"
+                          >
+                            <Users className="w-4 h-4" />
+                            {isCreatingRoom ? 'Creating...' : 'Create Room'}
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => setShowScanner(true)}
+                            variant="outline"
+                            className="flex items-center gap-2 w-full"
+                          >
+                            <QrCode className="w-4 h-4" />
+                            Scan QR Code
+                          </Button>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Input
+                            value={roomId}
+                            onChange={(e) => setRoomId(e.target.value.toUpperCase())}
+                            placeholder="Enter room ID"
+                            className="flex-1"
+                          />
+                          <Button 
+                            onClick={() => joinRoom(roomId)}
+                            disabled={!roomId.trim() || !deviceName.trim()}
+                            className="sm:w-auto w-full"
+                          >
+                            Join
+                          </Button>
+                        </div>
+
+                        {showQRCode && currentRoom && (
+                          <Card>
+                            <CardContent className="pt-6 text-center">
+                              <QRCodeGenerator 
+                                data={getRoomQRData()} 
+                                size={200}
+                              />
+                              <p className="text-sm text-muted-foreground mt-2">
+                                Scan this QR code to join room {currentRoom}
+                              </p>
+                            </CardContent>
+                          </Card>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
                 </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              </TabsContent>
+
+              <TabsContent value="devices" className="flex-1 m-0 p-6 overflow-y-auto">
+                <ScrollArea className="h-full">
+                  <div className="space-y-4 pr-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <Users className="w-5 h-5" />
+                          Available Devices ({connectedDevices.length})
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="max-h-64 overflow-y-auto">
+                          {connectedDevices.length === 0 ? (
+                            <div className="text-center py-8 text-muted-foreground">
+                              No devices found. Create or join a room to start sharing.
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              {connectedDevices.map((device) => (
+                                <div
+                                  key={device.id}
+                                  className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border rounded-lg gap-3"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                                      <Smartphone className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium">{device.name}</p>
+                                      <p className="text-sm text-muted-foreground">
+                                        {device.status}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex flex-wrap gap-2">
+                                    {files.map((file, index) => (
+                                      <Button
+                                        key={index}
+                                        size="sm"
+                                        onClick={() => handleSendFile(file, device.id)}
+                                        disabled={device.status !== 'connected'}
+                                        className="flex items-center gap-1"
+                                      >
+                                        <Send className="w-3 h-3" />
+                                        <span className="hidden sm:inline">Send</span> {file.name}
+                                      </Button>
+                                    ))}
+                                    {files.length === 0 && (
+                                      <Badge variant="outline">No files selected</Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+
+              <TabsContent value="transfers" className="flex-1 m-0 p-6 overflow-y-auto">
+                <ScrollArea className="h-full">
+                  <div className="space-y-4 pr-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Active Transfers</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="max-h-64 overflow-y-auto">
+                          {activeTransfers.length === 0 ? (
+                            <div className="text-center py-8 text-muted-foreground">
+                              No active transfers
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              {activeTransfers.map((transfer) => (
+                                <div key={transfer.id} className="border rounded-lg p-4">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                      {transfer.fromDevice === deviceName ? (
+                                        <Upload className="w-4 h-4 text-blue-500" />
+                                      ) : (
+                                        <Download className="w-4 h-4 text-green-500" />
+                                      )}
+                                      <span className="font-medium text-sm sm:text-base">{transfer.fileName}</span>
+                                    </div>
+                                    <Badge 
+                                      variant={
+                                        transfer.status === 'completed' ? 'default' :
+                                        transfer.status === 'failed' ? 'destructive' :
+                                        'secondary'
+                                      }
+                                    >
+                                      {transfer.status}
+                                    </Badge>
+                                  </div>
+                                  
+                                  <div className="text-sm text-muted-foreground mb-2">
+                                    {transfer.fromDevice === deviceName ? 
+                                      `To: ${transfer.toDevice}` : 
+                                      `From: ${transfer.fromDevice}`
+                                    }
+                                  </div>
+                                  
+                                  <Progress value={transfer.progress} className="mb-2" />
+                                  
+                                  <div className="text-xs text-muted-foreground">
+                                    {transfer.progress}% • {(transfer.fileSize / 1024 / 1024).toFixed(1)} MB
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
 
         {showScanner && (
           <QRCodeScanner

@@ -75,13 +75,17 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ isOpen, onClose, onScan }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md w-[95vw]" aria-describedby="qr-scanner-description">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Camera className="w-5 h-5" />
             Scan QR Code
           </DialogTitle>
         </DialogHeader>
+
+        <div id="qr-scanner-description" className="sr-only">
+          QR code scanner interface for joining nearby share rooms
+        </div>
 
         <div className="space-y-4">
           {error && (
