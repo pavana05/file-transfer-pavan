@@ -298,8 +298,8 @@ export const useWebRTC = ({
 
   // Initialize signaling connection
   const initializeSignaling = useCallback((roomId: string) => {
-    // This would connect to a signaling server (could be a Supabase edge function)
-    const wsUrl = `wss://zbvwodqcvotrfokadwyo.functions.supabase.co/functions/v1/nearby-share-signaling?room=${roomId}&device=${deviceName}`;
+    // Use the full URL to the Supabase edge function
+    const wsUrl = `wss://zbvwodqcvotrfokadwyo.functions.supabase.co/nearby-share-signaling?room=${roomId}&device=${encodeURIComponent(deviceName)}`;
     
     signalingWs.current = new WebSocket(wsUrl);
 
