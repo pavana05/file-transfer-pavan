@@ -5,8 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 const Index = () => {
   const uploadConfig = {
-    maxFileSize: 500 * 1024 * 1024,
-    // 500MB for large files and folders
+    maxFileSize: 10 * 1024 * 1024 * 1024,
+    // 10GB for large files and folders
     maxFiles: 50,
     // Allow multiple files
     acceptedTypes: [
