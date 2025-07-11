@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Download, File, ArrowLeft, Share2, Folder, Archive, ImageIcon } from 'lucide-react';
@@ -147,7 +148,7 @@ const CollectionShare = () => {
 
     if (file.file_type.startsWith('image/') && imageUrl && !imageError) {
       return (
-        <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0 ring-1 ring-border">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0 ring-1 ring-border">
           <img 
             src={imageUrl} 
             alt={file.original_name}
@@ -160,8 +161,8 @@ const CollectionShare = () => {
 
     // Fallback to emoji icons for non-images or failed image loads
     return (
-      <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 ring-1 ring-border">
-        <span className="text-lg">
+      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 ring-1 ring-border">
+        <span className="text-sm sm:text-lg">
           {getFileIcon(file.file_type)}
         </span>
       </div>
@@ -188,7 +189,7 @@ const CollectionShare = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -196,13 +197,13 @@ const CollectionShare = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
-        <Card className="p-8 text-center max-w-md">
-          <Folder className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-          <h1 className="text-xl font-semibold text-foreground mb-2">Collection Not Found</h1>
-          <p className="text-muted-foreground mb-6">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+        <Card className="p-6 sm:p-8 text-center max-w-md w-full">
+          <Folder className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+          <h1 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Collection Not Found</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mb-6">{error}</p>
           <Link to="/">
-            <Button>
+            <Button className="w-full sm:w-auto">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Upload
             </Button>
@@ -219,38 +220,38 @@ const CollectionShare = () => {
         <ThemeToggle />
       </div>
       
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
         {/* Header */}
-        <div className="mb-8">
-          <Link to="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
+        <div className="mb-6 sm:mb-8">
+          <Link to="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-3 sm:mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Upload
           </Link>
-          <h1 className="text-3xl font-bold text-foreground">{collection?.collection_name}</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground break-words">{collection?.collection_name}</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-2">
             {collection?.description || 'A collection of shared files'}
           </p>
         </div>
 
         {/* Collection Stats */}
-        <Card className="p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
-                <Folder className="w-6 h-6 text-white" />
+        <Card className="p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0">
+                <Folder className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">Collection Details</h2>
-                <p className="text-sm text-muted-foreground">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-base sm:text-lg font-semibold text-foreground">Collection Details</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {collection?.files.length} files • {formatFileSize(collection?.collection_size || 0)}
                 </p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="text-xs">
                 {collection?.download_count} downloads
               </Badge>
-              <Badge variant="outline">
+              <Badge variant="outline" className="text-xs">
                 Created {new Date(collection?.created_date || '').toLocaleDateString()}
               </Badge>
             </div>
@@ -259,7 +260,7 @@ const CollectionShare = () => {
           {/* Download Progress */}
           {downloading && (
             <div className="mb-4">
-              <div className="flex justify-between text-sm text-muted-foreground mb-2">
+              <div className="flex justify-between text-xs sm:text-sm text-muted-foreground mb-2">
                 <span>Downloading files...</span>
                 <span>{downloadProgress.toFixed(0)}%</span>
               </div>
@@ -268,11 +269,11 @@ const CollectionShare = () => {
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Button 
               onClick={handleDownloadAll} 
               disabled={downloading || !collection?.files.length}
-              className="flex-1 sm:flex-none"
+              className="w-full sm:w-auto sm:flex-1"
             >
               <Archive className="w-4 h-4 mr-2" />
               {downloading ? 'Downloading...' : 'Download All'}
@@ -281,7 +282,7 @@ const CollectionShare = () => {
             <Button 
               variant="outline" 
               onClick={copyShareLink}
-              className="flex-1 sm:flex-none"
+              className="w-full sm:w-auto sm:flex-1"
             >
               <Share2 className="w-4 h-4 mr-2" />
               Copy Link
@@ -291,50 +292,49 @@ const CollectionShare = () => {
 
         {/* Files List */}
         <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Files in Collection</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Files in Collection</h3>
           {collection?.files.map((file) => (
-            <Card key={file.id} className="p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 flex-1 min-w-0">
-                  <FilePreview file={file} />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-foreground truncate">
-                      {file.original_name}
-                    </h4>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <span>{formatFileSize(file.file_size)}</span>
-                      <span>•</span>
-                      <span>{file.file_type}</span>
-                      <span>•</span>
-                      <span>{file.download_count} downloads</span>
-                    </div>
+            <Card key={file.id} className="p-3 sm:p-4 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <FilePreview file={file} />
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-medium text-foreground truncate text-sm sm:text-base">
+                    {file.original_name}
+                  </h4>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-muted-foreground mt-1">
+                    <span>{formatFileSize(file.file_size)}</span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="truncate max-w-32 sm:max-w-none">{file.file_type}</span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="whitespace-nowrap">{file.download_count} downloads</span>
                   </div>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handleDownloadFile(file)}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3"
                 >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
+                  <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Download</span>
+                  <span className="sm:hidden">Get</span>
                 </Button>
               </div>
             </Card>
           ))}
 
           {!collection?.files.length && (
-            <Card className="p-8 text-center">
-              <File className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <p className="text-muted-foreground">No files in this collection</p>
+            <Card className="p-6 sm:p-8 text-center">
+              <File className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <p className="text-sm sm:text-base text-muted-foreground">No files in this collection</p>
             </Card>
           )}
         </div>
 
         {/* Info Card */}
-        <Card className="mt-8 p-6">
-          <h3 className="font-semibold text-foreground mb-3">About This Collection</h3>
-          <div className="text-sm text-muted-foreground space-y-2">
+        <Card className="mt-6 sm:mt-8 p-4 sm:p-6">
+          <h3 className="font-semibold text-foreground mb-3 text-sm sm:text-base">About This Collection</h3>
+          <div className="text-xs sm:text-sm text-muted-foreground space-y-2">
             <p>• Download individual files or the entire collection</p>
             <p>• Files are securely stored and scanned for safety</p>
             <p>• Share this link with anyone you trust</p>
