@@ -143,41 +143,48 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       <div
         {...getRootProps()}
         className={cn(
-          "relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-500",
-          "bg-gradient-upload backdrop-blur-sm",
-          "border-border/60 hover:border-primary/70 dark:border-border/40 dark:hover:border-primary/80",
-          "shadow-card hover:shadow-upload dark:shadow-glass dark:hover:shadow-glow",
-          "before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-mesh before:opacity-50 dark:before:opacity-70",
-          "after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-br after:from-background/10 after:to-transparent dark:after:from-background/20",
+          "relative border-2 border-dashed rounded-3xl p-16 text-center transition-all duration-700 ease-out",
+          "bg-gradient-to-br from-background/60 via-background/40 to-background/60 backdrop-blur-md",
+          "border-border/30 hover:border-primary/60 dark:border-border/20 dark:hover:border-primary/70",
+          "shadow-xl hover:shadow-2xl dark:shadow-2xl dark:hover:shadow-glow",
+          "before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-mesh before:opacity-30 dark:before:opacity-50",
+          "after:absolute after:inset-0 after:rounded-3xl after:bg-gradient-to-br after:from-white/5 after:via-transparent after:to-primary/5 dark:after:from-white/10 dark:after:to-primary/10",
           "group overflow-hidden",
-          !disabled && "cursor-pointer hover:scale-[1.02]",
-          isDragActive && !isDragReject && "border-primary/80 bg-primary/5 animate-pulse-glow scale-[1.02] dark:bg-primary/10 dark:border-primary",
+          !disabled && "cursor-pointer hover:scale-[1.01] active:scale-[0.99]",
+          isDragActive && !isDragReject && "border-primary/80 bg-primary/5 scale-[1.02] animate-pulse-glow dark:bg-primary/10 dark:border-primary",
           isDragReject && "border-destructive bg-destructive/5 dark:bg-destructive/10",
           disabled && "opacity-50 cursor-not-allowed"
         )}
       >
         <input {...getInputProps()} ref={fileInputRef} />
         
+        {/* Floating Background Elements */}
+        <div className="absolute inset-0 opacity-10 dark:opacity-20">
+          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
+        
         {/* Upload Icon */}
         <div className={cn(
-          "relative w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center transition-all duration-500",
-          "bg-gradient-primary shadow-glow dark:shadow-glow",
-          "ring-2 ring-primary/20 dark:ring-primary/40",
-          "group-hover:animate-float",
-          isDragActive && !isDragReject && "scale-110 animate-pulse-glow"
+          "relative w-24 h-24 mx-auto mb-8 rounded-3xl flex items-center justify-center transition-all duration-700",
+          "bg-gradient-to-br from-primary via-primary-glow to-primary shadow-2xl dark:shadow-glow",
+          "ring-4 ring-primary/20 dark:ring-primary/30",
+          "group-hover:ring-primary/40 group-hover:shadow-glow group-hover:-translate-y-1",
+          isDragActive && !isDragReject && "scale-110 animate-bounce ring-primary/60"
         )}>
-          <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-20 animate-glow dark:opacity-30"></div>
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent dark:from-white/10"></div>
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary via-primary-glow to-primary opacity-80 animate-pulse"></div>
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/30 to-transparent dark:from-white/20"></div>
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-conic from-primary/50 via-primary-glow/50 to-primary/50 blur-sm opacity-70 group-hover:opacity-100 transition-opacity"></div>
           {isDragActive && !isDragReject ? (
-            <FileCheck className="relative w-10 h-10 text-white animate-scale-in drop-shadow-lg" />
+            <FileCheck className="relative w-12 h-12 text-white animate-scale-in drop-shadow-xl" />
           ) : (
-            <Upload className="relative w-10 h-10 text-white drop-shadow-lg" />
+            <Upload className="relative w-12 h-12 text-white drop-shadow-xl group-hover:animate-bounce" />
           )}
         </div>
 
         {/* Main Text */}
-        <div className="relative z-10 space-y-4">
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+        <div className="relative z-10 space-y-6 mb-8">
+          <h3 className="text-3xl font-bold bg-gradient-to-r from-primary via-primary-glow to-secondary bg-clip-text text-transparent animate-fade-in">
             {isDragActive && !isDragReject
               ? "Drop your files here"
               : "Upload your files"
@@ -185,25 +192,25 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
           </h3>
 
           {/* Description */}
-          <p className="text-muted-foreground text-lg leading-relaxed">
+          <p className="text-muted-foreground text-lg leading-relaxed max-w-md mx-auto">
             {isDragActive && !isDragReject
-              ? "Release to upload your files"
-              : "Drag and drop files here, or click to browse"
+              ? "Release to upload your files instantly"
+              : "Drag and drop files here, or use the buttons below"
             }
           </p>
         </div>
 
         {/* Upload Buttons */}
-        <div className="relative z-10 mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="relative z-10 flex flex-col sm:flex-row gap-4 justify-center mb-8">
           <Button
             type="button"
             variant="outline"
             onClick={handleBrowseClick}
             disabled={disabled}
-            className="relative px-8 py-3 rounded-full border-primary/30 bg-background/80 backdrop-blur hover:bg-primary/10 hover:border-primary hover:shadow-glow transition-all duration-300 group"
+            className="relative px-10 py-4 text-lg rounded-2xl border-2 border-primary/40 bg-background/90 backdrop-blur-sm hover:bg-primary/10 hover:border-primary hover:shadow-xl hover:scale-105 transition-all duration-300 group overflow-hidden"
           >
-            <span className="relative z-10 font-medium">Browse Files</span>
-            <div className="absolute inset-0 rounded-full bg-gradient-primary opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <span className="relative z-10 font-semibold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">Browse Files</span>
           </Button>
           
           <div className="relative">
@@ -221,22 +228,32 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
               variant="secondary"
               onClick={handleFolderClick}
               disabled={disabled}
-              className="relative px-8 py-3 rounded-full bg-background/80 backdrop-blur hover:bg-secondary/80 transition-all duration-300"
+              className="relative px-10 py-4 text-lg rounded-2xl bg-secondary/80 backdrop-blur-sm hover:bg-secondary hover:shadow-xl hover:scale-105 transition-all duration-300 group overflow-hidden"
             >
-              <span className="font-medium">Upload Folder</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-secondary/0 via-secondary-foreground/10 to-secondary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <span className="relative z-10 font-semibold">Upload Folder</span>
             </Button>
           </div>
         </div>
 
         {/* File Format Info */}
-        <div className="relative z-10 mt-6 p-4 rounded-xl bg-background/50 dark:bg-background/70 backdrop-blur border border-border/50 dark:border-border/30">
-          <div className="text-sm text-muted-foreground space-y-2">
-            
+        <div className="relative z-10 p-6 rounded-2xl bg-background/60 dark:bg-background/80 backdrop-blur-sm border border-border/30 dark:border-border/20 shadow-lg">
+          <div className="text-sm text-muted-foreground space-y-3">
             {config.maxFileSize && (
-              <p>Maximum file size: <span className="text-foreground font-medium">{(config.maxFileSize / 1024 / 1024).toFixed(1)}MB</span></p>
+              <div className="flex items-center justify-center gap-2">
+                <span>Max size:</span> 
+                <span className="text-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">
+                  {(config.maxFileSize / 1024 / 1024).toFixed(1)}MB
+                </span>
+              </div>
             )}
             {config.maxFiles && config.maxFiles > 1 && (
-              <p>Maximum files: <span className="text-foreground font-medium">{config.maxFiles}</span></p>
+              <div className="flex items-center justify-center gap-2">
+                <span>Max files:</span> 
+                <span className="text-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">
+                  {config.maxFiles}
+                </span>
+              </div>
             )}
           </div>
         </div>
