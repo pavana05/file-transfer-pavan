@@ -10,6 +10,7 @@ export interface UploadedFile {
   preview?: string;
   uploadedAt?: Date;
   error?: string;
+  folderId?: string; // ID of folder containing this file
   metadata?: {
     dimensions?: { width: number; height: number };
     duration?: number;

@@ -1,10 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Search, Filter, Grid, List, FolderPlus, Trash2, Download, Upload, Share, Package } from 'lucide-react';
+import { Search, Filter, Grid, List, FolderPlus, Trash2, Download, Upload, Share, Package, Folder, FileX, Edit2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { FileUploadZone } from './FileUploadZone';
 import { FileList } from './FileList';
@@ -13,6 +15,14 @@ import { UploadedFile, UploadConfig, UploadCallbacks } from '@/types/upload';
 import { calculateUploadStats, generateFilePreview, detectDuplicateFiles } from '@/lib/file-utils';
 import { useToast } from '@/hooks/use-toast';
 import { UploadService } from '@/services/uploadService';
+
+interface FileFolder {
+  id: string;
+  name: string;
+  createdAt: Date;
+  fileCount: number;
+  files: string[]; // Array of file IDs
+}
 
 interface FileUploadManagerProps {
   config?: UploadConfig;
@@ -26,11 +36,15 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
   className
 }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [folders, setFolders] = useState<FileFolder[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [showUploadGlow, setShowUploadGlow] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
   const { toast } = useToast();
 
   // Calculate upload statistics
@@ -288,6 +302,87 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     }
   }, [files, toast]);
 
+  // Folder management functions
+  const handleCreateFolder = useCallback(() => {
+    if (!newFolderName.trim()) return;
+    
+    const newFolder: FileFolder = {
+      id: `folder-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: newFolderName.trim(),
+      createdAt: new Date(),
+      fileCount: 0,
+      files: []
+    };
+    
+    setFolders(prev => [...prev, newFolder]);
+    setNewFolderName('');
+    setIsCreateFolderOpen(false);
+    
+    toast({
+      title: "Folder created",
+      description: `"${newFolder.name}" folder has been created.`,
+    });
+  }, [newFolderName, toast]);
+
+  const handleDeleteFolder = useCallback((folderId: string) => {
+    const folder = folders.find(f => f.id === folderId);
+    if (!folder) return;
+    
+    // Move files back to main list (remove folder association)
+    setFiles(prev => prev.map(file => {
+      if (folder.files.includes(file.id)) {
+        return { ...file, folderId: undefined };
+      }
+      return file;
+    }));
+    
+    setFolders(prev => prev.filter(f => f.id !== folderId));
+    
+    toast({
+      title: "Folder deleted",
+      description: `"${folder.name}" folder has been deleted. Files moved to main list.`,
+    });
+  }, [folders, toast]);
+
+  const handleMoveFilesToFolder = useCallback((fileIds: string[], folderId: string | null) => {
+    setFiles(prev => prev.map(file => {
+      if (fileIds.includes(file.id)) {
+        return { ...file, folderId };
+      }
+      return file;
+    }));
+    
+    // Update folder file counts
+    setFolders(prev => prev.map(folder => {
+      const folderFiles = files.filter(f => 
+        fileIds.includes(f.id) ? folderId === folder.id : f.folderId === folder.id
+      );
+      return {
+        ...folder,
+        fileCount: folderFiles.length,
+        files: folderFiles.map(f => f.id)
+      };
+    }));
+    
+    setSelectedFiles([]);
+    
+    const targetFolder = folders.find(f => f.id === folderId);
+    toast({
+      title: "Files moved",
+      description: `${fileIds.length} file(s) moved to ${targetFolder ? `"${targetFolder.name}"` : 'main list'}.`,
+    });
+  }, [files, folders, toast]);
+
+  // Get files for current view (folder or all)
+  const getCurrentFiles = useCallback(() => {
+    if (selectedFolder) {
+      return filteredFiles.filter(file => file.folderId === selectedFolder);
+    }
+    return filteredFiles.filter(file => !file.folderId);
+  }, [filteredFiles, selectedFolder]);
+
+  const currentFiles = getCurrentFiles();
+
   const pendingCount = files.filter(f => f.status === 'pending').length;
 
   return (
@@ -425,9 +520,142 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
             </TabsContent>
             
             <TabsContent value="folders" className="mt-6">
-              <div className="text-center py-12 text-muted-foreground">
-                <FolderPlus className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Folder management coming soon</p>
+              <div className="space-y-4">
+                {/* Folder Actions */}
+                <div className="flex items-center gap-4 pb-4 border-b">
+                  <Dialog open={isCreateFolderOpen} onOpenChange={setIsCreateFolderOpen}>
+                    <DialogTrigger asChild>
+                      <Button size="sm" className="gap-2">
+                        <Plus className="w-4 h-4" />
+                        Create Folder
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Create New Folder</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 pt-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="folder-name">Folder Name</Label>
+                          <Input
+                            id="folder-name"
+                            placeholder="Enter folder name..."
+                            value={newFolderName}
+                            onChange={(e) => setNewFolderName(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleCreateFolder();
+                              }
+                            }}
+                          />
+                        </div>
+                        <div className="flex gap-2 pt-4">
+                          <Button onClick={handleCreateFolder} disabled={!newFolderName.trim()}>
+                            Create Folder
+                          </Button>
+                          <Button variant="outline" onClick={() => setIsCreateFolderOpen(false)}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
+                  {selectedFiles.length > 0 && (
+                    <Select onValueChange={(folderId) => handleMoveFilesToFolder(selectedFiles, folderId === 'main' ? null : folderId)}>
+                      <SelectTrigger className="w-48">
+                        <span className="text-sm">Move {selectedFiles.length} file(s) to...</span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="main">📁 Main Files</SelectItem>
+                        {folders.map(folder => (
+                          <SelectItem key={folder.id} value={folder.id}>
+                            📁 {folder.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+
+                {/* Main Files (not in any folder) */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-4 rounded-lg border border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors cursor-pointer"
+                       onClick={() => setSelectedFolder(null)}>
+                    <Folder className="w-8 h-8 text-muted-foreground" />
+                    <div className="flex-1">
+                      <h3 className="font-medium">📁 Main Files</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {files.filter(f => !f.folderId).length} files
+                      </p>
+                    </div>
+                    {!selectedFolder && (
+                      <div className="w-3 h-3 rounded-full bg-primary"></div>
+                    )}
+                  </div>
+
+                  {/* Custom Folders */}
+                  {folders.map(folder => (
+                    <div key={folder.id} className="flex items-center gap-3 p-4 rounded-lg border border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors">
+                      <div className="flex items-center gap-3 flex-1 cursor-pointer"
+                           onClick={() => setSelectedFolder(folder.id)}>
+                        <Folder className="w-8 h-8 text-primary" />
+                        <div className="flex-1">
+                          <h3 className="font-medium">📁 {folder.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {files.filter(f => f.folderId === folder.id).length} files • Created {folder.createdAt.toLocaleDateString()}
+                          </p>
+                        </div>
+                        {selectedFolder === folder.id && (
+                          <div className="w-3 h-3 rounded-full bg-primary"></div>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteFolder(folder.id)}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))}
+
+                  {folders.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <FolderPlus className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p className="mb-2">No folders created yet</p>
+                      <p className="text-sm">Create folders to organize your files</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Show files in selected folder */}
+                {selectedFolder && (
+                  <div className="mt-6 pt-6 border-t">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedFolder(null)}
+                        className="gap-2"
+                      >
+                        ← Back to all folders
+                      </Button>
+                      <span className="text-sm text-muted-foreground">
+                        Viewing: {folders.find(f => f.id === selectedFolder)?.name}
+                      </span>
+                    </div>
+                    <FileList
+                      files={currentFiles}
+                      onRemoveFile={handleRemoveFile}
+                      onPauseFile={handlePauseFile}
+                      onResumeFile={handleResumeFile}
+                      onRetryFile={handleRetryFile}
+                      showProgress={true}
+                    />
+                  </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>
