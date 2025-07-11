@@ -79,6 +79,17 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     setFiles(prev => [...prev, ...filesWithPreviews]);
     callbacks.onFileAdd?.(filesWithPreviews);
 
+    // Auto-scroll to show uploaded files
+    setTimeout(() => {
+      const fileListElement = document.querySelector('[data-file-list]');
+      if (fileListElement) {
+        fileListElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // Fallback: scroll to bottom of page
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }
+    }, 100);
+
     // Auto-upload if enabled
     if (config.autoUpload) {
       filesWithPreviews.forEach(file => {

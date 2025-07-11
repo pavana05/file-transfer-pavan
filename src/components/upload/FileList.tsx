@@ -95,7 +95,7 @@ export const FileList: React.FC<FileListProps> = ({
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-4", className)} data-file-list>
       {files.map((file) => (
         <Card 
           key={file.id} 
