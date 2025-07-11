@@ -231,7 +231,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         {/* File Format Info */}
         <div className="relative z-10 mt-6 p-4 rounded-xl bg-background/50 dark:bg-background/70 backdrop-blur border border-border/50 dark:border-border/30">
           <div className="text-sm text-muted-foreground space-y-2">
-            <p className="text-muted-foreground">{getSupportedFormats()}</p>
+            
             {config.maxFileSize && (
               <p>Maximum file size: <span className="text-foreground font-medium">{(config.maxFileSize / 1024 / 1024).toFixed(1)}MB</span></p>
             )}
