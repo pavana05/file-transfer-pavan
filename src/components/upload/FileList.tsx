@@ -157,41 +157,89 @@ export const FileList: React.FC<FileListProps> = ({
       {files.map((file) => (
         <Card 
           key={file.id} 
-          className="p-6 animate-fade-in transition-all duration-300 hover:shadow-glass border border-border/50 bg-background/80 backdrop-blur-sm rounded-xl group"
+          className="p-3 sm:p-6 animate-fade-in transition-all duration-300 hover:shadow-glass border border-border/50 bg-background/80 backdrop-blur-sm rounded-xl group"
         >
-          <div className="flex items-center gap-3">
-            {/* File Icon & Preview */}
-            <div className="flex-shrink-0">
-              {file.preview ? (
-                <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted shadow-inner ring-2 ring-border/20">
-                  <img 
-                    src={file.preview} 
-                    alt={file.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              ) : (
-                <div className={cn(
-                  "w-16 h-16 rounded-xl flex items-center justify-center shadow-inner relative",
-                  getFileTypeColor(file.type),
-                  "group-hover:scale-105 transition-transform duration-300"
-                )}>
-                  <div className="absolute inset-0 rounded-xl bg-gradient-glass opacity-50"></div>
-                  {getFileTypeIcon(file)}
-                </div>
-              )}
+          <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-col sm:flex-row">
+            {/* Mobile Layout: Icon and Actions Row */}
+            <div className="flex items-center justify-between w-full sm:w-auto">
+              {/* File Icon & Preview */}
+              <div className="flex-shrink-0">
+                {file.preview ? (
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden bg-muted shadow-inner ring-2 ring-border/20">
+                    <img 
+                      src={file.preview} 
+                      alt={file.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                ) : (
+                  <div className={cn(
+                    "w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center shadow-inner relative",
+                    getFileTypeColor(file.type),
+                    "group-hover:scale-105 transition-transform duration-300"
+                  )}>
+                    <div className="absolute inset-0 rounded-xl bg-gradient-glass opacity-50"></div>
+                    {getFileTypeIcon(file)}
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons - Mobile: Top Right */}
+              <div className="flex items-center gap-1 sm:hidden">
+                {file.status === 'uploading' && onPauseFile && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onPauseFile(file.id)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Pause className="w-3 h-3 sm:w-4 sm:h-4" />
+                  </Button>
+                )}
+                
+                {file.status === 'paused' && onResumeFile && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onResumeFile(file.id)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Play className="w-3 h-3 sm:w-4 sm:h-4" />
+                  </Button>
+                )}
+                
+                {file.status === 'error' && onRetryFile && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onRetryFile(file.id)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
+                  </Button>
+                )}
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onRemoveFile(file.id)}
+                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                >
+                  <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                </Button>
+              </div>
             </div>
 
             {/* File Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h4 className="font-medium text-sm text-foreground truncate">
+            <div className="flex-1 min-w-0 w-full sm:w-auto">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h4 className="font-medium text-sm sm:text-base text-foreground truncate">
                   {file.name}
                 </h4>
                 {getStatusBadge(file.status)}
               </div>
               
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2 sm:gap-4 text-xs text-muted-foreground flex-wrap">
                 <span>{formatFileSize(file.size)}</span>
                 {file.metadata?.dimensions && (
                   <span>
@@ -238,12 +286,12 @@ export const FileList: React.FC<FileListProps> = ({
                   </div>
                   <Button
                     variant="outline"
-                    size="default"
+                    size="sm"
                     onClick={() => copyShareLink(file.url!)}
-                    className="h-10 px-4 hover:bg-accent"
+                    className="h-8 sm:h-10 px-2 sm:px-4 hover:bg-accent text-xs sm:text-sm"
                   >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy
+                    <Copy className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Copy</span>
                   </Button>
                 </div>
               )}
@@ -256,8 +304,8 @@ export const FileList: React.FC<FileListProps> = ({
               )}
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-1">
+            {/* Action Buttons - Desktop: Right Side */}
+            <div className="hidden sm:flex items-center gap-1">
               {file.status === 'uploading' && onPauseFile && (
                 <Button
                   variant="ghost"
