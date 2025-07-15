@@ -201,7 +201,7 @@ const Index = () => {
               <ul className="space-y-3 text-muted-foreground">
                 <li className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary"></div>
-                  Chunked upload for large files (>100MB)
+                  Chunked upload for large files ({'>'}100MB)
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary"></div>
