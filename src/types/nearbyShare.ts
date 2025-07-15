@@ -37,12 +37,7 @@ export interface NearbyShareConfig {
 
 export interface WebRTCMessage {
   type: 'file-offer' | 'file-answer' | 'file-chunk' | 'file-complete' | 'file-error' | 'device-info' | 'room-join' | 'room-leave';
-  data: {
-    fileName?: string;
-    fileSize?: number;
-    transferId?: string;
-    [key: string]: any;
-  };
+  data: any;
   timestamp: number;
   messageId: string;
 }

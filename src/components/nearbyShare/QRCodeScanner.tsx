@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import QrScanner from 'qr-scanner';
-import { Camera, CameraOff, Loader2 } from 'lucide-react';
+import { Camera, CameraOff } from 'lucide-react';
 
 interface QRCodeScannerProps {
   isOpen: boolean;
@@ -16,7 +16,6 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ isOpen, onClose, onScan }
   const [scanner, setScanner] = useState<QrScanner | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [error, setError] = useState<string>('');
-  const [isInitializing, setIsInitializing] = useState(false);
 
   useEffect(() => {
     if (isOpen && videoRef.current) {
@@ -26,7 +25,6 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ isOpen, onClose, onScan }
     return () => {
       if (scanner) {
         scanner.destroy();
-        setScanner(null);
       }
     };
   }, [isOpen]);
@@ -34,32 +32,25 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ isOpen, onClose, onScan }
   const initializeScanner = async () => {
     if (!videoRef.current) return;
 
-    setIsInitializing(true);
-    setError('');
-
     try {
       // Check if QR Scanner is supported
       const hasCamera = await QrScanner.hasCamera();
       if (!hasCamera) {
         setError('No camera found on this device');
         setHasPermission(false);
-        setIsInitializing(false);
         return;
       }
 
       const qrScanner = new QrScanner(
         videoRef.current,
         (result) => {
-          console.log('QR Code scanned:', result.data);
           onScan(result.data);
           onClose();
         },
         {
           highlightScanRegion: true,
           highlightCodeOutline: true,
-          preferredCamera: 'environment', // Use back camera if available
-          maxScansPerSecond: 5,
-          returnDetailedScanResult: true
+          preferredCamera: 'environment' // Use back camera if available
         }
       );
 
@@ -69,26 +60,8 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ isOpen, onClose, onScan }
       setError('');
     } catch (err) {
       console.error('Error starting QR scanner:', err);
-      let errorMessage = 'Failed to access camera. ';
-      
-      if (err instanceof Error) {
-        if (err.name === 'NotAllowedError') {
-          errorMessage += 'Please allow camera access and try again.';
-        } else if (err.name === 'NotFoundError') {
-          errorMessage += 'No camera found on this device.';
-        } else if (err.name === 'NotSupportedError') {
-          errorMessage += 'Camera not supported on this device.';
-        } else {
-          errorMessage += 'Please check permissions and try again.';
-        }
-      } else {
-        errorMessage += 'Please check permissions and try again.';
-      }
-      
-      setError(errorMessage);
+      setError('Failed to access camera. Please check permissions.');
       setHasPermission(false);
-    } finally {
-      setIsInitializing(false);
     }
   };
 
@@ -97,20 +70,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ isOpen, onClose, onScan }
       scanner.destroy();
       setScanner(null);
     }
-    setHasPermission(null);
-    setError('');
-    setIsInitializing(false);
     onClose();
-  };
-
-  const handleRetry = () => {
-    if (scanner) {
-      scanner.destroy();
-      setScanner(null);
-    }
-    setHasPermission(null);
-    setError('');
-    initializeScanner();
   };
 
   return (
@@ -143,25 +103,16 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ isOpen, onClose, onScan }
               muted
             />
             
-            {isInitializing && (
+            {hasPermission === null && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                 <div className="text-white text-center">
-                  <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
+                  <Camera className="w-8 h-8 mx-auto mb-2" />
                   <p>Initializing camera...</p>
                 </div>
               </div>
             )}
 
-            {hasPermission === null && !isInitializing && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                <div className="text-white text-center">
-                  <Camera className="w-8 h-8 mx-auto mb-2" />
-                  <p>Preparing scanner...</p>
-                </div>
-              </div>
-            )}
-
-            {hasPermission === false && !isInitializing && (
+            {hasPermission === false && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                 <div className="text-white text-center">
                   <CameraOff className="w-8 h-8 mx-auto mb-2" />
@@ -169,23 +120,10 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ isOpen, onClose, onScan }
                 </div>
               </div>
             )}
+          </div>
 
-            {hasPermission === true && !error && (
-              <div className="absolute inset-0 pointer-events-none">
-                {/* Scanning overlay */}
-                <div className="absolute inset-4 border-2 border-white/50 rounded-lg">
-                  <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-white rounded-tl-lg"></div>
-                  <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-white rounded-tr-lg"></div>
-                  <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-white rounded-bl-lg"></div>
-                  <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-white rounded-br-lg"></div>
-                </div>
-                <div className="absolute bottom-8 left-0 right-0 text-center">
-                  <p className="text-white text-sm bg-black/50 px-3 py-1 rounded-full inline-block">
-                    Position QR code within the frame
-                  </p>
-                </div>
-              </div>
-            )}
+          <div className="text-center text-sm text-muted-foreground">
+            Position the QR code within the camera view to scan
           </div>
 
           <div className="flex gap-2">
@@ -193,14 +131,11 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ isOpen, onClose, onScan }
               Cancel
             </Button>
             <Button 
-              onClick={handleRetry} 
-              disabled={isInitializing}
+              onClick={initializeScanner} 
+              disabled={hasPermission === false}
               className="flex-1"
             >
-              {isInitializing ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              ) : null}
-              {isInitializing ? 'Initializing...' : 'Retry'}
+              Retry
             </Button>
           </div>
         </div>

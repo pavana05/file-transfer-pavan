@@ -25,22 +25,16 @@ export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) =>
   } = stats;
 
   return (
-    <Card className={cn("p-10 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-3xl shadow-hover relative overflow-hidden", className)}>
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50"></div>
+    <Card className={cn("p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass", className)}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
-              <Upload className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">Upload Progress</h3>
-          </div>
+          <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Upload Progress</h3>
           <Badge 
             variant={overallProgress === 100 ? "default" : "secondary"}
             className={cn(
-              "px-4 py-2 rounded-full font-semibold text-base shadow-lg",
-              overallProgress === 100 && "bg-gradient-success text-white shadow-glow animate-pulse"
+              "px-3 py-1 rounded-full font-medium",
+              overallProgress === 100 && "bg-gradient-success text-white shadow-glow"
             )}
           >
             {completedFiles}/{totalFiles} files
@@ -48,72 +42,66 @@ export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) =>
         </div>
 
         {/* Overall Progress */}
-        <div className="space-y-4 relative">
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground font-semibold text-lg">Overall Progress</span>
-            <span className="text-3xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">{Math.round(overallProgress)}%</span>
+            <span className="text-muted-foreground font-medium">Overall Progress</span>
+            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">{Math.round(overallProgress)}%</span>
           </div>
           <div className="relative">
             <Progress 
               value={overallProgress} 
-              className="h-6 bg-muted/60 rounded-full shadow-inner"
+              className="h-4 bg-muted/50 rounded-full shadow-inner"
             />
-            <div className="absolute top-0 left-0 h-6 bg-gradient-primary rounded-full shadow-glow opacity-30 animate-pulse" 
+            <div className="absolute top-0 left-0 h-4 bg-gradient-primary rounded-full shadow-glow opacity-20 animate-pulse" 
                  style={{ width: `${overallProgress}%` }}
             ></div>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-8 relative">
+        <div className="grid grid-cols-2 gap-6">
           {/* Total Size */}
-          <div className="space-y-3 p-6 rounded-2xl bg-upload-zone/40 border border-border/40 shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="flex items-center gap-3 text-base text-muted-foreground">
-              <div className="w-8 h-8 rounded-xl bg-primary/30 flex items-center justify-center shadow-inner">
-                <Upload className="w-4 h-4 text-primary" />
+          <div className="space-y-2 p-4 rounded-xl bg-upload-zone/30 border border-border/30">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Upload className="w-3 h-3 text-primary" />
               </div>
-              <span className="font-semibold">Total Size</span>
+              <span className="font-medium">Total Size</span>
             </div>
-            <div className="text-xl font-bold text-foreground">
+            <div className="text-lg font-bold text-foreground">
               {formatFileSize(uploadedSize)} / {formatFileSize(totalSize)}
             </div>
           </div>
 
           {/* Upload Speed */}
-          <div className="space-y-3 p-6 rounded-2xl bg-accent/10 border border-border/40 shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="flex items-center gap-3 text-base text-muted-foreground">
-              <div className="w-8 h-8 rounded-xl bg-accent/30 flex items-center justify-center shadow-inner">
-                <Zap className="w-4 h-4 text-accent" />
-              </div>
-              <span className="font-semibold">Speed</span>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Upload className="w-4 h-4" />
+              <span>Speed</span>
             </div>
-            <div className="text-xl font-bold text-foreground">
+            <div className="text-lg font-semibold">
               {uploadSpeed > 0 ? `${formatFileSize(uploadSpeed)}/s` : '--'}
             </div>
           </div>
 
           {/* Completed Files */}
-          <div className="space-y-3 p-6 rounded-2xl bg-success/10 border border-border/40 shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="flex items-center gap-3 text-base text-muted-foreground">
-              <div className="w-8 h-8 rounded-xl bg-success/30 flex items-center justify-center shadow-inner">
-                <CheckCircle className="w-4 h-4 text-success" />
-              </div>
-              <span className="font-semibold">Completed</span>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <CheckCircle className="w-4 h-4" />
+              <span>Completed</span>
             </div>
-            <div className="text-xl font-bold text-success">
+            <div className="text-lg font-semibold text-success">
               {completedFiles}
             </div>
           </div>
 
           {/* Time Remaining */}
-          <div className="space-y-3 p-6 rounded-2xl bg-warning/10 border border-border/40 shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="flex items-center gap-3 text-base text-muted-foreground">
-              <div className="w-8 h-8 rounded-xl bg-warning/30 flex items-center justify-center shadow-inner">
-                <Clock className="w-4 h-4 text-warning" />
-              </div>
-              <span className="font-semibold">Time Left</span>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock className="w-4 h-4" />
+              <span>Time Left</span>
             </div>
-            <div className="text-xl font-bold text-foreground">
+            <div className="text-lg font-semibold">
               {estimatedTimeRemaining > 0 && overallProgress < 100
                 ? formatDuration(estimatedTimeRemaining)
                 : '--'
@@ -124,11 +112,9 @@ export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) =>
 
         {/* Error Count */}
         {errors > 0 && (
-          <div className="flex items-center gap-3 p-4 bg-destructive/10 rounded-xl border border-destructive/30 shadow-lg">
-            <div className="w-8 h-8 rounded-xl bg-destructive/30 flex items-center justify-center">
-              <AlertCircle className="w-5 h-5 text-destructive" />
-            </div>
-            <span className="text-base text-destructive font-semibold">
+          <div className="flex items-center gap-2 p-3 bg-destructive/5 rounded-lg">
+            <AlertCircle className="w-5 h-5 text-destructive" />
+            <span className="text-sm text-destructive font-medium">
               {errors} file{errors !== 1 ? 's' : ''} failed to upload
             </span>
           </div>
@@ -136,11 +122,9 @@ export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) =>
 
         {/* Completion Status */}
         {overallProgress === 100 && errors === 0 && (
-          <div className="flex items-center gap-3 p-4 bg-success/10 rounded-xl border border-success/30 shadow-lg animate-fade-in">
-            <div className="w-8 h-8 rounded-xl bg-success/30 flex items-center justify-center animate-pulse">
-              <CheckCircle className="w-5 h-5 text-success" />
-            </div>
-            <span className="text-base text-success font-semibold">
+          <div className="flex items-center gap-2 p-3 bg-success/5 rounded-lg">
+            <CheckCircle className="w-5 h-5 text-success" />
+            <span className="text-sm text-success font-medium">
               All files uploaded successfully!
             </span>
           </div>

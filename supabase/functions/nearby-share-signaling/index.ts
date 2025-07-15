@@ -3,7 +3,6 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 };
 
 interface ConnectedDevice {
@@ -20,20 +19,14 @@ const devices = new Map<string, ConnectedDevice>();
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { 
-      status: 200,
-      headers: corsHeaders 
-    });
+    return new Response(null, { headers: corsHeaders });
   }
 
   const { headers } = req;
   const upgradeHeader = headers.get("upgrade") || "";
 
   if (upgradeHeader.toLowerCase() !== "websocket") {
-    return new Response("Expected WebSocket connection", { 
-      status: 400,
-      headers: corsHeaders 
-    });
+    return new Response("Expected WebSocket connection", { status: 400 });
   }
 
   const url = new URL(req.url);
@@ -41,16 +34,10 @@ serve(async (req) => {
   const deviceName = url.searchParams.get("device");
 
   if (!roomId || !deviceName) {
-    return new Response("Missing room or device parameter", { 
-      status: 400,
-      headers: corsHeaders 
-    });
+    return new Response("Missing room or device parameter", { status: 400 });
   }
 
-  const { socket, response } = Deno.upgradeWebSocket(req, {
-    headers: corsHeaders
-  });
-  
+  const { socket, response } = Deno.upgradeWebSocket(req);
   const deviceId = crypto.randomUUID();
 
   const device: ConnectedDevice = {
@@ -72,44 +59,28 @@ serve(async (req) => {
     devices.set(deviceId, device);
 
     // Send welcome message
-    try {
-      socket.send(JSON.stringify({
-        type: 'connected',
-        deviceId,
-        roomId,
-        timestamp: Date.now()
-      }));
-    } catch (error) {
-      console.error('Error sending welcome message:', error);
-    }
+    socket.send(JSON.stringify({
+      type: 'connected',
+      deviceId,
+      roomId
+    }));
 
-    // Notify other devices in the room and send existing device info to new device
+    // Notify other devices in the room
     const roomDevices = rooms.get(roomId)!;
     roomDevices.forEach(otherDevice => {
-      if (otherDevice.id !== deviceId) {
-        try {
-          // Notify existing device about new device
-          if (otherDevice.socket.readyState === WebSocket.OPEN) {
-            otherDevice.socket.send(JSON.stringify({
-              type: 'device-discovered',
-              deviceId,
-              deviceName,
-              timestamp: Date.now()
-            }));
-          }
-          
-          // Send existing device info to new device
-          if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({
-              type: 'device-discovered',
-              deviceId: otherDevice.id,
-              deviceName: otherDevice.name,
-              timestamp: Date.now()
-            }));
-          }
-        } catch (error) {
-          console.error('Error notifying devices:', error);
-        }
+      if (otherDevice.id !== deviceId && otherDevice.socket.readyState === WebSocket.OPEN) {
+        otherDevice.socket.send(JSON.stringify({
+          type: 'device-discovered',
+          deviceId,
+          deviceName
+        }));
+        
+        // Also send existing device info to new device
+        socket.send(JSON.stringify({
+          type: 'device-discovered',
+          deviceId: otherDevice.id,
+          deviceName: otherDevice.name
+        }));
       }
     });
   };
@@ -117,17 +88,7 @@ serve(async (req) => {
   socket.onmessage = (event) => {
     try {
       const message = JSON.parse(event.data);
-      console.log(`Message from ${deviceId} (${deviceName}):`, message.type);
-
-      // Validate message structure
-      if (!message.type) {
-        socket.send(JSON.stringify({
-          type: 'error',
-          message: 'Invalid message format: missing type',
-          timestamp: Date.now()
-        }));
-        return;
-      }
+      console.log(`Message from ${deviceId}:`, message.type);
 
       // Forward WebRTC signaling messages
       if (message.targetDevice && devices.has(message.targetDevice)) {
@@ -138,45 +99,18 @@ serve(async (req) => {
           const forwardedMessage = {
             ...message,
             fromDevice: deviceId,
-            fromDeviceName: deviceName,
-            timestamp: Date.now()
+            fromDeviceName: deviceName
           };
           
-          try {
-            targetDevice.socket.send(JSON.stringify(forwardedMessage));
-            console.log(`Forwarded ${message.type} from ${deviceId} to ${message.targetDevice}`);
-          } catch (error) {
-            console.error('Error forwarding message:', error);
-          }
-        } else {
-          // Target device is not available
-          socket.send(JSON.stringify({
-            type: 'error',
-            message: 'Target device is not available',
-            targetDevice: message.targetDevice,
-            timestamp: Date.now()
-          }));
+          targetDevice.socket.send(JSON.stringify(forwardedMessage));
         }
-      } else if (message.targetDevice) {
-        // Target device not found
-        socket.send(JSON.stringify({
-          type: 'error',
-          message: 'Target device not found',
-          targetDevice: message.targetDevice,
-          timestamp: Date.now()
-        }));
       }
     } catch (error) {
       console.error('Error handling message:', error);
-      try {
-        socket.send(JSON.stringify({
-          type: 'error',
-          message: 'Invalid message format',
-          timestamp: Date.now()
-        }));
-      } catch (sendError) {
-        console.error('Error sending error message:', sendError);
-      }
+      socket.send(JSON.stringify({
+        type: 'error',
+        message: 'Invalid message format'
+      }));
     }
   };
 
@@ -191,23 +125,17 @@ serve(async (req) => {
       // Notify other devices about disconnection
       roomDevices.forEach(otherDevice => {
         if (otherDevice.socket.readyState === WebSocket.OPEN) {
-          try {
-            otherDevice.socket.send(JSON.stringify({
-              type: 'device-disconnected',
-              deviceId,
-              deviceName,
-              timestamp: Date.now()
-            }));
-          } catch (error) {
-            console.error('Error notifying device disconnection:', error);
-          }
+          otherDevice.socket.send(JSON.stringify({
+            type: 'device-disconnected',
+            deviceId,
+            deviceName
+          }));
         }
       });
 
       // Clean up empty rooms
       if (roomDevices.size === 0) {
         rooms.delete(roomId);
-        console.log(`Room ${roomId} cleaned up`);
       }
     }
     
@@ -228,12 +156,8 @@ setInterval(() => {
 
   devices.forEach((device, deviceId) => {
     if (now.getTime() - device.joinedAt.getTime() > maxAge) {
-      try {
-        if (device.socket.readyState === WebSocket.OPEN) {
-          device.socket.close();
-        }
-      } catch (error) {
-        console.error('Error closing inactive socket:', error);
+      if (device.socket.readyState === WebSocket.OPEN) {
+        device.socket.close();
       }
       
       const roomDevices = rooms.get(device.roomId);
@@ -249,8 +173,3 @@ setInterval(() => {
     }
   });
 }, 5 * 60 * 1000); // Run every 5 minutes
-
-// Health check endpoint
-console.log("Nearby Share Signaling Server started");
-console.log("Rooms:", rooms.size);
-console.log("Connected devices:", devices.size);

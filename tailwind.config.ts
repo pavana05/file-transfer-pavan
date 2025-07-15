@@ -141,9 +141,7 @@ export default {
 				'gradient-success': 'var(--gradient-success)',
 				'gradient-glass': 'var(--gradient-glass)',
 				'gradient-mesh': 'var(--gradient-mesh)',
-				'gradient-border': 'var(--gradient-border)',
-				'gradient-radial': 'var(--gradient-radial)',
-				'gradient-conic': 'var(--gradient-conic)'
+				'gradient-border': 'var(--gradient-border)'
 			},
 			boxShadow: {
 				'upload': 'var(--shadow-upload)',

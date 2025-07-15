@@ -21,7 +21,6 @@ export const useWebRTC = ({
   const peerConnections = useRef<Map<string, RTCPeerConnection>>(new Map());
   const dataChannels = useRef<Map<string, RTCDataChannel>>(new Map());
   const signalingWs = useRef<WebSocket | null>(null);
-  const currentRoom = useRef<string | null>(null);
 
   const CHUNK_SIZE = 16384; // 16KB chunks
 
@@ -30,15 +29,14 @@ export const useWebRTC = ({
     const configuration: RTCConfiguration = {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' }
+        { urls: 'stun:stun1.l.google.com:19302' }
       ]
     };
 
     const peerConnection = new RTCPeerConnection(configuration);
     
     peerConnection.onicecandidate = (event) => {
-      if (event.candidate && signalingWs.current?.readyState === WebSocket.OPEN) {
+      if (event.candidate && signalingWs.current) {
         signalingWs.current.send(JSON.stringify({
           type: 'ice-candidate',
           candidate: event.candidate,
@@ -49,15 +47,12 @@ export const useWebRTC = ({
 
     peerConnection.onconnectionstatechange = () => {
       const state = peerConnection.connectionState;
-      console.log(`Connection state with ${deviceId}:`, state);
-      
       setConnectedDevices(prev => {
         const newMap = new Map(prev);
         const device = newMap.get(deviceId);
         if (device) {
           device.status = state === 'connected' ? 'connected' : 
                          state === 'connecting' ? 'connecting' : 'unavailable';
-          device.lastSeen = new Date();
           newMap.set(deviceId, device);
         }
         return newMap;
@@ -114,7 +109,7 @@ export const useWebRTC = ({
               break;
 
             case 'file-complete':
-              if (fileBuffer.length > 0 && expectedSize > 0) {
+              if (fileBuffer.length > 0) {
                 const completeBuffer = new Uint8Array(expectedSize);
                 let offset = 0;
                 fileBuffer.forEach(chunk => {
@@ -134,7 +129,6 @@ export const useWebRTC = ({
                     transfer.progress = 100;
                     transfer.completedAt = new Date();
                     newMap.set(transferId, transfer);
-                    onTransferProgress(transfer);
                   }
                   return newMap;
                 });
@@ -146,7 +140,7 @@ export const useWebRTC = ({
           fileBuffer.push(event.data);
           receivedSize += event.data.byteLength;
           
-          const progress = expectedSize > 0 ? Math.round((receivedSize / expectedSize) * 100) : 0;
+          const progress = Math.round((receivedSize / expectedSize) * 100);
           
           // Update transfer progress
           setActiveTransfers(prev => {
@@ -167,10 +161,6 @@ export const useWebRTC = ({
 
     channel.onerror = (error) => {
       console.error('Data channel error:', error);
-    };
-
-    channel.onclose = () => {
-      console.log(`Data channel closed with ${deviceId}`);
     };
   }, [deviceName, onFileReceived, onTransferProgress]);
 
@@ -219,11 +209,6 @@ export const useWebRTC = ({
         const end = Math.min(start + CHUNK_SIZE, buffer.byteLength);
         const chunk = buffer.slice(start, end);
         
-        // Wait for channel to be ready if needed
-        while (channel.bufferedAmount > CHUNK_SIZE * 10) {
-          await new Promise(resolve => setTimeout(resolve, 10));
-        }
-        
         channel.send(chunk);
         
         const progress = Math.round(((i + 1) / totalChunks) * 100);
@@ -241,9 +226,7 @@ export const useWebRTC = ({
         });
 
         // Small delay to prevent overwhelming the channel
-        if (i % 100 === 0) {
-          await new Promise(resolve => setTimeout(resolve, 1));
-        }
+        await new Promise(resolve => setTimeout(resolve, 1));
       }
 
       // Send completion message
@@ -264,7 +247,6 @@ export const useWebRTC = ({
           currentTransfer.status = 'completed';
           currentTransfer.completedAt = new Date();
           newMap.set(transferId, currentTransfer);
-          onTransferProgress(currentTransfer);
         }
         return newMap;
       });
@@ -277,7 +259,6 @@ export const useWebRTC = ({
         if (currentTransfer) {
           currentTransfer.status = 'failed';
           newMap.set(transferId, currentTransfer);
-          onTransferProgress(currentTransfer);
         }
         return newMap;
       });
@@ -293,8 +274,7 @@ export const useWebRTC = ({
 
       // Create data channel
       const dataChannel = peerConnection.createDataChannel('fileTransfer', {
-        ordered: true,
-        maxRetransmits: 3
+        ordered: true
       });
       setupDataChannel(dataChannel, deviceId);
 
@@ -303,7 +283,7 @@ export const useWebRTC = ({
       await peerConnection.setLocalDescription(offer);
 
       // Send offer through signaling server
-      if (signalingWs.current?.readyState === WebSocket.OPEN) {
+      if (signalingWs.current) {
         signalingWs.current.send(JSON.stringify({
           type: 'offer',
           offer,
@@ -318,145 +298,83 @@ export const useWebRTC = ({
 
   // Initialize signaling connection
   const initializeSignaling = useCallback((roomId: string) => {
-    return new Promise<void>((resolve, reject) => {
-      // Close existing connection
-      if (signalingWs.current) {
-        signalingWs.current.close();
-      }
+    // Use the full URL to the Supabase edge function
+    const wsUrl = `wss://zbvwodqcvotrfokadwyo.functions.supabase.co/nearby-share-signaling?room=${roomId}&device=${encodeURIComponent(deviceName)}`;
+    
+    signalingWs.current = new WebSocket(wsUrl);
 
-      // Use the full URL to the Supabase edge function
-      const wsUrl = `wss://zbvwodqcvotrfokadwyo.supabase.co/functions/v1/nearby-share-signaling?room=${roomId}&device=${encodeURIComponent(deviceName)}`;
-      
-      signalingWs.current = new WebSocket(wsUrl);
-      currentRoom.current = roomId;
+    signalingWs.current.onopen = () => {
+      setIsConnected(true);
+      console.log('Connected to signaling server');
+    };
 
-      const timeout = setTimeout(() => {
-        reject(new Error('Connection timeout'));
-      }, 10000);
+    signalingWs.current.onclose = () => {
+      setIsConnected(false);
+      console.log('Disconnected from signaling server');
+    };
 
-      signalingWs.current.onopen = () => {
-        clearTimeout(timeout);
-        setIsConnected(true);
-        console.log('Connected to signaling server');
-        resolve();
-      };
+    signalingWs.current.onmessage = async (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        
+        switch (message.type) {
+          case 'device-discovered':
+            const device: NearbyDevice = {
+              id: message.deviceId,
+              name: message.deviceName,
+              status: 'available',
+              lastSeen: new Date()
+            };
+            setConnectedDevices(prev => new Map(prev.set(device.id, device)));
+            onDeviceDiscovered(device);
+            break;
 
-      signalingWs.current.onclose = () => {
-        setIsConnected(false);
-        setConnectedDevices(new Map());
-        console.log('Disconnected from signaling server');
-      };
+          case 'offer':
+            await handleOffer(message.offer, message.fromDevice);
+            break;
 
-      signalingWs.current.onerror = (error) => {
-        clearTimeout(timeout);
-        console.error('WebSocket error:', error);
-        reject(new Error('Failed to connect to signaling server'));
-      };
+          case 'answer':
+            await handleAnswer(message.answer, message.fromDevice);
+            break;
 
-      signalingWs.current.onmessage = async (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          
-          switch (message.type) {
-            case 'connected':
-              console.log('Successfully joined room:', message.roomId);
-              break;
-
-            case 'device-discovered':
-              const device: NearbyDevice = {
-                id: message.deviceId,
-                name: message.deviceName,
-                status: 'available',
-                lastSeen: new Date()
-              };
-              setConnectedDevices(prev => new Map(prev.set(device.id, device)));
-              onDeviceDiscovered(device);
-              
-              // Automatically try to connect to new devices
-              setTimeout(() => {
-                connectToDevice(message.deviceId);
-              }, 1000);
-              break;
-
-            case 'device-disconnected':
-              setConnectedDevices(prev => {
-                const newMap = new Map(prev);
-                newMap.delete(message.deviceId);
-                return newMap;
-              });
-              
-              // Clean up peer connection
-              const peerConnection = peerConnections.current.get(message.deviceId);
-              if (peerConnection) {
-                peerConnection.close();
-                peerConnections.current.delete(message.deviceId);
-              }
-              dataChannels.current.delete(message.deviceId);
-              break;
-
-            case 'offer':
-              await handleOffer(message.offer, message.fromDevice);
-              break;
-
-            case 'answer':
-              await handleAnswer(message.answer, message.fromDevice);
-              break;
-
-            case 'ice-candidate':
-              await handleIceCandidate(message.candidate, message.fromDevice);
-              break;
-
-            case 'error':
-              console.error('Signaling error:', message.message);
-              break;
-          }
-        } catch (error) {
-          console.error('Error handling signaling message:', error);
+          case 'ice-candidate':
+            await handleIceCandidate(message.candidate, message.fromDevice);
+            break;
         }
-      };
-    });
-  }, [deviceName, onDeviceDiscovered, connectToDevice]);
+      } catch (error) {
+        console.error('Error handling signaling message:', error);
+      }
+    };
+  }, [deviceName, onDeviceDiscovered]);
 
   const handleOffer = async (offer: RTCSessionDescriptionInit, fromDevice: string) => {
-    try {
-      const peerConnection = createPeerConnection(fromDevice);
-      peerConnections.current.set(fromDevice, peerConnection);
+    const peerConnection = createPeerConnection(fromDevice);
+    peerConnections.current.set(fromDevice, peerConnection);
 
-      await peerConnection.setRemoteDescription(offer);
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
+    await peerConnection.setRemoteDescription(offer);
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
 
-      if (signalingWs.current?.readyState === WebSocket.OPEN) {
-        signalingWs.current.send(JSON.stringify({
-          type: 'answer',
-          answer,
-          targetDevice: fromDevice
-        }));
-      }
-    } catch (error) {
-      console.error('Error handling offer:', error);
+    if (signalingWs.current) {
+      signalingWs.current.send(JSON.stringify({
+        type: 'answer',
+        answer,
+        targetDevice: fromDevice
+      }));
     }
   };
 
   const handleAnswer = async (answer: RTCSessionDescriptionInit, fromDevice: string) => {
-    try {
-      const peerConnection = peerConnections.current.get(fromDevice);
-      if (peerConnection) {
-        await peerConnection.setRemoteDescription(answer);
-      }
-    } catch (error) {
-      console.error('Error handling answer:', error);
+    const peerConnection = peerConnections.current.get(fromDevice);
+    if (peerConnection) {
+      await peerConnection.setRemoteDescription(answer);
     }
   };
 
   const handleIceCandidate = async (candidate: RTCIceCandidateInit, fromDevice: string) => {
-    try {
-      const peerConnection = peerConnections.current.get(fromDevice);
-      if (peerConnection && peerConnection.remoteDescription) {
-        await peerConnection.addIceCandidate(candidate);
-      }
-    } catch (error) {
-      console.error('Error handling ICE candidate:', error);
+    const peerConnection = peerConnections.current.get(fromDevice);
+    if (peerConnection) {
+      await peerConnection.addIceCandidate(candidate);
     }
   };
 
