@@ -157,28 +157,29 @@ export const FileList: React.FC<FileListProps> = ({
       {files.map((file) => (
         <Card 
           key={file.id} 
-          className="p-3 sm:p-6 animate-fade-in transition-all duration-300 hover:shadow-glass border border-border/50 bg-background/80 backdrop-blur-sm rounded-xl group"
+          className="p-4 sm:p-8 animate-fade-in transition-all duration-500 hover:shadow-hover border border-border/50 bg-gradient-glass backdrop-blur-sm rounded-2xl group hover:scale-[1.02] hover:-translate-y-1 relative overflow-hidden"
         >
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-col sm:flex-row">
             {/* Mobile Layout: Icon and Actions Row */}
             <div className="flex items-center justify-between w-full sm:w-auto">
               {/* File Icon & Preview */}
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 relative">
                 {file.preview ? (
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden bg-muted shadow-inner ring-2 ring-border/20">
+                  <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl overflow-hidden bg-muted shadow-lg ring-2 ring-border/30 group-hover:ring-primary/40 transition-all duration-300">
                     <img 
                       src={file.preview} 
                       alt={file.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                   </div>
                 ) : (
                   <div className={cn(
-                    "w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center shadow-inner relative",
+                    "w-14 h-14 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center shadow-lg relative ring-2 ring-border/20 group-hover:ring-primary/40 transition-all duration-300",
                     getFileTypeColor(file.type),
-                    "group-hover:scale-105 transition-transform duration-300"
+                    "group-hover:scale-110 transition-transform duration-500"
                   )}>
-                    <div className="absolute inset-0 rounded-xl bg-gradient-glass opacity-50"></div>
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-glass opacity-60"></div>
                     {getFileTypeIcon(file)}
                   </div>
                 )}
@@ -233,13 +234,13 @@ export const FileList: React.FC<FileListProps> = ({
             {/* File Info */}
             <div className="flex-1 min-w-0 w-full sm:w-auto">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <h4 className="font-medium text-sm sm:text-base text-foreground truncate">
+                <h4 className="font-semibold text-base sm:text-lg text-foreground truncate">
                   {file.name}
                 </h4>
                 {getStatusBadge(file.status)}
               </div>
               
-              <div className="flex items-center gap-2 sm:gap-4 text-xs text-muted-foreground flex-wrap">
+              <div className="flex items-center gap-2 sm:gap-4 text-sm text-muted-foreground flex-wrap">
                 <span>{formatFileSize(file.size)}</span>
                 {file.metadata?.dimensions && (
                   <span>
@@ -255,15 +256,15 @@ export const FileList: React.FC<FileListProps> = ({
 
               {/* Progress Bar */}
               {showProgress && (file.status === 'uploading' || file.status === 'paused') && (
-                <div className="mt-3 p-3 rounded-lg bg-upload-zone/50 border border-border/30">
+                <div className="mt-4 p-4 rounded-xl bg-upload-zone/60 border border-border/40 shadow-inner">
                   <Progress 
                     value={file.progress} 
-                    className="h-3 bg-muted/50"
+                    className="h-4 bg-muted/60 shadow-inner"
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                    <span className="font-medium">{file.progress}%</span>
+                  <div className="flex justify-between text-sm text-muted-foreground mt-3">
+                    <span className="font-semibold">{file.progress}%</span>
                     {file.status === 'uploading' && (
-                      <span className="animate-pulse">Uploading...</span>
+                      <span className="animate-pulse font-medium">Uploading...</span>
                     )}
                   </div>
                 </div>
@@ -271,26 +272,26 @@ export const FileList: React.FC<FileListProps> = ({
 
               {/* Share Link */}
               {file.status === 'completed' && file.url && (
-                <div className="mt-3 flex items-center gap-3 p-4 bg-muted/50 rounded-xl border border-border/50">
-                  <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
-                    <Share className="w-4 h-4 text-success" />
+                <div className="mt-4 flex items-center gap-4 p-5 bg-gradient-success/10 rounded-2xl border border-success/30 shadow-lg">
+                  <div className="w-10 h-10 rounded-xl bg-success/30 flex items-center justify-center shadow-inner">
+                    <Share className="w-5 h-5 text-success" />
                   </div>
                   <div className="flex-1">
-                    <span className="text-foreground font-semibold text-sm block mb-1">Ready to share!</span>
+                    <span className="text-foreground font-bold text-base block mb-2">Ready to share!</span>
                     <input 
                       type="text" 
                       value={file.url} 
                       readOnly 
-                      className="w-full bg-transparent border-none outline-none text-foreground text-xs font-mono"
+                      className="w-full bg-transparent border-none outline-none text-foreground text-sm font-mono"
                     />
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => copyShareLink(file.url!)}
-                    className="h-8 sm:h-10 px-2 sm:px-4 hover:bg-accent text-xs sm:text-sm"
+                    className="h-10 sm:h-12 px-3 sm:px-5 hover:bg-success/10 hover:border-success/50 text-sm sm:text-base font-medium shadow-sm hover:shadow-md transition-all duration-300"
                   >
-                    <Copy className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                    <Copy className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" />
                     <span className="hidden sm:inline">Copy</span>
                   </Button>
                 </div>
@@ -298,7 +299,7 @@ export const FileList: React.FC<FileListProps> = ({
 
               {/* Error Message */}
               {file.status === 'error' && file.error && (
-                <div className="mt-2 text-xs text-destructive bg-destructive/5 p-2 rounded">
+                <div className="mt-3 text-sm text-destructive bg-destructive/10 p-3 rounded-xl border border-destructive/30 font-medium">
                   {file.error}
                 </div>
               )}
@@ -311,9 +312,9 @@ export const FileList: React.FC<FileListProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => onPauseFile(file.id)}
-                  className="h-8 w-8 p-0"
+                  className="h-10 w-10 p-0 hover:bg-warning/10 hover:text-warning transition-colors duration-300"
                 >
-                  <Pause className="w-4 h-4" />
+                  <Pause className="w-5 h-5" />
                 </Button>
               )}
               
@@ -322,9 +323,9 @@ export const FileList: React.FC<FileListProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => onResumeFile(file.id)}
-                  className="h-8 w-8 p-0"
+                  className="h-10 w-10 p-0 hover:bg-success/10 hover:text-success transition-colors duration-300"
                 >
-                  <Play className="w-4 h-4" />
+                  <Play className="w-5 h-5" />
                 </Button>
               )}
               
@@ -333,9 +334,9 @@ export const FileList: React.FC<FileListProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => onRetryFile(file.id)}
-                  className="h-8 w-8 p-0"
+                  className="h-10 w-10 p-0 hover:bg-primary/10 hover:text-primary transition-colors duration-300"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-5 h-5" />
                 </Button>
               )}
               
@@ -343,9 +344,9 @@ export const FileList: React.FC<FileListProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => onRemoveFile(file.id)}
-                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                className="h-10 w-10 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-300"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </Button>
             </div>
           </div>

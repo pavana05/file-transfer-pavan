@@ -1,5 +1,5 @@
 import { FileUploadManager } from '@/components/upload/FileUploadManager';
-import { Upload, Shield, Zap, Users, Smartphone } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, Sparkles, Globe, Lock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -60,11 +60,12 @@ const Index = () => {
   };
   return <div className="min-h-screen bg-gradient-mesh relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-background/90"></div>
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/15 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/15 rounded-full blur-3xl animate-float" style={{
       animationDelay: '1s'
     }}></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-primary/5 via-transparent to-transparent rounded-full blur-3xl"></div>
       
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-12">
@@ -74,80 +75,103 @@ const Index = () => {
         </div>
         <div className="text-center mb-16 animate-fade-in">
           <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
-              <Upload className="w-8 h-8 text-white drop-shadow-lg" />
+            <div className="relative w-20 h-20 rounded-3xl bg-gradient-primary flex items-center justify-center shadow-glow ring-4 ring-primary/20 group">
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 to-transparent"></div>
+              <div className="absolute -inset-1 rounded-3xl bg-gradient-conic from-primary/50 via-primary-glow/50 to-primary/50 blur-sm opacity-70 group-hover:opacity-100 transition-opacity"></div>
+              <Upload className="relative w-10 h-10 text-white drop-shadow-xl animate-pulse" />
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent"> File Transfer Online</h1>
+            <div className="text-left">
+              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent leading-tight">
+                File Transfer
+              </h1>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-2xl md:text-3xl font-semibold text-muted-foreground">Online</span>
+                <Sparkles className="w-6 h-6 text-primary animate-pulse" />
+              </div>
+            </div>
           </div>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
-            Advanced file management with drag-and-drop, progress tracking, and enterprise-grade security features
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-12 leading-relaxed font-light">
+            Experience seamless file sharing with advanced drag-and-drop, real-time progress tracking, and enterprise-grade security features
           </p>
           
           {/* Feature Badges */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
+          <div className="flex flex-wrap justify-center gap-4 mb-16">
+            <Badge variant="secondary" className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-lg">
               <Shield className="w-4 h-4" />
               <span className="font-medium">Secure Upload</span>
             </Badge>
-            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
+            <Badge variant="secondary" className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-lg">
               <Zap className="w-4 h-4" />
               <span className="font-medium">Resume Support</span>
             </Badge>
-            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
+            <Badge variant="secondary" className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-lg">
               <Users className="w-4 h-4" />
               <span className="font-medium">Multi-user Ready</span>
+            </Badge>
+            <Badge variant="secondary" className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-lg">
+              <Globe className="w-4 h-4" />
+              <span className="font-medium">Cross Platform</span>
             </Badge>
           </div>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
-              <Upload className="w-8 h-8 text-white" />
+        <div className="grid md:grid-cols-3 gap-8 mb-20">
+          <Card className="p-10 text-center hover:shadow-hover transition-all duration-700 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-3xl group hover:scale-105 hover:-translate-y-2 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <div className="relative w-20 h-20 rounded-3xl bg-gradient-primary flex items-center justify-center mx-auto mb-8 shadow-glow group-hover:animate-float ring-4 ring-primary/20 group-hover:ring-primary/40 transition-all duration-500">
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 to-transparent"></div>
+              <Upload className="w-10 h-10 text-white drop-shadow-xl" />
             </div>
-            <h3 className="text-xl font-bold mb-3 text-foreground">Drag & Drop Interface</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Intuitive drag-and-drop with visual feedback and hover states
+            <h3 className="text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300">Drag & Drop Interface</h3>
+            <p className="text-muted-foreground leading-relaxed text-lg">
+              Intuitive drag-and-drop experience with beautiful visual feedback and smooth animations
             </p>
           </Card>
 
-          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-secondary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
-              <Zap className="w-8 h-8 text-white" />
+          <Card className="p-10 text-center hover:shadow-hover transition-all duration-700 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-3xl group hover:scale-105 hover:-translate-y-2 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <div className="relative w-20 h-20 rounded-3xl bg-gradient-secondary flex items-center justify-center mx-auto mb-8 shadow-glow group-hover:animate-float ring-4 ring-accent/20 group-hover:ring-accent/40 transition-all duration-500">
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 to-transparent"></div>
+              <Zap className="w-10 h-10 text-white drop-shadow-xl" />
             </div>
-            <h3 className="text-xl font-bold mb-3 text-foreground">Progress Tracking</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Real-time progress bars with pause/resume functionality
+            <h3 className="text-2xl font-bold mb-4 text-foreground group-hover:text-accent transition-colors duration-300">Progress Tracking</h3>
+            <p className="text-muted-foreground leading-relaxed text-lg">
+              Real-time progress visualization with pause, resume, and retry capabilities
             </p>
           </Card>
 
-          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
-              <Shield className="w-8 h-8 text-white" />
+          <Card className="p-10 text-center hover:shadow-hover transition-all duration-700 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-3xl group hover:scale-105 hover:-translate-y-2 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-success/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <div className="relative w-20 h-20 rounded-3xl bg-gradient-success flex items-center justify-center mx-auto mb-8 shadow-glow group-hover:animate-float ring-4 ring-success/20 group-hover:ring-success/40 transition-all duration-500">
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 to-transparent"></div>
+              <Shield className="w-10 h-10 text-white drop-shadow-xl" />
             </div>
-            <h3 className="text-xl font-bold mb-3 text-foreground">File Validation</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Type checking, size limits, and security scanning
+            <h3 className="text-2xl font-bold mb-4 text-foreground group-hover:text-success transition-colors duration-300">Enterprise Security</h3>
+            <p className="text-muted-foreground leading-relaxed text-lg">
+              Advanced file validation, type checking, and comprehensive security scanning
             </p>
           </Card>
         </div>
 
         {/* Nearby Share Section */}
-        <Card className="p-8 text-center bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-secondary flex items-center justify-center mx-auto mb-6 shadow-glow">
-            <Smartphone className="w-8 h-8 text-white" />
+        <Card className="p-12 text-center bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-3xl shadow-hover mb-12 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50"></div>
+          <div className="relative w-24 h-24 rounded-3xl bg-gradient-secondary flex items-center justify-center mx-auto mb-8 shadow-glow ring-4 ring-accent/30 group-hover:ring-accent/50 transition-all duration-500">
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 to-transparent"></div>
+            <div className="absolute -inset-1 rounded-3xl bg-gradient-conic from-accent/50 via-primary/50 to-accent/50 blur-sm opacity-70"></div>
+            <Smartphone className="relative w-12 h-12 text-white drop-shadow-xl" />
           </div>
-          <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+          <h3 className="text-3xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
             Nearby Share
           </h3>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Share files directly with nearby devices without uploading to the cloud. 
-            Create a room or scan a QR code to start peer-to-peer file sharing.
+          <p className="text-muted-foreground mb-8 max-w-3xl mx-auto text-lg leading-relaxed">
+            Experience lightning-fast peer-to-peer file sharing with nearby devices. No cloud uploads required – 
+            just create a room or scan a QR code to start instant, secure file transfers.
           </p>
           <NearbyShareDialog
             trigger={
-              <Button size="lg" className="gap-2">
+              <Button size="lg" className="gap-3 px-8 py-4 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                 <Smartphone className="w-5 h-5" />
                 Start Nearby Share
               </Button>
@@ -159,36 +183,76 @@ const Index = () => {
         <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
 
         {/* Technical Specifications */}
-        <Card className="mt-16 p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass">
-          <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Technical Specifications</h3>
-          <div className="grid md:grid-cols-2 gap-6 text-sm">
+        <Card className="mt-20 p-12 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-3xl shadow-hover relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-30"></div>
+          <div className="relative">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
+                <Lock className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-3xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
+                Technical Specifications
+              </h3>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 text-base relative">
             <div>
-              <h4 className="font-medium mb-2">Upload Features</h4>
-              <ul className="space-y-1 text-muted-foreground">
-                <li>• Chunked upload for large files (&gt;100MB)</li>
-                <li>• Resume capability for interrupted uploads</li>
-                <li>• Concurrent upload limiting</li>
-                <li>• Duplicate file detection</li>
-                <li>• Nearby share with WebRTC P2P transfer</li>
+              <h4 className="font-bold mb-4 text-xl text-foreground">Upload Features</h4>
+              <ul className="space-y-3 text-muted-foreground">
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  Chunked upload for large files (>100MB)
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  Resume capability for interrupted uploads
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  Concurrent upload limiting
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  Duplicate file detection
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  Nearby share with WebRTC P2P transfer
+                </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-medium mb-2">Integration Ready</h4>
-              <ul className="space-y-1 text-muted-foreground">
-                <li>• Supabase storage integration</li>
-                <li>• QR code room joining</li>
-                <li>• Real-time device discovery</li>
-                <li>• WebRTC peer-to-peer connections</li>
-                <li>• TypeScript interfaces included</li>
+              <h4 className="font-bold mb-4 text-xl text-foreground">Integration Ready</h4>
+              <ul className="space-y-3 text-muted-foreground">
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent"></div>
+                  Supabase storage integration
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent"></div>
+                  QR code room joining
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent"></div>
+                  Real-time device discovery
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent"></div>
+                  WebRTC peer-to-peer connections
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent"></div>
+                  TypeScript interfaces included
+                </li>
               </ul>
             </div>
           </div>
         </Card>
 
         {/* Credit */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            This project is made by <a href="https://pavan-05.framer.ai/" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:text-primary/80 transition-colors">PAVAN</a>
+        <div className="mt-12 text-center">
+          <p className="text-base text-muted-foreground">
+            Crafted with ❤️ by <a href="https://pavan-05.framer.ai/" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:text-primary-glow transition-colors duration-300 hover:underline">PAVAN</a>
           </p>
         </div>
       </div>
