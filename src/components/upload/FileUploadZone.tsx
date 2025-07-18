@@ -106,10 +106,13 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       }
     }
   }, [validateFile, createUploadedFile, onFilesAdded]);
-  const handleBrowseClick = useCallback(() => {
+  const handleBrowseClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
     fileInputRef.current?.click();
   }, []);
-  const handleFolderClick = useCallback(() => {
+  
+  const handleFolderClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
     folderInputRef.current?.click();
   }, []);
   const getFileTypeIcon = (type: string) => {
@@ -127,7 +130,34 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   };
   return <div className={cn("w-full", className)}>
       <div {...getRootProps()} className={cn("relative border-2 border-dashed rounded-3xl p-16 text-center transition-all duration-700 ease-out", "bg-gradient-to-br from-background/60 via-background/40 to-background/60 backdrop-blur-md", "border-border/30 hover:border-primary/60 dark:border-border/20 dark:hover:border-primary/70", "shadow-xl hover:shadow-2xl dark:shadow-2xl dark:hover:shadow-glow", "before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-mesh before:opacity-30 dark:before:opacity-50", "after:absolute after:inset-0 after:rounded-3xl after:bg-gradient-to-br after:from-white/5 after:via-transparent after:to-primary/5 dark:after:from-white/10 dark:after:to-primary/10", "group overflow-hidden", !disabled && "cursor-pointer hover:scale-[1.01] active:scale-[0.99]", isDragActive && !isDragReject && "border-primary/80 bg-primary/5 scale-[1.02] animate-pulse-glow dark:bg-primary/10 dark:border-primary", isDragReject && "border-destructive bg-destructive/5 dark:bg-destructive/10", disabled && "opacity-50 cursor-not-allowed")}>
-        <input {...getInputProps()} ref={fileInputRef} />
+        <input {...getInputProps()} />
+        
+        {/* Hidden file input for browse button */}
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          onChange={(e) => {
+            const files = e.target.files;
+            if (files) {
+              const fileArray = Array.from(files);
+              const validFiles: UploadedFile[] = [];
+              fileArray.forEach(file => {
+                const validation = validateFile(file);
+                if (validation.isValid) {
+                  validFiles.push(createUploadedFile(file));
+                }
+              });
+              if (validFiles.length > 0) {
+                onFilesAdded(validFiles);
+              }
+            }
+            e.target.value = '';
+          }}
+          className="hidden" 
+          multiple={config.maxFiles !== 1}
+          accept={config.acceptedTypes?.join(',')}
+          disabled={disabled} 
+        />
         
         {/* Floating Background Elements */}
         <div className="absolute inset-0 opacity-10 dark:opacity-20">
