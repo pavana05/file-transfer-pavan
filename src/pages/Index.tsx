@@ -19,10 +19,10 @@ const Index = () => {
     enablePreview: true
   };
   const uploadCallbacks: UploadCallbacks = {
-    onFileAdd: files => {
+    onFileAdd: (files) => {
       console.log("Files added:", files);
     },
-    onUploadComplete: file => {
+    onUploadComplete: (file) => {
       console.log("Upload complete:", file);
     },
     onUploadError: (file, error) => {
