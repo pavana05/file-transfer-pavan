@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { useWebRTC } from '@/hooks/useWebRTC';
 import { NearbyDevice, FileTransfer } from '@/types/nearbyShare';
-import { Wifi, WifiOff, Users, Send, QrCode, Smartphone, Download, Upload } from 'lucide-react';
+import { Wifi, WifiOff, Users, Send, QrCode, Smartphone, Download, Upload, FileIcon, FolderOpen } from 'lucide-react';
 import QRCodeGenerator from './QRCodeGenerator';
 import QRCodeScanner from './QRCodeScanner';
 
@@ -28,6 +28,8 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
   const [currentRoom, setCurrentRoom] = useState<string | null>(null);
   const [showQRCode, setShowQRCode] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>(files);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
 
@@ -174,6 +176,22 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
     });
   };
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      setSelectedFiles(Array.from(files));
+    }
+  };
+
+  const triggerFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Update selected files when props change
+  useEffect(() => {
+    setSelectedFiles(files);
+  }, [files]);
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -217,7 +235,7 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
                         {isConnected ? (
                           <Badge variant="default" className="flex items-center gap-1">
                             <Wifi className="w-3 h-3" />
-                            Connected
+                            Connected to signaling server
                           </Badge>
                         ) : (
                           <Badge variant="secondary" className="flex items-center gap-1">
@@ -228,6 +246,7 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
                         {currentRoom && (
                           <Badge variant="outline">Room: {currentRoom}</Badge>
                         )}
+                        <Badge variant="outline">{connectedDevices.length} device{connectedDevices.length !== 1 ? 's' : ''}</Badge>
                       </div>
                     </CardContent>
                   </Card>
@@ -303,6 +322,41 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
+                      <div className="mb-4">
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <Button onClick={triggerFileSelect} size="sm" variant="outline" className="flex items-center gap-2">
+                            <FolderOpen className="w-4 h-4" />
+                            Select Files
+                          </Button>
+                          {selectedFiles.length > 0 && (
+                            <Badge variant="secondary">{selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected</Badge>
+                          )}
+                        </div>
+                        
+                        {selectedFiles.length > 0 && (
+                          <div className="space-y-1 text-sm text-muted-foreground">
+                            {selectedFiles.slice(0, 3).map((file, index) => (
+                              <div key={index} className="flex items-center gap-2">
+                                <FileIcon className="w-3 h-3" />
+                                <span className="truncate">{file.name}</span>
+                                <span>({(file.size / 1024 / 1024).toFixed(1)} MB)</span>
+                              </div>
+                            ))}
+                            {selectedFiles.length > 3 && (
+                              <div className="text-xs">...and {selectedFiles.length - 3} more files</div>
+                            )}
+                          </div>
+                        )}
+                        
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          multiple
+                          onChange={handleFileSelect}
+                          className="hidden"
+                        />
+                      </div>
+                      
                       {connectedDevices.length === 0 ? (
                         <div className="text-center py-8 text-muted-foreground">
                           No devices found. Create or join a room to start sharing.
@@ -327,7 +381,7 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
                               </div>
                               
                               <div className="flex flex-wrap gap-2">
-                                {files.map((file, index) => (
+                                {selectedFiles.map((file, index) => (
                                   <Button
                                     key={index}
                                     size="sm"
@@ -339,19 +393,19 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
                                     <span className="hidden sm:inline">Send</span> {file.name}
                                   </Button>
                                 ))}
-                                {files.length === 0 && (
+                                {selectedFiles.length === 0 && (
                                   <Badge variant="outline">No files selected</Badge>
                                 )}
                               </div>
                             </div>
                           ))}
-                        </div>
-                      )}
+                         </div>
+                        )}
                     </CardContent>
-                  </Card>
-                </div>
-              </ScrollArea>
-            </TabsContent>
+                   </Card>
+                 </div>
+               </ScrollArea>
+             </TabsContent>
 
             <TabsContent value="transfers" className="flex-1 m-0 overflow-hidden">
               <ScrollArea className="h-full">

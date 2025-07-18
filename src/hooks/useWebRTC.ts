@@ -327,6 +327,13 @@ export const useWebRTC = ({
             };
             setConnectedDevices(prev => new Map(prev.set(device.id, device)));
             onDeviceDiscovered(device);
+            
+            // Auto-connect to newly discovered devices
+            try {
+              await connectToDevice(message.deviceId);
+            } catch (error) {
+              console.log('Auto-connect failed, will try manual connection');
+            }
             break;
 
           case 'offer':
@@ -348,33 +355,45 @@ export const useWebRTC = ({
   }, [deviceName, onDeviceDiscovered]);
 
   const handleOffer = async (offer: RTCSessionDescriptionInit, fromDevice: string) => {
-    const peerConnection = createPeerConnection(fromDevice);
-    peerConnections.current.set(fromDevice, peerConnection);
+    try {
+      const peerConnection = createPeerConnection(fromDevice);
+      peerConnections.current.set(fromDevice, peerConnection);
 
-    await peerConnection.setRemoteDescription(offer);
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
+      await peerConnection.setRemoteDescription(offer);
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
 
-    if (signalingWs.current) {
-      signalingWs.current.send(JSON.stringify({
-        type: 'answer',
-        answer,
-        targetDevice: fromDevice
-      }));
+      if (signalingWs.current) {
+        signalingWs.current.send(JSON.stringify({
+          type: 'answer',
+          answer,
+          targetDevice: fromDevice
+        }));
+      }
+    } catch (error) {
+      console.error('Error handling offer:', error);
     }
   };
 
   const handleAnswer = async (answer: RTCSessionDescriptionInit, fromDevice: string) => {
-    const peerConnection = peerConnections.current.get(fromDevice);
-    if (peerConnection) {
-      await peerConnection.setRemoteDescription(answer);
+    try {
+      const peerConnection = peerConnections.current.get(fromDevice);
+      if (peerConnection) {
+        await peerConnection.setRemoteDescription(answer);
+      }
+    } catch (error) {
+      console.error('Error handling answer:', error);
     }
   };
 
   const handleIceCandidate = async (candidate: RTCIceCandidateInit, fromDevice: string) => {
-    const peerConnection = peerConnections.current.get(fromDevice);
-    if (peerConnection) {
-      await peerConnection.addIceCandidate(candidate);
+    try {
+      const peerConnection = peerConnections.current.get(fromDevice);
+      if (peerConnection && peerConnection.remoteDescription) {
+        await peerConnection.addIceCandidate(candidate);
+      }
+    } catch (error) {
+      console.error('Error handling ICE candidate:', error);
     }
   };
 
