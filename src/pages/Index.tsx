@@ -7,33 +7,29 @@ import { Input } from "@/components/ui/input";
 import NearbyShareDialog from "@/components/nearbyShare/NearbyShareDialog";
 import { FileUploadManager } from "@/components/upload/FileUploadManager";
 import { UploadConfig, UploadCallbacks } from "@/types/upload";
-
 const Index = () => {
   const [isNearbyShareOpen, setIsNearbyShareOpen] = useState(false);
   const [flightCode, setFlightCode] = useState("");
-
   const uploadConfig: UploadConfig = {
-    maxFileSize: 100 * 1024 * 1024, // 100MB
+    maxFileSize: 100 * 1024 * 1024,
+    // 100MB
     acceptedTypes: ["image/*", "video/*", "audio/*", "application/pdf", "application/msword", "text/plain", "application/zip"],
     allowedExtensions: ["jpg", "jpeg", "png", "gif", "mp4", "mp3", "pdf", "doc", "docx", "txt", "zip", "rar"],
     autoUpload: true,
-    enablePreview: true,
+    enablePreview: true
   };
-
   const uploadCallbacks: UploadCallbacks = {
-    onFileAdd: (files) => {
+    onFileAdd: files => {
       console.log("Files added:", files);
     },
-    onUploadComplete: (file) => {
+    onUploadComplete: file => {
       console.log("Upload complete:", file);
     },
     onUploadError: (file, error) => {
       console.error("Upload error:", file, error);
-    },
+    }
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="flex items-center justify-between p-6">
         <div className="flex items-center space-x-2">
@@ -94,10 +90,7 @@ const Index = () => {
                 <p className="text-sm opacity-90">Your file transfer ticket</p>
               </div>
 
-              <Button 
-                onClick={() => setIsNearbyShareOpen(true)}
-                className="w-full bg-white/20 hover:bg-white/30 text-white border-0 rounded-xl py-3"
-              >
+              <Button onClick={() => setIsNearbyShareOpen(true)} className="w-full bg-white/20 hover:bg-white/30 text-white border-0 rounded-xl py-3">
                 Tap to start sending
               </Button>
 
@@ -108,12 +101,7 @@ const Index = () => {
               <div className="text-center text-sm opacity-90">OR</div>
 
               <div className="space-y-3">
-                <Input
-                  value={flightCode}
-                  onChange={(e) => setFlightCode(e.target.value)}
-                  placeholder="Flight#"
-                  className="bg-white/20 border-white/30 text-white placeholder:text-white/70 rounded-xl"
-                />
+                <Input value={flightCode} onChange={e => setFlightCode(e.target.value)} placeholder="Flight#" className="bg-white/20 border-white/30 text-white placeholder:text-white/70 rounded-xl" />
                 <div className="text-xs text-center opacity-75">
                   ENTER YOUR FLIGHT CODE TO RECEIVE
                 </div>
@@ -132,10 +120,7 @@ const Index = () => {
           </p>
 
           <div className="mb-8">
-            <FileUploadManager 
-              config={uploadConfig}
-              callbacks={uploadCallbacks}
-            />
+            <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
           </div>
 
           <div className="text-xs text-muted-foreground space-x-4">
@@ -145,9 +130,7 @@ const Index = () => {
             <span>• No registration required</span>
           </div>
 
-          <Button className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-xl">
-            Choose Files
-          </Button>
+          
         </div>
       </section>
 
@@ -298,13 +281,9 @@ const Index = () => {
       </footer>
 
       {/* Nearby Share Dialog */}
-      <NearbyShareDialog 
-        trigger={
-          <div style={{ display: 'none' }} />
-        }
-      />
-    </div>
-  );
+      <NearbyShareDialog trigger={<div style={{
+      display: 'none'
+    }} />} />
+    </div>;
 };
-
 export default Index;
