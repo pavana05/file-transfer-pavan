@@ -16,12 +16,15 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({
 
   useEffect(() => {
     if (canvasRef.current && data) {
+      // Get computed styles to use theme colors
+      const isDark = document.documentElement.classList.contains('dark');
+      
       QRCode.toCanvas(canvasRef.current, data, {
         width: size,
-        margin: 2,
+        margin: 4,
         color: {
-          dark: '#000000',
-          light: '#FFFFFF'
+          dark: isDark ? '#FFFFFF' : '#000000',
+          light: isDark ? '#000000' : '#FFFFFF'
         }
       }).catch(console.error);
     }
@@ -31,7 +34,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({
     <div className={`flex justify-center ${className}`}>
       <canvas 
         ref={canvasRef}
-        className="border rounded-lg"
+        className="border rounded-lg bg-background shadow-sm"
       />
     </div>
   );
