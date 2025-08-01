@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,6 +33,39 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
 
   const { toast } = useToast();
 
+  const handleDeviceDiscovered = useCallback((device: NearbyDevice) => {
+    setDiscoveredDevices(prev => {
+      const existing = prev.find(d => d.id === device.id);
+      if (existing) {
+        return prev.map(d => d.id === device.id ? device : d);
+      }
+      return [...prev, device];
+    });
+    toast({
+      title: 'Device Discovered',
+      description: `${device.name} is available for sharing`,
+    });
+  }, [toast]);
+
+  const handleFileReceived = useCallback((file: File, fromDevice: string) => {
+    toast({
+      title: 'File Received',
+      description: `Received ${file.name} from ${fromDevice}`,
+    });
+    
+    // Create download link
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [toast]);
+
+  const handleTransferProgress = useCallback((transfer: FileTransfer) => {
+    // Progress updates handled in UI
+  }, []);
+
   const {
     isConnected,
     connectedDevices,
@@ -42,36 +75,9 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
     initializeSignaling
   } = useWebRTC({
     deviceName,
-    onDeviceDiscovered: (device) => {
-      setDiscoveredDevices(prev => {
-        const existing = prev.find(d => d.id === device.id);
-        if (existing) {
-          return prev.map(d => d.id === device.id ? device : d);
-        }
-        return [...prev, device];
-      });
-      toast({
-        title: 'Device Discovered',
-        description: `${device.name} is available for sharing`,
-      });
-    },
-    onFileReceived: (file, fromDevice) => {
-      toast({
-        title: 'File Received',
-        description: `Received ${file.name} from ${fromDevice}`,
-      });
-      
-      // Create download link
-      const url = URL.createObjectURL(file);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = file.name;
-      a.click();
-      URL.revokeObjectURL(url);
-    },
-    onTransferProgress: (transfer) => {
-      // Progress updates handled in UI
-    }
+    onDeviceDiscovered: handleDeviceDiscovered,
+    onFileReceived: handleFileReceived,
+    onTransferProgress: handleTransferProgress
   });
 
   const createRoom = async () => {

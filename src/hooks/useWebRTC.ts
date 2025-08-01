@@ -266,6 +266,49 @@ export const useWebRTC = ({
     }
   }, [deviceName, onTransferProgress]);
 
+  const handleOffer = useCallback(async (offer: RTCSessionDescriptionInit, fromDevice: string) => {
+    try {
+      const peerConnection = createPeerConnection(fromDevice);
+      peerConnections.current.set(fromDevice, peerConnection);
+
+      await peerConnection.setRemoteDescription(offer);
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+
+      if (signalingWs.current) {
+        signalingWs.current.send(JSON.stringify({
+          type: 'answer',
+          answer,
+          targetDevice: fromDevice
+        }));
+      }
+    } catch (error) {
+      console.error('Error handling offer:', error);
+    }
+  }, [createPeerConnection]);
+
+  const handleAnswer = useCallback(async (answer: RTCSessionDescriptionInit, fromDevice: string) => {
+    try {
+      const peerConnection = peerConnections.current.get(fromDevice);
+      if (peerConnection) {
+        await peerConnection.setRemoteDescription(answer);
+      }
+    } catch (error) {
+      console.error('Error handling answer:', error);
+    }
+  }, []);
+
+  const handleIceCandidate = useCallback(async (candidate: RTCIceCandidateInit, fromDevice: string) => {
+    try {
+      const peerConnection = peerConnections.current.get(fromDevice);
+      if (peerConnection && peerConnection.remoteDescription) {
+        await peerConnection.addIceCandidate(candidate);
+      }
+    } catch (error) {
+      console.error('Error handling ICE candidate:', error);
+    }
+  }, []);
+
   // Connect to another device
   const connectToDevice = useCallback(async (deviceId: string) => {
     try {
@@ -352,50 +395,7 @@ export const useWebRTC = ({
         console.error('Error handling signaling message:', error);
       }
     };
-  }, [deviceName, onDeviceDiscovered]);
-
-  const handleOffer = async (offer: RTCSessionDescriptionInit, fromDevice: string) => {
-    try {
-      const peerConnection = createPeerConnection(fromDevice);
-      peerConnections.current.set(fromDevice, peerConnection);
-
-      await peerConnection.setRemoteDescription(offer);
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-
-      if (signalingWs.current) {
-        signalingWs.current.send(JSON.stringify({
-          type: 'answer',
-          answer,
-          targetDevice: fromDevice
-        }));
-      }
-    } catch (error) {
-      console.error('Error handling offer:', error);
-    }
-  };
-
-  const handleAnswer = async (answer: RTCSessionDescriptionInit, fromDevice: string) => {
-    try {
-      const peerConnection = peerConnections.current.get(fromDevice);
-      if (peerConnection) {
-        await peerConnection.setRemoteDescription(answer);
-      }
-    } catch (error) {
-      console.error('Error handling answer:', error);
-    }
-  };
-
-  const handleIceCandidate = async (candidate: RTCIceCandidateInit, fromDevice: string) => {
-    try {
-      const peerConnection = peerConnections.current.get(fromDevice);
-      if (peerConnection && peerConnection.remoteDescription) {
-        await peerConnection.addIceCandidate(candidate);
-      }
-    } catch (error) {
-      console.error('Error handling ICE candidate:', error);
-    }
-  };
+  }, [deviceName, onDeviceDiscovered, connectToDevice, handleOffer, handleAnswer, handleIceCandidate]);
 
   // Cleanup
   useEffect(() => {
