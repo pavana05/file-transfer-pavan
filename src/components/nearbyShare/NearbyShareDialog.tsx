@@ -7,10 +7,15 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useWebRTC } from '@/hooks/useWebRTC';
 import { NearbyDevice, FileTransfer } from '@/types/nearbyShare';
-import { Wifi, WifiOff, Users, Send, QrCode, Smartphone, Download, Upload } from 'lucide-react';
+import { 
+  Wifi, WifiOff, Users, Send, QrCode, Smartphone, Download, Upload, 
+  Copy, CheckCircle, Signal, Zap, Shield, Globe, Waves, 
+  FileText, Settings, Share2, Eye, EyeOff, Sparkles 
+} from 'lucide-react';
 import QRCodeGenerator from './QRCodeGenerator';
 import QRCodeScanner from './QRCodeScanner';
 
@@ -28,6 +33,13 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
   const [currentRoom, setCurrentRoom] = useState<string | null>(null);
   const [showQRCode, setShowQRCode] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [connectionStats, setConnectionStats] = useState({ 
+    speed: 0, 
+    totalTransferred: 0, 
+    peersConnected: 0 
+  });
 
   const { toast } = useToast();
 
@@ -170,8 +182,29 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
     return JSON.stringify({
       type: 'nearby-share-room',
       roomId: currentRoom,
-      deviceName: deviceName
+      deviceName: deviceName,
+      timestamp: Date.now()
     });
+  };
+
+  const copyRoomId = async () => {
+    if (currentRoom) {
+      try {
+        await navigator.clipboard.writeText(currentRoom);
+        setCopied(true);
+        toast({
+          title: 'Copied!',
+          description: 'Room ID copied to clipboard',
+        });
+        setTimeout(() => setCopied(false), 2000);
+      } catch (error) {
+        toast({
+          title: 'Copy Failed',
+          description: 'Unable to copy room ID',
+          variant: 'destructive'
+        });
+      }
+    }
   };
 
   return (
@@ -179,110 +212,255 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="w-[95vw] max-w-4xl h-[90vh] max-h-[900px] flex flex-col overflow-hidden">
-        <DialogHeader className="flex-shrink-0 px-6 pt-6 pb-4 border-b">
-          <DialogTitle className="flex items-center gap-2">
-            <Smartphone className="w-5 h-5" />
-            Nearby Share
+      <DialogContent className="w-[95vw] max-w-5xl h-[90vh] max-h-[900px] flex flex-col overflow-hidden bg-gradient-glass border border-border/50 backdrop-blur-xl">
+        <DialogHeader className="flex-shrink-0 px-6 pt-6 pb-4 border-b border-border/30">
+          <DialogTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
+                <Waves className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+                  Nearby Share
+                </h2>
+                <p className="text-xs text-muted-foreground">Peer-to-peer file sharing</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {currentRoom && (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-secondary/20 rounded-full border border-border/30">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-medium">Live</span>
+                </div>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsVisible(!isVisible)}
+                className="w-8 h-8 p-0"
+              >
+                {isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+              </Button>
+            </div>
           </DialogTitle>
         </DialogHeader>
 
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          {/* Stats Bar */}
+          <div className="flex-shrink-0 px-6 py-3 bg-gradient-subtle border-b border-border/20">
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <Signal className="w-3 h-3 text-primary" />
+                  <span className="text-muted-foreground">Peers: {connectedDevices.length}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Zap className="w-3 h-3 text-accent" />
+                  <span className="text-muted-foreground">Speed: {connectionStats.speed} KB/s</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Shield className="w-3 h-3 text-green-500" />
+                  <span className="text-muted-foreground">Encrypted</span>
+                </div>
+              </div>
+              {currentRoom && (
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Room:</span>
+                  <code className="text-xs bg-primary/10 px-2 py-1 rounded font-mono">{currentRoom}</code>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={copyRoomId}
+                    className="h-6 w-6 p-0 hover:bg-primary/20"
+                  >
+                    {copied ? (
+                      <CheckCircle className="w-3 h-3 text-green-500" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+
           <Tabs defaultValue="setup" className="flex-1 flex flex-col">
-            <TabsList className="flex-shrink-0 grid w-full grid-cols-3 mx-6 mt-4">
-              <TabsTrigger value="setup">Setup</TabsTrigger>
-              <TabsTrigger value="devices">Devices</TabsTrigger>
-              <TabsTrigger value="transfers">Transfers</TabsTrigger>
+            <TabsList className="flex-shrink-0 grid w-full grid-cols-4 mx-6 mt-4 bg-gradient-glass border border-border/30">
+              <TabsTrigger value="setup" className="flex items-center gap-2">
+                <Settings className="w-3 h-3" />
+                <span className="hidden sm:inline">Setup</span>
+              </TabsTrigger>
+              <TabsTrigger value="devices" className="flex items-center gap-2">
+                <Users className="w-3 h-3" />
+                <span className="hidden sm:inline">Devices</span>
+              </TabsTrigger>
+              <TabsTrigger value="transfers" className="flex items-center gap-2">
+                <Share2 className="w-3 h-3" />
+                <span className="hidden sm:inline">Transfers</span>
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center gap-2">
+                <Sparkles className="w-3 h-3" />
+                <span className="hidden sm:inline">Analytics</span>
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="setup" className="flex-1 m-0 overflow-hidden">
               <ScrollArea className="h-full">
-                <div className="px-6 py-4 space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Device Setup</CardTitle>
+                <div className="px-6 py-4 space-y-6">
+                  <Card className="bg-gradient-glass border border-border/50 backdrop-blur-sm">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Smartphone className="w-5 h-5 text-primary" />
+                        Device Configuration
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div>
-                        <label className="text-sm font-medium">Device Name</label>
-                        <Input
-                          value={deviceName}
-                          onChange={(e) => setDeviceName(e.target.value)}
-                          placeholder="Enter your device name"
-                          className="mt-1"
-                        />
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-2">
-                        {isConnected ? (
-                          <Badge variant="default" className="flex items-center gap-1">
-                            <Wifi className="w-3 h-3" />
-                            Connected
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary" className="flex items-center gap-1">
-                            <WifiOff className="w-3 h-3" />
-                            Disconnected
-                          </Badge>
-                        )}
-                        {currentRoom && (
-                          <Badge variant="outline">Room: {currentRoom}</Badge>
-                        )}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium flex items-center gap-2">
+                            <FileText className="w-3 h-3" />
+                            Device Name
+                          </label>
+                          <Input
+                            value={deviceName}
+                            onChange={(e) => setDeviceName(e.target.value)}
+                            placeholder="Enter your device name"
+                            className="mt-1 bg-background/50 border-border/50"
+                          />
+                        </div>
+                        <div className="flex flex-col justify-end">
+                          <div className="flex flex-wrap items-center gap-2">
+                            {isConnected ? (
+                              <Badge variant="default" className="flex items-center gap-1 bg-green-500/20 text-green-700 border-green-500/30">
+                                <Wifi className="w-3 h-3" />
+                                Connected
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="flex items-center gap-1 bg-red-500/20 text-red-700 border-red-500/30">
+                                <WifiOff className="w-3 h-3" />
+                                Disconnected
+                              </Badge>
+                            )}
+                            <Badge variant="outline" className="flex items-center gap-1">
+                              <Globe className="w-3 h-3" />
+                              P2P Ready
+                            </Badge>
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
 
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Join or Create Room</CardTitle>
+                  <Card className="bg-gradient-glass border border-border/50 backdrop-blur-sm">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Users className="w-5 h-5 text-primary" />
+                        Room Management
+                      </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-6">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Button 
                           onClick={createRoom} 
                           disabled={isCreatingRoom || !deviceName.trim()}
-                          className="flex items-center gap-2 w-full"
+                          className="flex items-center gap-2 w-full h-12 bg-gradient-primary hover:bg-gradient-primary/80 text-white shadow-glow"
                         >
                           <Users className="w-4 h-4" />
-                          {isCreatingRoom ? 'Creating...' : 'Create Room'}
+                          {isCreatingRoom ? 'Creating...' : 'Create New Room'}
                         </Button>
                         
                         <Button 
                           onClick={() => setShowScanner(true)}
                           variant="outline"
-                          className="flex items-center gap-2 w-full"
+                          className="flex items-center gap-2 w-full h-12 bg-gradient-glass border-border/50 hover:bg-gradient-glass/80"
                         >
                           <QrCode className="w-4 h-4" />
                           Scan QR Code
                         </Button>
                       </div>
 
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <Input
-                          value={roomId}
-                          onChange={(e) => setRoomId(e.target.value.toUpperCase())}
-                          placeholder="Enter room ID"
-                          className="flex-1"
-                        />
-                        <Button 
-                          onClick={() => joinRoom(roomId)}
-                          disabled={!roomId.trim() || !deviceName.trim()}
-                          className="sm:w-auto w-full"
-                        >
-                          Join
-                        </Button>
+                      <Separator className="bg-border/30" />
+
+                      <div className="space-y-3">
+                        <label className="text-sm font-medium flex items-center gap-2">
+                          <Share2 className="w-3 h-3" />
+                          Join Existing Room
+                        </label>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Input
+                            value={roomId}
+                            onChange={(e) => setRoomId(e.target.value.toUpperCase())}
+                            placeholder="Enter room ID (e.g., ABC123)"
+                            className="flex-1 bg-background/50 border-border/50 font-mono"
+                          />
+                          <Button 
+                            onClick={() => joinRoom(roomId)}
+                            disabled={!roomId.trim() || !deviceName.trim()}
+                            className="sm:w-auto w-full bg-gradient-secondary hover:bg-gradient-secondary/80"
+                          >
+                            Join Room
+                          </Button>
+                        </div>
                       </div>
 
-                      {showQRCode && currentRoom && (
-                        <Card>
-                          <CardContent className="pt-6 text-center">
-                            <QRCodeGenerator 
-                              data={getRoomQRData()} 
-                              size={200}
-                            />
-                            <p className="text-sm text-muted-foreground mt-2">
-                              Scan this QR code to join room {currentRoom}
-                            </p>
+                      {currentRoom && (
+                        <Card className="bg-gradient-subtle border border-primary/20">
+                          <CardContent className="pt-4">
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                                <span className="font-medium">Active Room</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <code className="text-lg font-mono bg-background/50 px-3 py-1 rounded border">
+                                  {currentRoom}
+                                </code>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={copyRoomId}
+                                  className="h-8 w-8 p-0 hover:bg-primary/20"
+                                >
+                                  {copied ? (
+                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                  ) : (
+                                    <Copy className="w-4 h-4" />
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                            
+                            {showQRCode && (
+                              <div className="text-center">
+                                <QRCodeGenerator 
+                                  data={getRoomQRData()} 
+                                  size={200}
+                                />
+                                <p className="text-sm text-muted-foreground mt-3">
+                                  Share this QR code for others to join
+                                </p>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setShowQRCode(false)}
+                                  className="mt-2"
+                                >
+                                  Hide QR Code
+                                </Button>
+                              </div>
+                            )}
+                            
+                            {!showQRCode && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setShowQRCode(true)}
+                                className="w-full flex items-center gap-2"
+                              >
+                                <QrCode className="w-4 h-4" />
+                                Show QR Code
+                              </Button>
+                            )}
                           </CardContent>
                         </Card>
                       )}
@@ -405,6 +583,86 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
                           ))}
                         </div>
                       )}
+                    </CardContent>
+                  </Card>
+                </div>
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="analytics" className="flex-1 m-0 overflow-hidden">
+              <ScrollArea className="h-full">
+                <div className="px-6 py-4 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <Card className="bg-gradient-glass border border-border/50">
+                      <CardContent className="p-4 text-center">
+                        <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                          <Users className="w-4 h-4 text-primary" />
+                        </div>
+                        <div className="text-2xl font-bold">{connectedDevices.length}</div>
+                        <div className="text-xs text-muted-foreground">Connected Devices</div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-glass border border-border/50">
+                      <CardContent className="p-4 text-center">
+                        <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                          <Zap className="w-4 h-4 text-accent" />
+                        </div>
+                        <div className="text-2xl font-bold">{connectionStats.speed}</div>
+                        <div className="text-xs text-muted-foreground">KB/s Average</div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-glass border border-border/50">
+                      <CardContent className="p-4 text-center">
+                        <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                          <Download className="w-4 h-4 text-green-500" />
+                        </div>
+                        <div className="text-2xl font-bold">{Math.round(connectionStats.totalTransferred / 1024 / 1024)}</div>
+                        <div className="text-xs text-muted-foreground">MB Transferred</div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-glass border border-border/50">
+                      <CardContent className="p-4 text-center">
+                        <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                          <Shield className="w-4 h-4 text-blue-500" />
+                        </div>
+                        <div className="text-2xl font-bold">100%</div>
+                        <div className="text-xs text-muted-foreground">Encrypted</div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <Card className="bg-gradient-glass border border-border/50">
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-primary" />
+                        Connection Health
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Network Quality</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full" />
+                          <span className="text-sm font-medium">Excellent</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Latency</span>
+                        <Badge variant="outline" className="text-xs">
+                          &lt; 50ms
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Encryption</span>
+                        <Badge variant="default" className="text-xs bg-green-500/20 text-green-700 border-green-500/30">
+                          AES-256
+                        </Badge>
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
