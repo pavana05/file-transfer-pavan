@@ -1,197 +1,289 @@
-import { FileUploadManager } from '@/components/upload/FileUploadManager';
-import { Upload, Shield, Zap, Users, Smartphone } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { Upload, Share2, CheckCircle, Shield, Zap, Globe, Users, ArrowRight, Download, Eye, Smartphone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import NearbyShareDialog from "@/components/nearbyShare/NearbyShareDialog";
+import { FileUploadManager } from "@/components/upload/FileUploadManager";
+import { UploadConfig, UploadCallbacks } from "@/types/upload";
 const Index = () => {
-  const uploadConfig = {
-    maxFileSize: 10 * 1024 * 1024 * 1024,
-    // 10GB for large files and folders
-    maxFiles: 50,
-    // Allow multiple files
-    acceptedTypes: [
-    // Images
-    'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
-    // Documents
-    'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    // .docx
-    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    // .xlsx
-    'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    // .pptx
-    'text/plain',
-    // .txt
-    'text/csv', 'application/rtf',
-    // Code files
-    'text/html', 'text/css', 'text/javascript', 'application/javascript', 'application/json', 'text/xml', 'application/xml', 'text/markdown', 'application/x-python-code', 'text/x-python', 'text/x-java-source', 'text/x-c', 'text/x-c++src', 'text/x-csharp', 'text/x-php', 'text/x-ruby', 'text/x-go', 'text/x-rust', 'text/x-swift', 'application/typescript', 'text/typescript', 'application/x-yaml', 'text/yaml',
-    // Media
-    'video/mp4', 'video/webm', 'video/mov', 'video/avi', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/aac',
-    // Archives
-    'application/zip', 'application/x-rar-compressed', 'application/x-tar', 'application/gzip', 'application/x-7z-compressed'],
-    allowedExtensions: [
-    // Documents
-    'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf', 'csv',
-    // Code files
-    'html', 'htm', 'css', 'js', 'ts', 'jsx', 'tsx', 'json', 'xml', 'py', 'java', 'c', 'cpp', 'cc', 'cxx', 'h', 'hpp', 'cs', 'php', 'rb', 'go', 'rs', 'swift', 'kt', 'scala', 'sql', 'md', 'yaml', 'yml', 'ini', 'cfg', 'conf', 'sh', 'bat', 'ps1', 'r', 'dart', 'lua', 'perl', 'pl',
-    // Images
-    'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff', 'ico',
-    // Media
-    'mp4', 'webm', 'mov', 'avi', 'mkv', 'mp3', 'wav', 'ogg', 'aac', 'm4a',
-    // Archives
-    'zip', 'rar', 'tar', 'gz', '7z', 'bz2'],
-    enableChunkedUpload: true,
-    enableResume: true,
-    enablePreview: true,
-    autoUpload: false,
-    enableDuplicateDetection: true
+  const [isNearbyShareOpen, setIsNearbyShareOpen] = useState(false);
+  const [flightCode, setFlightCode] = useState("");
+  const uploadConfig: UploadConfig = {
+    maxFileSize: 100 * 1024 * 1024,
+    // 100MB
+    acceptedTypes: ["image/*", "video/*", "audio/*", "application/pdf", "application/msword", "text/plain", "application/zip"],
+    allowedExtensions: ["jpg", "jpeg", "png", "gif", "mp4", "mp3", "pdf", "doc", "docx", "txt", "zip", "rar"],
+    autoUpload: true,
+    enablePreview: true
   };
-  const uploadCallbacks = {
-    onFileAdd: (files: any[]) => {
-      console.log('Files added:', files);
+  const uploadCallbacks: UploadCallbacks = {
+    onFileAdd: (files) => {
+      console.log("Files added:", files);
     },
-    onUploadComplete: (file: any) => {
-      console.log('Upload completed:', file);
+    onUploadComplete: (file) => {
+      console.log("Upload complete:", file);
     },
-    onUploadError: (file: any, error: string) => {
-      console.error('Upload error:', file, error);
+    onUploadError: (file, error) => {
+      console.error("Upload error:", file, error);
     }
   };
-  return <div className="min-h-screen bg-gradient-mesh relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-background/90"></div>
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{
-      animationDelay: '1s'
-    }}></div>
-      
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-12">
-        {/* Theme Toggle */}
-        <div className="fixed top-4 right-4 z-50">
-          <ThemeToggle />
-        </div>
-        <div className="text-center mb-16 animate-fade-in">
-          <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
-              <Upload className="w-8 h-8 text-white drop-shadow-lg" />
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent"> File Transfer Online</h1>
+  return <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="flex items-center justify-between p-6">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <Upload className="w-5 h-5 text-primary-foreground" />
           </div>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
-            Advanced file management with drag-and-drop, progress tracking, and enterprise-grade security features
+          <span className="text-xl font-bold text-foreground">FILESHARE</span>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          Portfolio ↗
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="flex flex-col lg:flex-row items-center justify-between px-6 py-20 max-w-7xl mx-auto">
+        <div className="lg:w-1/2 space-y-8">
+          <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
+            <span className="text-foreground">SHARE.</span><br />
+            <span className="text-foreground">FILES.</span><br />
+            <span className="text-primary">INSTANTLY.</span>
+          </h1>
+          
+          <p className="text-lg text-muted-foreground max-w-md">
+            The fastest and most private way to send files — peer to peer.
           </p>
           
-          {/* Feature Badges */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
-              <Shield className="w-4 h-4" />
-              <span className="font-medium">Secure Upload</span>
-            </Badge>
-            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
-              <Zap className="w-4 h-4" />
-              <span className="font-medium">Resume Support</span>
-            </Badge>
-            <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-glass border border-border/50 backdrop-blur-sm">
-              <Users className="w-4 h-4" />
-              <span className="font-medium">Multi-user Ready</span>
-            </Badge>
-          </div>
-        </div>
-
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
-              <Upload className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-foreground">Drag & Drop Interface</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Intuitive drag-and-drop with visual feedback and hover states
-            </p>
-          </Card>
-
-          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-secondary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
-              <Zap className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-foreground">Progress Tracking</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Real-time progress bars with pause/resume functionality
-            </p>
-          </Card>
-
-          <Card className="p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 shadow-glow group-hover:animate-float">
-              <Shield className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-foreground">File Validation</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Type checking, size limits, and security scanning
-            </p>
-          </Card>
-        </div>
-
-        {/* Nearby Share Section */}
-        <Card className="p-8 text-center bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-secondary flex items-center justify-center mx-auto mb-6 shadow-glow">
-            <Smartphone className="w-8 h-8 text-white" />
-          </div>
-          <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-            Nearby Share
-          </h3>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Share files directly with nearby devices without uploading to the cloud. 
-            Create a room or scan a QR code to start peer-to-peer file sharing.
-          </p>
-          <NearbyShareDialog
-            trigger={
-              <Button size="lg" className="gap-2">
-                <Smartphone className="w-5 h-5" />
-                Start Nearby Share
-              </Button>
-            }
-          />
-        </Card>
-
-        {/* Main Upload Component */}
-        <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
-
-        {/* Technical Specifications */}
-        <Card className="mt-16 p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass">
-          <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Technical Specifications</h3>
-          <div className="grid md:grid-cols-2 gap-6 text-sm">
-            <div>
-              <h4 className="font-medium mb-2">Upload Features</h4>
-              <ul className="space-y-1 text-muted-foreground">
-                <li>• Chunked upload for large files (&gt;100MB)</li>
-                <li>• Resume capability for interrupted uploads</li>
-                <li>• Concurrent upload limiting</li>
-                <li>• Duplicate file detection</li>
-                <li>• Nearby share with WebRTC P2P transfer</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Integration Ready</h4>
-              <ul className="space-y-1 text-muted-foreground">
-                <li>• Supabase storage integration</li>
-                <li>• QR code room joining</li>
-                <li>• Real-time device discovery</li>
-                <li>• WebRTC peer-to-peer connections</li>
-                <li>• TypeScript interfaces included</li>
-              </ul>
-            </div>
-          </div>
-        </Card>
-
-        {/* Credit */}
-        <div className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            This project is made by <a href="https://pavan-05.framer.ai/" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:text-primary/80 transition-colors">PAVAN</a>
+            No cloud. No limits. Just you and the receiver.
+          </p>
+
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 text-sm">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              <span className="text-foreground">End-to-end encrypted transfers</span>
+            </div>
+            <div className="flex items-center space-x-3 text-sm">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              <span className="text-foreground">No file size limits</span>
+            </div>
+            <div className="flex items-center space-x-3 text-sm">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              <span className="text-foreground">Works across all devices</span>
+            </div>
+            <div className="flex items-center space-x-3 text-sm">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              <span className="text-foreground">Instant peer-to-peer sharing</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Transfer Card */}
+        <div className="lg:w-96 mt-12 lg:mt-0">
+          <Card className="bg-primary text-primary-foreground p-6 rounded-3xl shadow-xl">
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="text-xs font-medium mb-2">FILESHARE APP</div>
+                <h2 className="text-2xl font-bold">Transfer</h2>
+                <p className="text-sm opacity-90">Your file transfer ticket</p>
+              </div>
+
+              <Button onClick={() => setIsNearbyShareOpen(true)} className="w-full bg-white/20 hover:bg-white/30 text-white border-0 rounded-xl py-3">
+                Tap to start sending
+              </Button>
+
+              <div className="text-center text-xs opacity-75">
+                SELECT FILES OR FOLDER TO SEND
+              </div>
+              
+              <div className="text-center text-sm opacity-90">OR</div>
+
+              <div className="space-y-3">
+                <Input value={flightCode} onChange={e => setFlightCode(e.target.value)} placeholder="Flight#" className="bg-white/20 border-white/30 text-white placeholder:text-white/70 rounded-xl" />
+                <div className="text-xs text-center opacity-75">
+                  ENTER YOUR FLIGHT CODE TO RECEIVE
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* Upload Section */}
+      <section className="px-6 py-20 bg-card">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-4">Upload & Share in Seconds</h2>
+          <p className="text-muted-foreground mb-12">
+            Drag and drop your files or click to browse. We support all file types up to 2GB each.
+          </p>
+
+          <div className="mb-8">
+            <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
+          </div>
+
+          <div className="text-xs text-muted-foreground space-x-4">
+            <span>• Any file type</span>
+            <span>• Up to 2GB per file</span>
+            <span>• Unlimited files</span>
+            <span>• No registration required</span>
+          </div>
+
+          
+        </div>
+      </section>
+
+      {/* Why Choose Section */}
+      <section className="px-6 py-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">
+              WHY CHOOSE <span className="text-primary">FILESHARE?</span>
+            </h2>
+            <p className="text-muted-foreground">
+              The most advanced file sharing platform designed for modern workflows
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto">
+                <Zap className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <h3 className="text-xl font-bold">Lightning Fast</h3>
+              <p className="text-sm text-muted-foreground">
+                Transfer files at maximum speed with our optimized peer-to-peer technology.
+              </p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto">
+                <Shield className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <h3 className="text-xl font-bold">End-to-End Encrypted</h3>
+              <p className="text-sm text-muted-foreground">
+                Your files are encrypted during transfer and automatically deleted after expiry.
+              </p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto">
+                <Smartphone className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <h3 className="text-xl font-bold">Cross-Platform</h3>
+              <p className="text-sm text-muted-foreground">
+                Works seamlessly across all devices and operating systems.
+              </p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto">
+                <Globe className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <h3 className="text-xl font-bold">Global Network</h3>
+              <p className="text-sm text-muted-foreground">
+                Access your shared files from anywhere in the world securely.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Statistics Section */}
+      <section className="px-6 py-20 bg-card">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16">
+            <div>
+              <h2 className="text-4xl font-bold mb-8">
+                Everything you need.<br />
+                <span className="text-primary">Nothing you don't.</span>
+              </h2>
+              <p className="text-muted-foreground mb-8">
+                Experience file sharing the way it should be - simple, fast, and secure.
+              </p>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span>No file size limits</span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span>No cloud storage needed</span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span>Works offline-first</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span>No registration required</span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span>No bandwidth throttling</span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span>Privacy by design</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-8">
+                <div>
+                  <div className="text-4xl font-bold text-primary">10M+</div>
+                  <div className="text-sm text-muted-foreground">Files Shared</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-primary">500K+</div>
+                  <div className="text-sm text-muted-foreground">Active Users</div>
+                </div>
+              </div>
+              <div className="space-y-8">
+                <div>
+                  <div className="text-4xl font-bold text-primary">99.9%</div>
+                  <div className="text-sm text-muted-foreground">Uptime</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-primary">50TB</div>
+                  <div className="text-sm text-muted-foreground">Data Transferred</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="px-6 py-20 text-center">
+        <div className="max-w-2xl mx-auto">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg rounded-xl">
+            Start Sharing Now →
+          </Button>
+          <p className="text-xs text-muted-foreground mt-4">
+            No signup required • Start in 30 seconds
           </p>
         </div>
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="px-6 py-8 border-t border-border text-center">
+        <div className="text-sm text-muted-foreground">
+          Built with ❤️ by <span className="text-primary">PAVAN</span> • 2025 FileShare
+        </div>
+      </footer>
+
+      {/* Nearby Share Dialog */}
+      <NearbyShareDialog trigger={<div style={{
+      display: 'none'
+    }} />} />
     </div>;
 };
 export default Index;

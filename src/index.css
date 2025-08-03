@@ -8,27 +8,27 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 10% 98%;
-    --foreground: 240 10% 15%;
+    --background: 220 27% 8%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 15%;
+    --card: 220 27% 10%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 15%;
+    --popover: 220 27% 10%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 217 91% 75%;
+    --primary: 16 100% 55%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 16 100% 60%;
 
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 10%;
+    --secondary: 220 27% 15%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted: 220 27% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 217 91% 95%;
-    --accent-foreground: 217 91% 35%;
+    --accent: 16 100% 55%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
@@ -39,15 +39,15 @@ All colors MUST be HSL.
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 217 91% 60%;
+    --border: 220 27% 18%;
+    --input: 220 27% 18%;
+    --ring: 16 100% 55%;
 
     /* Upload specific tokens */
-    --upload-zone: 217 91% 97%;
-    --upload-zone-hover: 217 91% 94%;
-    --upload-zone-active: 217 91% 90%;
-    --upload-progress: 217 91% 60%;
+    --upload-zone: 220 27% 12%;
+    --upload-zone-hover: 220 27% 15%;
+    --upload-zone-active: 220 27% 18%;
+    --upload-progress: 16 100% 55%;
     --upload-success: 142 76% 36%;
     --upload-error: 0 84% 60%;
 
