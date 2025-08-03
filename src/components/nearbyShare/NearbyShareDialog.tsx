@@ -260,7 +260,14 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      setSelectedFiles(Array.from(files));
+      const fileArray = Array.from(files);
+      setSelectedFiles(fileArray);
+      
+      // Show success toast
+      toast({
+        title: `📁 ${fileArray.length} File${fileArray.length !== 1 ? 's' : ''} Selected`,
+        description: `Ready to share ${fileArray.map(f => f.name).slice(0, 2).join(', ')}${fileArray.length > 2 ? ` and ${fileArray.length - 2} more` : ''}`,
+      });
     }
   };
 
@@ -365,6 +372,57 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
                           {connectedDevices.length} device{connectedDevices.length !== 1 ? 's' : ''}
                         </Badge>
                       </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* File Selection Card */}
+                  <Card className="bg-gradient-glass border border-border/50 shadow-glass backdrop-blur-sm">
+                    <CardHeader className="bg-gradient-to-r from-accent/5 to-primary/5 rounded-t-lg">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <FolderOpen className="w-5 h-5 text-accent" />
+                        File Selection
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6 space-y-4">
+                      <div className="flex flex-wrap items-center gap-2 mb-3">
+                        <Button onClick={triggerFileSelect} size="sm" variant="outline" className="flex items-center gap-2 border-primary/30 hover:bg-primary/10">
+                          <FolderOpen className="w-4 h-4" />
+                          Browse Files
+                        </Button>
+                        {selectedFiles.length > 0 && (
+                          <Badge variant="secondary" className="bg-gradient-glass border-primary/30">
+                            {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      {selectedFiles.length > 0 && (
+                        <div className="p-3 bg-background/50 rounded-lg border border-primary/20 space-y-2">
+                          <p className="text-sm font-medium text-primary">Selected Files:</p>
+                          <div className="space-y-1 text-sm text-muted-foreground max-h-24 overflow-y-auto">
+                            {selectedFiles.slice(0, 5).map((file, index) => (
+                              <div key={index} className="flex items-center gap-2">
+                                <FileIcon className="w-3 h-3" />
+                                <span className="truncate flex-1">{file.name}</span>
+                                <span className="text-xs">({(file.size / 1024 / 1024).toFixed(1)} MB)</span>
+                              </div>
+                            ))}
+                            {selectedFiles.length > 5 && (
+                              <div className="text-xs text-center text-muted-foreground/70">
+                                ...and {selectedFiles.length - 5} more files
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
                     </CardContent>
                   </Card>
 
