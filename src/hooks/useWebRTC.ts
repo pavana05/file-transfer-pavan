@@ -171,6 +171,16 @@ export const useWebRTC = ({
       throw new Error('No active data channel with device');
     }
 
+    // File validation
+    const maxFileSize = 100 * 1024 * 1024; // 100MB limit
+    if (file.size > maxFileSize) {
+      throw new Error('File too large. Maximum size is 100MB.');
+    }
+
+    if (file.size === 0) {
+      throw new Error('Cannot send empty file');
+    }
+
     const transferId = crypto.randomUUID();
     const transfer: FileTransfer = {
       id: transferId,
@@ -298,53 +308,97 @@ export const useWebRTC = ({
 
   // Initialize signaling connection
   const initializeSignaling = useCallback((roomId: string) => {
-    // Use the full URL to the Supabase edge function
-    const wsUrl = `wss://zbvwodqcvotrfokadwyo.functions.supabase.co/nearby-share-signaling?room=${roomId}&device=${encodeURIComponent(deviceName)}`;
-    
-    signalingWs.current = new WebSocket(wsUrl);
-
-    signalingWs.current.onopen = () => {
-      setIsConnected(true);
-      console.log('Connected to signaling server');
-    };
-
-    signalingWs.current.onclose = () => {
-      setIsConnected(false);
-      console.log('Disconnected from signaling server');
-    };
-
-    signalingWs.current.onmessage = async (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        
-        switch (message.type) {
-          case 'device-discovered':
-            const device: NearbyDevice = {
-              id: message.deviceId,
-              name: message.deviceName,
-              status: 'available',
-              lastSeen: new Date()
-            };
-            setConnectedDevices(prev => new Map(prev.set(device.id, device)));
-            onDeviceDiscovered(device);
-            break;
-
-          case 'offer':
-            await handleOffer(message.offer, message.fromDevice);
-            break;
-
-          case 'answer':
-            await handleAnswer(message.answer, message.fromDevice);
-            break;
-
-          case 'ice-candidate':
-            await handleIceCandidate(message.candidate, message.fromDevice);
-            break;
-        }
-      } catch (error) {
-        console.error('Error handling signaling message:', error);
+    return new Promise<void>((resolve, reject) => {
+      // Use the full URL to the Supabase edge function
+      const wsUrl = `wss://zbvwodqcvotrfokadwyo.functions.supabase.co/nearby-share-signaling?room=${roomId}&device=${encodeURIComponent(deviceName)}`;
+      
+      if (signalingWs.current) {
+        signalingWs.current.close();
       }
-    };
+      
+      signalingWs.current = new WebSocket(wsUrl);
+
+      const connectionTimeout = setTimeout(() => {
+        reject(new Error('Connection timeout'));
+      }, 10000); // 10 second timeout
+
+      signalingWs.current.onopen = () => {
+        clearTimeout(connectionTimeout);
+        setIsConnected(true);
+        console.log('Connected to signaling server');
+        resolve();
+      };
+
+      signalingWs.current.onclose = (event) => {
+        clearTimeout(connectionTimeout);
+        setIsConnected(false);
+        console.log('Disconnected from signaling server', event.code, event.reason);
+        
+        // Auto-reconnect after 3 seconds if not a clean close
+        if (event.code !== 1000 && event.code !== 1001) {
+          setTimeout(() => {
+            console.log('Attempting to reconnect...');
+            initializeSignaling(roomId).catch(console.error);
+          }, 3000);
+        }
+      };
+
+      signalingWs.current.onerror = (error) => {
+        clearTimeout(connectionTimeout);
+        console.error('WebSocket error:', error);
+        reject(new Error('WebSocket connection failed'));
+      };
+
+      signalingWs.current.onmessage = async (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          console.log('Received signaling message:', message.type);
+          
+          switch (message.type) {
+            case 'connected':
+              console.log('Device connected with ID:', message.deviceId);
+              break;
+
+            case 'device-discovered':
+              const device: NearbyDevice = {
+                id: message.deviceId,
+                name: message.deviceName,
+                status: 'available',
+                lastSeen: new Date()
+              };
+              setConnectedDevices(prev => new Map(prev.set(device.id, device)));
+              onDeviceDiscovered(device);
+              break;
+
+            case 'device-disconnected':
+              setConnectedDevices(prev => {
+                const newMap = new Map(prev);
+                newMap.delete(message.deviceId);
+                return newMap;
+              });
+              break;
+
+            case 'offer':
+              await handleOffer(message.offer, message.fromDevice);
+              break;
+
+            case 'answer':
+              await handleAnswer(message.answer, message.fromDevice);
+              break;
+
+            case 'ice-candidate':
+              await handleIceCandidate(message.candidate, message.fromDevice);
+              break;
+
+            case 'error':
+              console.error('Signaling server error:', message.message);
+              break;
+          }
+        } catch (error) {
+          console.error('Error handling signaling message:', error);
+        }
+      };
+    });
   }, [deviceName, onDeviceDiscovered]);
 
   const handleOffer = async (offer: RTCSessionDescriptionInit, fromDevice: string) => {
