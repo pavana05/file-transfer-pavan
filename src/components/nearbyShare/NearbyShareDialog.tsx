@@ -104,14 +104,13 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
       setShowQRCode(true);
       
       toast({
-        title: 'Room Created Successfully',
-        description: `Room ${newRoomId} is ready! Share the QR code or room ID with others.`,
+        title: 'Room Created',
+        description: `Room ${newRoomId} is ready for sharing`,
       });
     } catch (error) {
-      console.error('Failed to create room:', error);
       toast({
-        title: 'Connection Failed',
-        description: error instanceof Error ? error.message : 'Failed to create room. Please check your internet connection.',
+        title: 'Error',
+        description: 'Failed to create room',
         variant: 'destructive'
       });
     } finally {
@@ -129,29 +128,19 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
       return;
     }
 
-    if (!roomToJoin.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Please enter a valid room ID',
-        variant: 'destructive'
-      });
-      return;
-    }
-
     try {
       await initializeSignaling(roomToJoin);
       setCurrentRoom(roomToJoin);
       setRoomId(roomToJoin);
       
       toast({
-        title: 'Successfully Joined',
-        description: `Connected to room ${roomToJoin}. You can now discover and share files with other devices.`,
+        title: 'Joined Room',
+        description: `Connected to room ${roomToJoin}`,
       });
     } catch (error) {
-      console.error('Failed to join room:', error);
       toast({
-        title: 'Connection Failed',
-        description: error instanceof Error ? error.message : 'Failed to join room. Please check the room ID and your internet connection.',
+        title: 'Error',
+        description: 'Failed to join room',
         variant: 'destructive'
       });
     }
@@ -161,14 +150,13 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
     try {
       await sendFile(file, deviceId);
       toast({
-        title: 'Transfer Started',
-        description: `Sending ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`,
+        title: 'File Sent',
+        description: `Started sending ${file.name}`,
       });
     } catch (error) {
-      console.error('Failed to send file:', error);
       toast({
-        title: 'Transfer Failed',
-        description: error instanceof Error ? error.message : 'Failed to send file. Please try again.',
+        title: 'Error',
+        description: 'Failed to send file',
         variant: 'destructive'
       });
     }
