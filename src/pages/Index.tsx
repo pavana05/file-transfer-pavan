@@ -141,26 +141,67 @@ const Index = () => {
         </div>
 
         {/* Nearby Share Section */}
-        <Card className="p-4 sm:p-6 lg:p-8 text-center bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass mb-6 md:mb-8 mx-4">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-2xl bg-gradient-secondary flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-glow">
-            <Smartphone className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
-          </div>
-          <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-            Nearby Share
-          </h3>
-          <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 max-w-2xl mx-auto px-2">
-            Share files directly with nearby devices without uploading to the cloud. 
-            Create a room or scan a QR code to start peer-to-peer file sharing.
-          </p>
-          <NearbyShareDialog
-            trigger={
-              <Button size="sm" className="gap-1.5 sm:gap-2 text-sm sm:text-base h-9 sm:h-10 lg:h-11 px-4 sm:px-6">
-                <Smartphone className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="whitespace-nowrap">Start Nearby Share</span>
-              </Button>
-            }
-          />
-        </Card>
+        <div className="relative mb-6 md:mb-8 mx-4">
+          {/* Background Glow Effects */}
+          <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 via-primary-glow/30 to-secondary/20 rounded-3xl blur-xl opacity-50"></div>
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-3xl blur-lg opacity-30"></div>
+          
+          <Card className="relative p-6 sm:p-8 lg:p-10 text-center bg-gradient-to-br from-background/95 via-background/90 to-background/95 border-2 border-primary/20 backdrop-blur-xl rounded-3xl shadow-2xl hover:shadow-glow transition-all duration-700 hover:scale-[1.02] group overflow-hidden">
+            {/* Animated Background Pattern */}
+            <div className="absolute inset-0 opacity-5 dark:opacity-10">
+              <div className="absolute top-4 left-4 w-20 h-20 bg-primary/30 rounded-full blur-2xl animate-pulse"></div>
+              <div className="absolute bottom-4 right-4 w-32 h-32 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+              <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-accent/25 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            </div>
+
+            {/* Enhanced Icon Container */}
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-3xl mx-auto mb-6 sm:mb-8 group-hover:animate-float">
+              {/* Multiple gradient layers for depth */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-glow to-secondary rounded-3xl shadow-2xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/20 to-white/10 rounded-3xl"></div>
+              <div className="absolute -inset-1 bg-gradient-conic from-primary/60 via-primary-glow/60 to-secondary/60 rounded-3xl blur-sm opacity-60 group-hover:opacity-100 transition-opacity"></div>
+              
+              {/* Icon with enhanced styling */}
+              <div className="relative w-full h-full flex items-center justify-center rounded-3xl ring-4 ring-primary/30 group-hover:ring-primary/50 transition-all duration-500">
+                <Smartphone className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white drop-shadow-2xl group-hover:scale-110 transition-transform duration-300" />
+              </div>
+            </div>
+
+            {/* Enhanced Typography */}
+            <div className="relative z-10 space-y-4 sm:space-y-6 mb-6 sm:mb-8">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
+                <span className="bg-gradient-to-r from-primary via-primary-glow to-secondary bg-clip-text text-transparent animate-fade-in">
+                  Nearby Share
+                </span>
+              </h3>
+              <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary-glow rounded-full mx-auto opacity-60"></div>
+              
+              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
+                Share files directly with nearby devices without uploading to the cloud.<br />
+                <span className="text-foreground/80 font-medium">Create a room or scan a QR code to start peer-to-peer file sharing.</span>
+              </p>
+            </div>
+
+            {/* Enhanced Call-to-Action */}
+            <div className="relative z-10">
+              <NearbyShareDialog
+                trigger={
+                  <Button 
+                    size="lg" 
+                    className="relative px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-2xl bg-gradient-to-r from-primary via-primary-glow to-primary hover:from-primary-glow hover:via-primary hover:to-primary-glow shadow-xl hover:shadow-2xl hover:shadow-primary/25 border-2 border-primary/20 hover:border-primary/40 transition-all duration-500 transform hover:scale-105 group/btn overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-700 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000"></div>
+                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 mr-2 relative z-10" />
+                    <span className="relative z-10">Start Nearby Share</span>
+                  </Button>
+                }
+              />
+            </div>
+
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-1/4 right-1/4 h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
+          </Card>
+        </div>
 
 
         {/* Technical Specifications */}
