@@ -162,7 +162,7 @@ const Index = () => {
               <div className="absolute -inset-1 bg-gradient-conic from-primary/60 via-primary-glow/60 to-secondary/60 rounded-3xl blur-sm opacity-60 group-hover:opacity-100 transition-opacity"></div>
               
               {/* Icon with enhanced styling */}
-              <div className="relative w-full h-full flex items-center justify-center rounded-3xl ring-4 ring-primary/30 group-hover:ring-primary/50 transition-all duration-500">
+              <div className="relative w-full h-full flex items-center justify-center rounded-3xl ring-4 ring-primary/30">
                 <Smartphone className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white drop-shadow-2xl group-hover:scale-110 transition-transform duration-300" />
               </div>
             </div>
