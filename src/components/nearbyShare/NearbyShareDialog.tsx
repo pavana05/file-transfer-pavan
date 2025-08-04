@@ -212,7 +212,7 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="w-[95vw] max-w-5xl h-[90vh] max-h-[900px] flex flex-col overflow-hidden bg-gradient-glass border border-border/50 backdrop-blur-xl">
+      <DialogContent className="w-[95vw] max-w-5xl h-[90vh] max-h-[900px] flex flex-col overflow-auto bg-gradient-glass border border-border/50 backdrop-blur-xl">
         <DialogHeader className="flex-shrink-0 px-6 pt-6 pb-4 border-b border-border/30">
           <DialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-3">
