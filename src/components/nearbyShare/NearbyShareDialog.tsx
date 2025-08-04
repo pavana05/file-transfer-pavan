@@ -245,7 +245,7 @@ const NearbyShareDialog: React.FC<NearbyShareDialogProps> = ({ trigger, files = 
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0 overflow-auto">
           {/* Stats Bar */}
           <div className="flex-shrink-0 px-6 py-3 bg-gradient-subtle border-b border-border/20">
             <div className="flex items-center justify-between text-xs">
