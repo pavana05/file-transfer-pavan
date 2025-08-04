@@ -102,6 +102,11 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Main Upload Component - Hero Section */}
+        <div className="mb-12 md:mb-16 px-4">
+          <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
+        </div>
+
         {/* Features Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-12 md:mb-16 px-4">
           <Card className="p-4 sm:p-6 lg:p-8 text-center hover:shadow-glass transition-all duration-500 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl group hover:scale-105">
@@ -157,8 +162,6 @@ const Index = () => {
           />
         </Card>
 
-        {/* Main Upload Component */}
-        <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
 
         {/* Technical Specifications */}
         <Card className="mt-12 md:mt-16 p-4 sm:p-6 lg:p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass mx-4">
