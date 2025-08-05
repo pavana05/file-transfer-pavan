@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Search, Filter, Grid, List, FolderPlus, Trash2, Download, Upload, Share, Package, Folder, FileX, Edit2, Plus, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,6 +47,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
   const [newFolderName, setNewFolderName] = useState('');
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
   const { toast } = useToast();
+  const uploadZoneRef = useRef<HTMLDivElement>(null);
 
   // Calculate upload statistics
   const stats = calculateUploadStats(files);
@@ -95,14 +96,14 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     setFiles(prev => [...prev, ...filesWithPreviews]);
     callbacks.onFileAdd?.(filesWithPreviews);
 
-    // Auto-scroll to show uploaded files and show upload button glow
+    // Auto-scroll to upload zone to guide users where to upload more files
     setTimeout(() => {
-      const fileListElement = document.querySelector('[data-file-list]');
-      if (fileListElement) {
-        fileListElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        // Fallback: scroll to bottom of page
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      if (uploadZoneRef.current) {
+        uploadZoneRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest'
+        });
       }
       
       // Show glow effect on upload button
@@ -389,11 +390,13 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
   return (
     <div className={cn("w-full max-w-6xl mx-auto space-y-6", className)}>
       {/* Upload Zone */}
-      <FileUploadZone
-        config={config}
-        onFilesAdded={handleFilesAdded}
-        className="mb-6"
-      />
+      <div ref={uploadZoneRef}>
+        <FileUploadZone
+          config={config}
+          onFilesAdded={handleFilesAdded}
+          className="mb-6"
+        />
+      </div>
 
       {/* Upload Stats */}
       {files.length > 0 && (
