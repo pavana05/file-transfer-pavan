@@ -271,28 +271,47 @@ export const FileList: React.FC<FileListProps> = ({
 
               {/* Share Link */}
               {file.status === 'completed' && file.url && (
-                <div className="mt-3 flex items-center gap-3 p-4 bg-muted/50 rounded-xl border border-border/50">
-                  <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
-                    <Share className="w-4 h-4 text-success" />
+                <div className="mt-3 group/share relative overflow-hidden">
+                  {/* Gradient background with subtle animation */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-success/5 via-success/10 to-success/5 rounded-xl opacity-80"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-xl transform -skew-x-12 translate-x-[-100%] group-hover/share:translate-x-[200%] transition-transform duration-1000"></div>
+                  
+                  <div className="relative flex items-center gap-3 p-4 border border-success/20 rounded-xl backdrop-blur-sm hover:border-success/40 transition-all duration-300 hover:shadow-lg hover:shadow-success/10">
+                    {/* Enhanced icon with glow effect */}
+                    <div className="relative">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-success to-success/80 flex items-center justify-center shadow-lg group-hover/share:shadow-success/25 transition-all duration-300 group-hover/share:scale-110">
+                        <Share className="w-5 h-5 text-white drop-shadow-sm" />
+                      </div>
+                      <div className="absolute inset-0 rounded-xl bg-success/20 blur-sm group-hover/share:bg-success/40 transition-all duration-300"></div>
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-foreground font-semibold text-sm block">Ready to share!</span>
+                        <div className="flex-1 h-px bg-gradient-to-r from-success/30 to-transparent"></div>
+                      </div>
+                      <div className="relative group/input">
+                        <input 
+                          type="text" 
+                          value={file.url} 
+                          readOnly 
+                          className="w-full bg-background/50 border border-border/30 rounded-lg px-3 py-2 text-foreground text-xs font-mono hover:border-success/30 transition-colors focus:outline-none focus:border-success/50 focus:ring-2 focus:ring-success/20"
+                        />
+                        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-success/5 to-transparent opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                      </div>
+                    </div>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyShareLink(file.url!)}
+                      className="h-10 px-4 border-success/30 hover:border-success/50 hover:bg-success/10 hover:text-success transition-all duration-300 hover:scale-105 hover:shadow-md group/copy relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-success/10 to-transparent opacity-0 group-hover/copy:opacity-100 transition-opacity duration-300"></div>
+                      <Copy className="w-4 h-4 mr-2 relative z-10" />
+                      <span className="relative z-10 font-medium">Copy Link</span>
+                    </Button>
                   </div>
-                  <div className="flex-1">
-                    <span className="text-foreground font-semibold text-sm block mb-1">Ready to share!</span>
-                    <input 
-                      type="text" 
-                      value={file.url} 
-                      readOnly 
-                      className="w-full bg-transparent border-none outline-none text-foreground text-xs font-mono"
-                    />
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyShareLink(file.url!)}
-                    className="h-8 sm:h-10 px-2 sm:px-4 hover:bg-accent text-xs sm:text-sm"
-                  >
-                    <Copy className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Copy</span>
-                  </Button>
                 </div>
               )}
 
