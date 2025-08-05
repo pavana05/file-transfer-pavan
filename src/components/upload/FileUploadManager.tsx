@@ -97,9 +97,9 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
     // Auto-scroll to show uploaded files and show upload button glow
     setTimeout(() => {
-      const fileListElement = document.querySelector('[data-file-list]');
-      if (fileListElement) {
-        fileListElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const fileManagementElement = document.querySelector('[data-file-management]');
+      if (fileManagementElement) {
+        fileManagementElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
         // Fallback: scroll to bottom of page
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
@@ -402,7 +402,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
       {/* File Management */}
       {files.length > 0 && (
-        <Card className="p-6">
+        <Card className="p-6" data-file-management>
           {/* Controls Bar */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             {/* Search */}
