@@ -402,87 +402,99 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
       {/* File Management */}
       {files.length > 0 && (
-        <Card className="p-6" data-file-management>
+        <Card className="p-3 sm:p-6" data-file-management>
           {/* Controls Bar */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
             {/* Search */}
-            <div className="relative flex-1">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search files..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 h-11 text-base"
               />
             </div>
 
-            {/* Filter */}
-            <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="w-full sm:w-48">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filter files" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Files</SelectItem>
-                <SelectItem value="images">Images</SelectItem>
-                <SelectItem value="documents">Documents</SelectItem>
-                <SelectItem value="videos">Videos</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="error">Failed</SelectItem>
-              </SelectContent>
-            </Select>
+            {/* Filter and View Mode */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Select value={filterType} onValueChange={setFilterType}>
+                <SelectTrigger className="h-11 text-base">
+                  <Filter className="w-4 h-4 mr-2 shrink-0" />
+                  <SelectValue placeholder="Filter files" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Files</SelectItem>
+                  <SelectItem value="images">Images</SelectItem>
+                  <SelectItem value="documents">Documents</SelectItem>
+                  <SelectItem value="videos">Videos</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="error">Failed</SelectItem>
+                </SelectContent>
+              </Select>
 
-            {/* View Mode */}
-            <div className="flex gap-1">
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-              >
-                <Grid className="w-4 h-4" />
-              </Button>
+              {/* View Mode */}
+              <div className="flex gap-1 sm:w-auto">
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'outline'}
+                  size="default"
+                  onClick={() => setViewMode('list')}
+                  className="flex-1 sm:flex-none h-11 px-4"
+                >
+                  <List className="w-4 h-4 mr-2 sm:mr-0" />
+                  <span className="sm:hidden">List</span>
+                </Button>
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'outline'}
+                  size="default"
+                  onClick={() => setViewMode('grid')}
+                  className="flex-1 sm:flex-none h-11 px-4"
+                >
+                  <Grid className="w-4 h-4 mr-2 sm:mr-0" />
+                  <span className="sm:hidden">Grid</span>
+                </Button>
+              </div>
             </div>
           </div>
 
           {/* Upload Buttons */}
           {!config.autoUpload && pendingCount > 0 && (
-            <div className="flex items-center gap-2 p-3 bg-upload-zone rounded-lg mb-4">
-              <span className="text-sm text-muted-foreground">
-                {pendingCount} file(s) ready to upload
-              </span>
-              <div className="flex gap-2 ml-auto">
+            <div className="p-3 sm:p-4 bg-upload-zone rounded-lg mb-4 sm:mb-6 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <span className="text-sm font-medium text-foreground">
+                  {pendingCount} file(s) ready to upload
+                </span>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <Button
                   onClick={handleUploadAll}
-                  size="sm"
+                  size="default"
                   variant="outline"
                   className={cn(
-                    "transition-all duration-300",
+                    "h-11 flex-1 sm:flex-none transition-all duration-300 text-base",
                     showUploadGlow && "ring-2 ring-primary ring-offset-2 bg-primary/10 shadow-glow animate-pulse"
                   )}
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   Upload Individual
                 </Button>
+                
                 {pendingCount > 1 && (
                   <Button
                     onClick={handleUploadAsCollection}
-                    size="sm"
+                    size="default"
+                    className="h-11 flex-1 sm:flex-none text-base"
                   >
                     <Package className="w-4 h-4 mr-2" />
                     Upload as Collection
                   </Button>
                 )}
+                
                 <NearbyShareDialog
                   trigger={
-                    <Button size="sm" variant="outline" className="gap-2">
+                    <Button size="default" variant="outline" className="h-11 flex-1 sm:flex-none gap-2 text-base">
                       <Smartphone className="w-4 h-4" />
                       Nearby Share
                     </Button>
@@ -495,15 +507,15 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
           {/* Bulk Actions */}
           {selectedFiles.length > 0 && (
-            <div className="flex items-center gap-2 p-3 bg-muted rounded-lg mb-4">
-              <span className="text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 sm:p-4 bg-muted rounded-lg mb-4 sm:mb-6">
+              <span className="text-sm font-medium text-foreground">
                 {selectedFiles.length} file(s) selected
               </span>
               <Button
                 variant="outline"
-                size="sm"
+                size="default"
                 onClick={handleDeleteSelected}
-                className="ml-auto"
+                className="w-full sm:w-auto sm:ml-auto h-11 text-base"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete Selected
@@ -513,9 +525,13 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
           {/* File List */}
           <Tabs value="files" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="files">Files ({filteredFiles.length})</TabsTrigger>
-              <TabsTrigger value="folders">Folders</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 h-11">
+              <TabsTrigger value="files" className="text-sm sm:text-base">
+                Files ({filteredFiles.length})
+              </TabsTrigger>
+              <TabsTrigger value="folders" className="text-sm sm:text-base">
+                Folders
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="files" className="mt-6">
@@ -532,10 +548,10 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
             <TabsContent value="folders" className="mt-6">
               <div className="space-y-4">
                 {/* Folder Actions */}
-                <div className="flex items-center gap-4 pb-4 border-b">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pb-4 border-b">
                   <Dialog open={isCreateFolderOpen} onOpenChange={setIsCreateFolderOpen}>
                     <DialogTrigger asChild>
-                      <Button size="sm" className="gap-2">
+                      <Button size="default" className="h-11 gap-2 text-base">
                         <Plus className="w-4 h-4" />
                         Create Folder
                       </Button>
@@ -557,13 +573,22 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                                 handleCreateFolder();
                               }
                             }}
+                            className="h-11 text-base"
                           />
                         </div>
-                        <div className="flex gap-2 pt-4">
-                          <Button onClick={handleCreateFolder} disabled={!newFolderName.trim()}>
+                        <div className="flex flex-col sm:flex-row gap-2 pt-4">
+                          <Button 
+                            onClick={handleCreateFolder} 
+                            disabled={!newFolderName.trim()}
+                            className="h-11 text-base"
+                          >
                             Create Folder
                           </Button>
-                          <Button variant="outline" onClick={() => setIsCreateFolderOpen(false)}>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => setIsCreateFolderOpen(false)}
+                            className="h-11 text-base"
+                          >
                             Cancel
                           </Button>
                         </div>
@@ -573,8 +598,8 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
                   {selectedFiles.length > 0 && (
                     <Select onValueChange={(folderId) => handleMoveFilesToFolder(selectedFiles, folderId === 'main' ? null : folderId)}>
-                      <SelectTrigger className="w-48">
-                        <span className="text-sm">Move {selectedFiles.length} file(s) to...</span>
+                      <SelectTrigger className="w-full sm:w-auto h-11 text-base">
+                        <span className="text-sm sm:text-base">Move {selectedFiles.length} file(s) to...</span>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="main">📁 Main Files</SelectItem>
@@ -590,41 +615,41 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
                 {/* Main Files (not in any folder) */}
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-4 rounded-lg border border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors cursor-pointer"
+                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-lg border border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors cursor-pointer touch-manipulation"
                        onClick={() => setSelectedFolder(null)}>
-                    <Folder className="w-8 h-8 text-muted-foreground" />
-                    <div className="flex-1">
-                      <h3 className="font-medium">📁 Main Files</h3>
-                      <p className="text-sm text-muted-foreground">
+                    <Folder className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-sm sm:text-base truncate">📁 Main Files</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {files.filter(f => !f.folderId).length} files
                       </p>
                     </div>
                     {!selectedFolder && (
-                      <div className="w-3 h-3 rounded-full bg-primary"></div>
+                      <div className="w-3 h-3 rounded-full bg-primary shrink-0"></div>
                     )}
                   </div>
 
                   {/* Custom Folders */}
                   {folders.map(folder => (
-                    <div key={folder.id} className="flex items-center gap-3 p-4 rounded-lg border border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors">
-                      <div className="flex items-center gap-3 flex-1 cursor-pointer"
+                    <div key={folder.id} className="flex items-center gap-3 p-3 sm:p-4 rounded-lg border border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 transition-colors">
+                      <div className="flex items-center gap-3 flex-1 cursor-pointer touch-manipulation min-w-0"
                            onClick={() => setSelectedFolder(folder.id)}>
-                        <Folder className="w-8 h-8 text-primary" />
-                        <div className="flex-1">
-                          <h3 className="font-medium">📁 {folder.name}</h3>
-                          <p className="text-sm text-muted-foreground">
+                        <Folder className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-sm sm:text-base truncate">📁 {folder.name}</h3>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">
                             {files.filter(f => f.folderId === folder.id).length} files • Created {folder.createdAt.toLocaleDateString()}
                           </p>
                         </div>
                         {selectedFolder === folder.id && (
-                          <div className="w-3 h-3 rounded-full bg-primary"></div>
+                          <div className="w-3 h-3 rounded-full bg-primary shrink-0"></div>
                         )}
                       </div>
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="default"
                         onClick={() => handleDeleteFolder(folder.id)}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        className="h-10 w-10 p-0 shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -632,27 +657,27 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                   ))}
 
                   {folders.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <FolderPlus className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p className="mb-2">No folders created yet</p>
-                      <p className="text-sm">Create folders to organize your files</p>
+                    <div className="text-center py-6 sm:py-8 text-muted-foreground">
+                      <FolderPlus className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 opacity-50" />
+                      <p className="mb-2 text-sm sm:text-base">No folders created yet</p>
+                      <p className="text-xs sm:text-sm">Create folders to organize your files</p>
                     </div>
                   )}
                 </div>
 
                 {/* Show files in selected folder */}
                 {selectedFolder && (
-                  <div className="mt-6 pt-6 border-t">
-                    <div className="flex items-center gap-2 mb-4">
+                  <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="default"
                         onClick={() => setSelectedFolder(null)}
-                        className="gap-2"
+                        className="h-10 gap-2 justify-start sm:justify-center text-sm sm:text-base"
                       >
                         ← Back to all folders
                       </Button>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-xs sm:text-sm text-muted-foreground px-2 sm:px-0">
                         Viewing: {folders.find(f => f.id === selectedFolder)?.name}
                       </span>
                     </div>
