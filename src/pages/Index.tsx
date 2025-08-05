@@ -150,8 +150,12 @@ const Index = () => {
             {/* Animated Background Pattern */}
             <div className="absolute inset-0 opacity-5 dark:opacity-10">
               <div className="absolute top-4 left-4 w-20 h-20 bg-primary/30 rounded-full blur-2xl animate-pulse"></div>
-              <div className="absolute bottom-4 right-4 w-32 h-32 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-              <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-accent/25 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+              <div className="absolute bottom-4 right-4 w-32 h-32 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{
+              animationDelay: '1s'
+            }}></div>
+              <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-accent/25 rounded-full blur-xl animate-pulse" style={{
+              animationDelay: '2s'
+            }}></div>
             </div>
 
             {/* Enhanced Icon Container */}
@@ -170,9 +174,7 @@ const Index = () => {
             {/* Enhanced Typography */}
             <div className="relative z-10 space-y-4 sm:space-y-6 mb-6 sm:mb-8">
               <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-                <span className="bg-gradient-to-r from-primary via-primary-glow to-secondary bg-clip-text text-transparent animate-fade-in">
-                  Nearby Share
-                </span>
+                <span className="bg-gradient-to-r from-primary via-primary-glow to-secondary bg-clip-text text-transparent animate-fade-in">Quick Share</span>
               </h3>
               <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary-glow rounded-full mx-auto opacity-60"></div>
               
@@ -184,18 +186,11 @@ const Index = () => {
 
             {/* Enhanced Call-to-Action */}
             <div className="relative z-10">
-              <NearbyShareDialog
-                trigger={
-                  <Button 
-                    size="lg" 
-                    className="relative px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-2xl bg-gradient-to-r from-primary via-primary-glow to-primary hover:from-primary-glow hover:via-primary hover:to-primary-glow shadow-xl hover:shadow-2xl hover:shadow-primary/25 border-2 border-primary/20 hover:border-primary/40 transition-all duration-500 transform hover:scale-105 group/btn overflow-hidden"
-                  >
+              <NearbyShareDialog trigger={<Button size="lg" className="relative px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-2xl bg-gradient-to-r from-primary via-primary-glow to-primary hover:from-primary-glow hover:via-primary hover:to-primary-glow shadow-xl hover:shadow-2xl hover:shadow-primary/25 border-2 border-primary/20 hover:border-primary/40 transition-all duration-500 transform hover:scale-105 group/btn overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-700 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000"></div>
                     <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 mr-2 relative z-10" />
-                    <span className="relative z-10">Start Nearby Share</span>
-                  </Button>
-                }
-              />
+                    <span className="relative z-10">Start Quick Share</span>
+                  </Button>} />
             </div>
 
             {/* Bottom accent line */}
