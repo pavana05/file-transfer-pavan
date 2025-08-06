@@ -206,23 +206,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         </div>
 
         {/* File Format Info */}
-        <div className="relative z-10 p-6 rounded-2xl bg-background/60 dark:bg-background/80 backdrop-blur-sm border border-border/30 dark:border-border/20 shadow-lg">
-          <div className="text-sm text-muted-foreground space-y-3">
-            
-            {mergedConfig.maxFileSize && <div className="flex items-center justify-center gap-2">
-                <span>Max size:</span> 
-                <span className="text-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">
-                  {(mergedConfig.maxFileSize / 1024 / 1024).toFixed(1)}MB
-                </span>
-              </div>}
-            {mergedConfig.maxFiles && mergedConfig.maxFiles > 1 && <div className="flex items-center justify-center gap-2">
-                <span>Max files:</span> 
-                <span className="text-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">
-                  {mergedConfig.maxFiles}
-                </span>
-              </div>}
-          </div>
-        </div>
+        
 
         {/* Error State */}
         {isDragReject && <div className="absolute inset-0 flex items-center justify-center bg-destructive/10 backdrop-blur-sm rounded-2xl border-2 border-dashed border-destructive">
