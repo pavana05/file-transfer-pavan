@@ -12,6 +12,33 @@ interface FileUploadZoneProps {
   className?: string;
 }
 
+// Default configuration that includes ZIP formats
+const defaultConfig: UploadConfig = {
+  maxFileSize: 100 * 1024 * 1024, // 100MB
+  acceptedTypes: [
+    'image/*',
+    'video/*',
+    'audio/*',
+    'text/*',
+    'application/pdf',
+    'application/zip',
+    'application/x-zip-compressed',
+    'application/x-rar-compressed',
+    'application/x-7z-compressed',
+    'application/x-tar',
+    'application/gzip'
+  ],
+  allowedExtensions: [
+    'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg',
+    'mp4', 'avi', 'mov', 'wmv', 'flv', 'webm',
+    'mp3', 'wav', 'flac', 'aac', 'ogg',
+    'txt', 'doc', 'docx', 'pdf', 'rtf',
+    'zip', 'rar', '7z', 'tar', 'gz', 'bz2'
+  ],
+  enablePreview: true,
+  autoUpload: false
+};
+
 export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   config = {},
   onFilesAdded,
@@ -22,24 +49,36 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
 
+  // Merge with default config
+  const mergedConfig = { ...defaultConfig, ...config };
+
   const validateFile = useCallback((file: File): FileValidationResult => {
     const errors: string[] = [];
     const warnings: string[] = [];
 
     // Check file size
-    if (config.maxFileSize && file.size > config.maxFileSize) {
-      errors.push(`File size exceeds ${(config.maxFileSize / 1024 / 1024).toFixed(1)}MB limit`);
+    if (mergedConfig.maxFileSize && file.size > mergedConfig.maxFileSize) {
+      errors.push(`File size exceeds ${(mergedConfig.maxFileSize / 1024 / 1024).toFixed(1)}MB limit`);
     }
 
     // Check file type
-    if (config.acceptedTypes && !config.acceptedTypes.includes(file.type)) {
-      errors.push(`File type ${file.type} is not supported`);
+    if (mergedConfig.acceptedTypes && mergedConfig.acceptedTypes.length > 0) {
+      const isTypeAccepted = mergedConfig.acceptedTypes.some(acceptedType => {
+        if (acceptedType.endsWith('/*')) {
+          return file.type.startsWith(acceptedType.slice(0, -1));
+        }
+        return file.type === acceptedType;
+      });
+
+      if (!isTypeAccepted) {
+        errors.push(`File type ${file.type} is not supported`);
+      }
     }
 
     // Check file extension
-    if (config.allowedExtensions) {
+    if (mergedConfig.allowedExtensions && mergedConfig.allowedExtensions.length > 0) {
       const extension = file.name.split('.').pop()?.toLowerCase();
-      if (extension && !config.allowedExtensions.includes(extension)) {
+      if (extension && !mergedConfig.allowedExtensions.includes(extension)) {
         errors.push(`File extension .${extension} is not allowed`);
       }
     }
@@ -49,7 +88,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       errors,
       warnings
     };
-  }, [config]);
+  }, [mergedConfig]);
 
   const createUploadedFile = useCallback((file: File): UploadedFile => {
     const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -89,10 +128,10 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
     onDragEnter: () => setIsDragActive(true),
     onDragLeave: () => setIsDragActive(false),
     disabled,
-    multiple: config.maxFiles !== 1,
-    maxFiles: config.maxFiles,
-    accept: config.acceptedTypes ? 
-      config.acceptedTypes.reduce((acc, type) => ({ ...acc, [type]: [] }), {}) : 
+    multiple: mergedConfig.maxFiles !== 1,
+    maxFiles: mergedConfig.maxFiles,
+    accept: mergedConfig.acceptedTypes ? 
+      mergedConfig.acceptedTypes.reduce((acc, type) => ({ ...acc, [type]: [] }), {}) : 
       undefined
   });
 
@@ -127,15 +166,25 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
     if (type.startsWith('image/')) return Image;
     if (type.startsWith('video/')) return Video;
     if (type.startsWith('audio/')) return Music;
-    if (type.includes('zip') || type.includes('rar') || type.includes('tar')) return Archive;
+    if (type.includes('zip') || type.includes('rar') || type.includes('tar') || type.includes('7z') || type.includes('gzip')) return Archive;
     return FileText;
   };
 
   const getSupportedFormats = () => {
-    if (config.acceptedTypes) {
-      return config.acceptedTypes.map(type => type.split('/')[1]).join(', ').toUpperCase();
+    if (mergedConfig.acceptedTypes && mergedConfig.acceptedTypes.length > 0) {
+      const formats = mergedConfig.acceptedTypes
+        .map(type => {
+          if (type.includes('/')) {
+            return type.split('/')[1];
+          }
+          return type;
+        })
+        .filter(format => format !== '*')
+        .join(', ')
+        .toUpperCase();
+      return formats || 'All file types';
     }
-    return 'All file types';
+    return 'All file types including ZIP archives';
   };
 
   return (
@@ -195,7 +244,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
           <p className="text-muted-foreground text-lg leading-relaxed max-w-md mx-auto">
             {isDragActive && !isDragReject
               ? "Release to upload your files instantly"
-              : "Drag and drop files here, or use the buttons below"
+              : "Drag and drop files here, including ZIP archives, or use the buttons below"
             }
           </p>
         </div>
@@ -239,19 +288,23 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         {/* File Format Info */}
         <div className="relative z-10 p-6 rounded-2xl bg-background/60 dark:bg-background/80 backdrop-blur-sm border border-border/30 dark:border-border/20 shadow-lg">
           <div className="text-sm text-muted-foreground space-y-3">
-            {config.maxFileSize && (
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Archive className="w-4 h-4 text-primary" />
+              <span className="font-medium text-foreground">Supports ZIP, RAR, 7Z archives</span>
+            </div>
+            {mergedConfig.maxFileSize && (
               <div className="flex items-center justify-center gap-2">
                 <span>Max size:</span> 
                 <span className="text-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">
-                  {(config.maxFileSize / 1024 / 1024).toFixed(1)}MB
+                  {(mergedConfig.maxFileSize / 1024 / 1024).toFixed(1)}MB
                 </span>
               </div>
             )}
-            {config.maxFiles && config.maxFiles > 1 && (
+            {mergedConfig.maxFiles && mergedConfig.maxFiles > 1 && (
               <div className="flex items-center justify-center gap-2">
                 <span>Max files:</span> 
                 <span className="text-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">
-                  {config.maxFiles}
+                  {mergedConfig.maxFiles}
                 </span>
               </div>
             )}
@@ -266,7 +319,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
                 <FileText className="w-8 h-8 text-destructive" />
               </div>
               <p className="text-destructive font-semibold text-lg">Invalid file type</p>
-              <p className="text-destructive/70 text-sm mt-1">Please upload a supported file format</p>
+              <p className="text-destructive/70 text-sm mt-1">Please upload a supported file format including ZIP archives</p>
             </div>
           </div>
         )}
