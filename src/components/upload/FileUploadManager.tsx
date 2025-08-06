@@ -485,6 +485,20 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                   </Button>
                 </div>
               </div>
+
+              {/* Select All Button */}
+              {filteredFiles.length > 0 && (
+                <div className="flex justify-start">
+                  <Button
+                    variant="outline"
+                    size="default"
+                    onClick={handleSelectAll}
+                    className="h-11 px-6 font-medium border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all duration-200"
+                  >
+                    Select All ({filteredFiles.length})
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Enhanced Upload Buttons Section */}
