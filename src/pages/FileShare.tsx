@@ -8,6 +8,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { formatFileSize } from '@/lib/file-utils';
 import { UploadService } from '@/services/uploadService';
 import { useToast } from '@/hooks/use-toast';
+import FilePreview from '@/components/filePreview/FilePreview';
 
 interface FileInfo {
   id: string;
@@ -177,13 +178,15 @@ const FileShare = () => {
           
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row items-start gap-6">
-              {/* Enhanced File Icon */}
-              <div className="relative group/icon">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/25 group-hover/icon:scale-105 transition-transform duration-200">
-                  <File className="w-10 h-10 text-white" />
-                </div>
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 to-transparent blur-md" />
-              </div>
+              {/* Enhanced File Preview */}
+              {fileInfo && (
+                <FilePreview
+                  fileName={fileInfo.original_name}
+                  fileType={fileInfo.file_type}
+                  storagePath={fileInfo.storage_path}
+                  fileSize={fileInfo.file_size}
+                />
+              )}
 
               {/* Enhanced File Details */}
               <div className="flex-1 min-w-0 space-y-6">
