@@ -135,83 +135,142 @@ const FileShare = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Theme Toggle */}
-      <div className="fixed top-4 right-4 z-50">
-        <ThemeToggle />
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Enhanced Background with Multiple Gradients */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-background/95" />
+      <div className="absolute inset-0 bg-gradient-to-tl from-primary/5 via-transparent to-accent/10" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-primary/20 to-transparent rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-radial from-accent/15 to-transparent rounded-full blur-3xl" />
+      
+      {/* Enhanced Theme Toggle */}
+      <div className="fixed top-6 right-6 z-50">
+        <div className="backdrop-blur-md bg-background/80 rounded-xl border border-border/50 p-1">
+          <ThemeToggle />
+        </div>
       </div>
       
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
-        {/* Header */}
-        <div className="mb-8">
-          <Link to="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+      <div className="relative z-10 container mx-auto px-4 py-12 max-w-3xl">
+        {/* Enhanced Header */}
+        <div className="mb-12 text-center">
+          <Link 
+            to="/" 
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors duration-200 mb-6 group"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
             Back to Upload
           </Link>
-          <h1 className="text-3xl font-bold text-foreground">Shared File</h1>
-          <p className="text-muted-foreground mt-2">Download the file shared with you</p>
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+              Shared File
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-md mx-auto">
+              Securely download the file that has been shared with you
+            </p>
+          </div>
         </div>
 
-        {/* File Card */}
-        <Card className="p-6">
-          <div className="flex items-start gap-4">
-            {/* File Icon */}
-            <div className="w-16 h-16 rounded-xl bg-gradient-primary flex items-center justify-center flex-shrink-0">
-              <File className="w-8 h-8 text-white" />
-            </div>
-
-            {/* File Details */}
-            <div className="flex-1 min-w-0">
-              <h2 className="text-lg font-semibold text-foreground mb-2 break-words">
-                {fileInfo?.original_name}
-              </h2>
-              
-              <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-4">
-                <span>{formatFileSize(fileInfo?.file_size || 0)}</span>
-                <span>•</span>
-                <span>{fileInfo?.file_type}</span>
-                <span>•</span>
-                <span>Uploaded {new Date(fileInfo?.upload_date || '').toLocaleDateString()}</span>
+        {/* Enhanced File Card */}
+        <Card className="relative p-8 backdrop-blur-sm bg-card/95 border-border/50 shadow-lg shadow-primary/5 overflow-hidden group hover:shadow-xl hover:shadow-primary/10 transition-all duration-300">
+          {/* Card Background Effects */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-radial from-primary/20 to-transparent rounded-full blur-2xl" />
+          
+          <div className="relative z-10">
+            <div className="flex flex-col md:flex-row items-start gap-6">
+              {/* Enhanced File Icon */}
+              <div className="relative group/icon">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/25 group-hover/icon:scale-105 transition-transform duration-200">
+                  <File className="w-10 h-10 text-white" />
+                </div>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 to-transparent blur-md" />
               </div>
 
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary">
-                  {fileInfo?.download_count} downloads
-                </Badge>
-              </div>
+              {/* Enhanced File Details */}
+              <div className="flex-1 min-w-0 space-y-6">
+                <div className="space-y-3">
+                  <h2 className="text-2xl font-bold text-foreground break-words leading-tight">
+                    {fileInfo?.original_name}
+                  </h2>
+                  
+                  <div className="flex flex-wrap gap-4 text-muted-foreground">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
+                      <span className="text-sm font-medium">{formatFileSize(fileInfo?.file_size || 0)}</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
+                      <span className="text-sm font-medium">{fileInfo?.file_type}</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
+                      <span className="text-sm font-medium">
+                        {new Date(fileInfo?.upload_date || '').toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
-                <Button 
-                  onClick={handleDownload} 
-                  disabled={downloading}
-                  className="flex-1 sm:flex-none"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  {downloading ? 'Downloading...' : 'Download File'}
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  onClick={copyShareLink}
-                  className="flex-1 sm:flex-none"
-                >
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Copy Link
-                </Button>
+                  <div className="flex flex-wrap gap-3">
+                    <Badge 
+                      variant="secondary" 
+                      className="px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20 text-foreground font-medium"
+                    >
+                      {fileInfo?.download_count} downloads
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Enhanced Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button 
+                    onClick={handleDownload} 
+                    disabled={downloading}
+                    size="lg"
+                    className="flex-1 sm:flex-none h-12 px-8 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 hover:scale-105"
+                  >
+                    <Download className="w-5 h-5 mr-3" />
+                    {downloading ? 'Downloading...' : 'Download File'}
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    onClick={copyShareLink}
+                    size="lg"
+                    className="flex-1 sm:flex-none h-12 px-8 border-2 border-border/60 hover:border-primary/30 hover:bg-primary/5 backdrop-blur-sm transition-all duration-200 hover:scale-105 font-semibold"
+                  >
+                    <Share2 className="w-5 h-5 mr-3" />
+                    Copy Link
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
         </Card>
 
-        {/* Info Card */}
-        <Card className="mt-6 p-6">
-          <h3 className="font-semibold text-foreground mb-3">About This Service</h3>
-          <div className="text-sm text-muted-foreground space-y-2">
-            <p>• Files are securely stored and can be accessed via this unique link</p>
-            <p>• This link can be shared with anyone you trust</p>
-            <p>• Download count is tracked for transparency</p>
-            <p>• Files are scanned for security before sharing</p>
+        {/* Enhanced Info Card */}
+        <Card className="mt-8 p-8 backdrop-blur-sm bg-card/95 border-border/50 shadow-lg shadow-accent/5 hover:shadow-xl hover:shadow-accent/10 transition-all duration-300">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center">
+                <File className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Secure File Sharing</h3>
+            </div>
+            
+            <div className="grid sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
+                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                <p>Files are securely stored with enterprise-grade encryption</p>
+              </div>
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
+                <div className="w-2 h-2 rounded-full bg-accent mt-2 flex-shrink-0" />
+                <p>Unique secure links can be shared with trusted contacts</p>
+              </div>
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
+                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                <p>Download activity is monitored for transparency</p>
+              </div>
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
+                <div className="w-2 h-2 rounded-full bg-accent mt-2 flex-shrink-0" />
+                <p>All files undergo automated security scanning</p>
+              </div>
+            </div>
           </div>
         </Card>
       </div>
