@@ -5,6 +5,7 @@ export interface FileUploadResult {
   success: boolean;
   shareUrl?: string;
   collectionUrl?: string;
+  sharePin?: string;
   error?: string;
 }
 
@@ -49,6 +50,16 @@ export class UploadService {
 
         onProgress?.(100);
 
+        // Generate PIN for the file
+        const { data: pinData, error: pinError } = await supabase
+          .rpc('generate_share_pin');
+        
+        if (pinError) {
+          throw new Error(`PIN generation error: ${pinError.message}`);
+        }
+
+        const sharePin = pinData;
+
         // Save file metadata to database
         const { error: dbError } = await supabase
           .from('uploaded_files')
@@ -58,7 +69,8 @@ export class UploadService {
             file_size: file.size,
             file_type: file.type,
             storage_path: storagePath,
-            share_token: shareToken
+            share_token: shareToken,
+            share_pin: sharePin
           });
 
         if (dbError) {
@@ -72,7 +84,8 @@ export class UploadService {
 
         return {
           success: true,
-          shareUrl
+          shareUrl,
+          sharePin
         };
       } finally {
         clearInterval(progressInterval);
@@ -162,6 +175,16 @@ export class UploadService {
 
           uploadedFiles.push(storagePath);
 
+            // Generate PIN for the file
+            const { data: pinData, error: pinError } = await supabase
+              .rpc('generate_share_pin');
+            
+            if (pinError) {
+              throw new Error(`PIN generation error: ${pinError.message}`);
+            }
+
+            const sharePin = pinData;
+
             // Save file metadata linked to collection
             const { error: dbError } = await supabase
               .from('uploaded_files')
@@ -172,6 +195,7 @@ export class UploadService {
                 file_type: file.type,
                 storage_path: storagePath,
                 share_token: shareToken,
+                share_pin: sharePin,
                 collection_id: collectionId
               });
 
@@ -225,6 +249,20 @@ export class UploadService {
       .from('uploaded_files')
       .select('*')
       .eq('share_token', shareToken)
+      .single();
+
+    if (error || !data) {
+      throw new Error('File not found');
+    }
+
+    return data;
+  }
+
+  static async getFileInfoByPin(pin: string) {
+    const { data, error } = await supabase
+      .from('uploaded_files')
+      .select('*')
+      .eq('share_pin', pin)
       .single();
 
     if (error || !data) {

@@ -16,6 +16,7 @@ import { calculateUploadStats, generateFilePreview, detectDuplicateFiles } from 
 import { useToast } from '@/hooks/use-toast';
 import { UploadService } from '@/services/uploadService';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
+import UploadSuccessDialog from './UploadSuccessDialog';
 
 interface FileFolder {
   id: string;
@@ -46,6 +47,17 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
   const [showUploadGlow, setShowUploadGlow] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState<{
+    isOpen: boolean;
+    shareUrl: string;
+    sharePin?: string;
+    fileName: string;
+  }>({
+    isOpen: false,
+    shareUrl: '',
+    sharePin: '',
+    fileName: ''
+  });
   const { toast } = useToast();
 
   // Calculate upload statistics
@@ -154,9 +166,12 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
         const completedFile = { ...file, url: result.shareUrl };
         callbacks.onUploadComplete?.(completedFile);
 
-        toast({
-          title: "Upload successful!",
-          description: "File uploaded and share link generated.",
+        // Show success dialog with PIN
+        setUploadSuccess({
+          isOpen: true,
+          shareUrl: result.shareUrl || '',
+          sharePin: result.sharePin || '',
+          fileName: file.name
         });
       } else {
         throw new Error(result.error || 'Upload failed');
@@ -770,6 +785,15 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
           </div>
         </Card>
       )}
+      
+      {/* Upload Success Dialog */}
+      <UploadSuccessDialog
+        isOpen={uploadSuccess.isOpen}
+        onClose={() => setUploadSuccess(prev => ({ ...prev, isOpen: false }))}
+        shareUrl={uploadSuccess.shareUrl}
+        sharePin={uploadSuccess.sharePin}
+        fileName={uploadSuccess.fileName}
+      />
     </div>
   );
 };

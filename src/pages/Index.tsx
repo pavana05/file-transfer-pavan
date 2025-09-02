@@ -1,10 +1,10 @@
 import { FileUploadManager } from '@/components/upload/FileUploadManager';
-import { Upload, Shield, Zap, Users, Smartphone } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
-import { Button } from '@/components/ui/button';
 const Index = () => {
   const uploadConfig = {
     maxFileSize: 10 * 1024 * 1024 * 1024,
@@ -99,6 +99,21 @@ const Index = () => {
               <Users className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
               <span className="font-medium whitespace-nowrap">Multi-user Ready</span>
             </Badge>
+          </div>
+
+          {/* PIN Access Section */}
+          <div className="text-center mb-8 md:mb-10">
+            <p className="text-sm text-muted-foreground mb-4">
+              Have a 4-digit PIN from someone? Access their file directly:
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => window.open('/pin', '_blank')}
+              className="h-11 px-6 border-2 border-primary/30 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
+            >
+              <KeyRound className="w-4 h-4 mr-2" />
+              Access with PIN
+            </Button>
           </div>
         </div>
 
