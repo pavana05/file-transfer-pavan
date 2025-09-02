@@ -119,18 +119,52 @@ const FileShare = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
-        <Card className="p-8 text-center max-w-md">
-          <File className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-          <h1 className="text-xl font-semibold text-foreground mb-2">File Not Found</h1>
-          <p className="text-muted-foreground mb-6">{error}</p>
-          <Link to="/">
-            <Button>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Upload
-            </Button>
-          </Link>
-        </Card>
+      <div className="min-h-screen relative overflow-hidden">
+        {/* Enhanced Background with Multiple Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-background/95" />
+        <div className="absolute inset-0 bg-gradient-to-tl from-destructive/5 via-transparent to-muted/10" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-destructive/10 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-radial from-muted/15 to-transparent rounded-full blur-3xl" />
+        
+        <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+          <Card className="relative p-12 text-center max-w-lg backdrop-blur-sm bg-card/95 border-border/50 shadow-2xl shadow-destructive/10 overflow-hidden group hover:shadow-3xl hover:shadow-destructive/15 transition-all duration-500">
+            {/* Card Background Effects */}
+            <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-muted/5 opacity-50" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-radial from-destructive/15 to-transparent rounded-full blur-2xl" />
+            
+            <div className="relative z-10 space-y-8">
+              {/* Enhanced Icon */}
+              <div className="relative">
+                <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-destructive/10 to-muted/10 border border-destructive/20 flex items-center justify-center backdrop-blur-sm">
+                  <File className="w-12 h-12 text-destructive/70" />
+                </div>
+                <div className="absolute inset-0 w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-destructive/5 to-transparent animate-pulse" />
+              </div>
+
+              {/* Enhanced Typography */}
+              <div className="space-y-4">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                  File Not Found
+                </h1>
+                <p className="text-lg text-muted-foreground leading-relaxed max-w-sm mx-auto">
+                  {error}
+                </p>
+                <div className="w-16 h-0.5 bg-gradient-to-r from-destructive/50 to-transparent mx-auto" />
+              </div>
+
+              {/* Enhanced Button */}
+              <Link to="/">
+                <Button 
+                  size="lg"
+                  className="h-12 px-8 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 hover:scale-105"
+                >
+                  <ArrowLeft className="w-5 h-5 mr-3" />
+                  Back to Upload
+                </Button>
+              </Link>
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
