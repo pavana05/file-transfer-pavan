@@ -115,6 +115,66 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_collection_by_token: {
+        Args: { p_share_token: string }
+        Returns: {
+          collection_name: string
+          collection_size: number
+          created_date: string
+          description: string | null
+          download_count: number
+          id: string
+          share_token: string
+        }[]
+      }
+      get_file_by_pin: {
+        Args: { p_share_pin: string }
+        Returns: {
+          collection_id: string | null
+          download_count: number
+          file_size: number
+          file_type: string
+          filename: string
+          id: string
+          original_name: string
+          share_pin: string | null
+          share_token: string
+          storage_path: string
+          upload_date: string
+        }[]
+      }
+      get_file_by_token: {
+        Args: { p_share_token: string }
+        Returns: {
+          collection_id: string | null
+          download_count: number
+          file_size: number
+          file_type: string
+          filename: string
+          id: string
+          original_name: string
+          share_pin: string | null
+          share_token: string
+          storage_path: string
+          upload_date: string
+        }[]
+      }
+      get_files_by_collection_token: {
+        Args: { p_collection_token: string }
+        Returns: {
+          collection_id: string | null
+          download_count: number
+          file_size: number
+          file_type: string
+          filename: string
+          id: string
+          original_name: string
+          share_pin: string | null
+          share_token: string
+          storage_path: string
+          upload_date: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

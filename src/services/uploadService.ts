@@ -246,79 +246,68 @@ export class UploadService {
 
   static async getFileInfo(shareToken: string) {
     const { data, error } = await supabase
-      .from('uploaded_files')
-      .select('*')
-      .eq('share_token', shareToken)
-      .single();
+      .rpc('get_file_by_token', { p_share_token: shareToken });
 
-    if (error || !data) {
+    if (error || !data || data.length === 0) {
       throw new Error('File not found');
     }
 
-    return data;
+    return data[0];
   }
 
   static async getFileInfoByPin(pin: string) {
     const { data, error } = await supabase
-      .from('uploaded_files')
-      .select('*')
-      .eq('share_pin', pin)
-      .single();
+      .rpc('get_file_by_pin', { p_share_pin: pin });
 
-    if (error || !data) {
+    if (error || !data || data.length === 0) {
       throw new Error('File not found');
     }
 
-    return data;
+    return data[0];
   }
 
   static async getCollectionInfo(shareToken: string): Promise<CollectionInfo> {
     const { data: collectionData, error: collectionError } = await supabase
-      .from('file_collections')
-      .select('*')
-      .eq('share_token', shareToken)
-      .single();
+      .rpc('get_collection_by_token', { p_share_token: shareToken });
 
-    if (collectionError || !collectionData) {
+    if (collectionError || !collectionData || collectionData.length === 0) {
       throw new Error('Collection not found');
     }
 
-    // Get file count
-    const { count } = await supabase
-      .from('uploaded_files')
-      .select('id', { count: 'exact', head: true })
-      .eq('collection_id', collectionData.id);
+    const collection = collectionData[0];
+
+    // Get file count using the secure function
+    const { data: filesData, error: filesError } = await supabase
+      .rpc('get_files_by_collection_token', { p_collection_token: shareToken });
+
+    const fileCount = filesError ? 0 : (filesData?.length || 0);
 
     return {
-      ...collectionData,
-      file_count: count || 0
+      ...collection,
+      file_count: fileCount
     };
   }
 
   static async getCollectionFiles(shareToken: string): Promise<FileCollection> {
     const { data: collectionData, error: collectionError } = await supabase
-      .from('file_collections')
-      .select('*')
-      .eq('share_token', shareToken)
-      .single();
+      .rpc('get_collection_by_token', { p_share_token: shareToken });
 
-    if (collectionError || !collectionData) {
+    if (collectionError || !collectionData || collectionData.length === 0) {
       throw new Error('Collection not found');
     }
 
-    // Get all files in the collection
+    const collection = collectionData[0];
+
+    // Get all files in the collection using secure function
     const { data: filesData, error: filesError } = await supabase
-      .from('uploaded_files')
-      .select('*')
-      .eq('collection_id', collectionData.id)
-      .order('upload_date', { ascending: true });
+      .rpc('get_files_by_collection_token', { p_collection_token: shareToken });
 
     if (filesError) {
       throw new Error('Failed to load collection files');
     }
 
     return {
-      ...collectionData,
+      ...collection,
       files: filesData || []
     };
   }
