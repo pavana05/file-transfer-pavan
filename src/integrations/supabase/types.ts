@@ -99,6 +99,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_file: {
+        Args: {
+          p_collection_id?: string
+          p_share_pin?: string
+          p_share_token?: string
+        }
+        Returns: boolean
+      }
       generate_share_pin: {
         Args: Record<PropertyKey, never>
         Returns: string
