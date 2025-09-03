@@ -245,69 +245,90 @@ export class UploadService {
   }
 
   static async getFileInfo(shareToken: string) {
+    // Try direct query first (more efficient)
     const { data, error } = await supabase
-      .rpc('get_file_by_token', { p_share_token: shareToken });
+      .from('uploaded_files')
+      .select('*')
+      .eq('share_token', shareToken)
+      .maybeSingle();
 
-    if (error || !data || data.length === 0) {
+    if (error) {
       throw new Error('File not found');
     }
 
-    return data[0];
+    if (!data) {
+      throw new Error('File not found');
+    }
+
+    return data;
   }
 
   static async getFileInfoByPin(pin: string) {
+    // Try direct query first (more efficient)
     const { data, error } = await supabase
-      .rpc('get_file_by_pin', { p_share_pin: pin });
+      .from('uploaded_files')
+      .select('*')
+      .eq('share_pin', pin)
+      .maybeSingle();
 
-    if (error || !data || data.length === 0) {
+    if (error) {
       throw new Error('File not found');
     }
 
-    return data[0];
+    if (!data) {
+      throw new Error('File not found');
+    }
+
+    return data;
   }
 
   static async getCollectionInfo(shareToken: string): Promise<CollectionInfo> {
     const { data: collectionData, error: collectionError } = await supabase
-      .rpc('get_collection_by_token', { p_share_token: shareToken });
+      .from('file_collections')
+      .select('*')
+      .eq('share_token', shareToken)
+      .maybeSingle();
 
-    if (collectionError || !collectionData || collectionData.length === 0) {
+    if (collectionError || !collectionData) {
       throw new Error('Collection not found');
     }
 
-    const collection = collectionData[0];
-
-    // Get file count using the secure function
-    const { data: filesData, error: filesError } = await supabase
-      .rpc('get_files_by_collection_token', { p_collection_token: shareToken });
-
-    const fileCount = filesError ? 0 : (filesData?.length || 0);
+    // Get file count
+    const { count } = await supabase
+      .from('uploaded_files')
+      .select('id', { count: 'exact', head: true })
+      .eq('collection_id', collectionData.id);
 
     return {
-      ...collection,
-      file_count: fileCount
+      ...collectionData,
+      file_count: count || 0
     };
   }
 
   static async getCollectionFiles(shareToken: string): Promise<FileCollection> {
     const { data: collectionData, error: collectionError } = await supabase
-      .rpc('get_collection_by_token', { p_share_token: shareToken });
+      .from('file_collections')
+      .select('*')
+      .eq('share_token', shareToken)
+      .maybeSingle();
 
-    if (collectionError || !collectionData || collectionData.length === 0) {
+    if (collectionError || !collectionData) {
       throw new Error('Collection not found');
     }
 
-    const collection = collectionData[0];
-
-    // Get all files in the collection using secure function
+    // Get all files in the collection
     const { data: filesData, error: filesError } = await supabase
-      .rpc('get_files_by_collection_token', { p_collection_token: shareToken });
+      .from('uploaded_files')
+      .select('*')
+      .eq('collection_id', collectionData.id)
+      .order('upload_date', { ascending: true });
 
     if (filesError) {
       throw new Error('Failed to load collection files');
     }
 
     return {
-      ...collection,
+      ...collectionData,
       files: filesData || []
     };
   }
@@ -321,20 +342,32 @@ export class UploadService {
   }
 
   static async incrementDownloadCount(shareToken: string) {
-    const { error } = await supabase
-      .rpc('increment_file_download_count', { p_share_token: shareToken });
-    
-    if (error) {
-      console.warn('Failed to increment download count:', error.message);
+    const { data, error } = await supabase
+      .from('uploaded_files')
+      .select('download_count')
+      .eq('share_token', shareToken)
+      .maybeSingle();
+
+    if (!error && data) {
+      await supabase
+        .from('uploaded_files')
+        .update({ download_count: data.download_count + 1 })
+        .eq('share_token', shareToken);
     }
   }
 
   static async incrementCollectionDownloadCount(shareToken: string) {
-    const { error } = await supabase
-      .rpc('increment_collection_download_count', { p_share_token: shareToken });
-    
-    if (error) {
-      console.warn('Failed to increment collection download count:', error.message);
+    const { data, error } = await supabase
+      .from('file_collections')
+      .select('download_count')
+      .eq('share_token', shareToken)
+      .maybeSingle();
+
+    if (!error && data) {
+      await supabase
+        .from('file_collections')
+        .update({ download_count: data.download_count + 1 })
+        .eq('share_token', shareToken);
     }
   }
 
