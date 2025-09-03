@@ -175,6 +175,14 @@ export type Database = {
           upload_date: string
         }[]
       }
+      increment_collection_download_count: {
+        Args: { p_share_token: string }
+        Returns: boolean
+      }
+      increment_file_download_count: {
+        Args: { p_share_token: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

@@ -321,32 +321,20 @@ export class UploadService {
   }
 
   static async incrementDownloadCount(shareToken: string) {
-    const { data, error } = await supabase
-      .from('uploaded_files')
-      .select('download_count')
-      .eq('share_token', shareToken)
-      .single();
-
-    if (!error && data) {
-      await supabase
-        .from('uploaded_files')
-        .update({ download_count: data.download_count + 1 })
-        .eq('share_token', shareToken);
+    const { error } = await supabase
+      .rpc('increment_file_download_count', { p_share_token: shareToken });
+    
+    if (error) {
+      console.warn('Failed to increment download count:', error.message);
     }
   }
 
   static async incrementCollectionDownloadCount(shareToken: string) {
-    const { data, error } = await supabase
-      .from('file_collections')
-      .select('download_count')
-      .eq('share_token', shareToken)
-      .single();
-
-    if (!error && data) {
-      await supabase
-        .from('file_collections')
-        .update({ download_count: data.download_count + 1 })
-        .eq('share_token', shareToken);
+    const { error } = await supabase
+      .rpc('increment_collection_download_count', { p_share_token: shareToken });
+    
+    if (error) {
+      console.warn('Failed to increment collection download count:', error.message);
     }
   }
 
