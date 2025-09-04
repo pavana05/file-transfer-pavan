@@ -1,11 +1,13 @@
 import { FileUploadManager } from '@/components/upload/FileUploadManager';
-import { Upload, Shield, Zap, Users, Smartphone, KeyRound } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { useAuth } from '@/contexts/AuthContext';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 const Index = () => {
+  const { user, signOut } = useAuth();
   const uploadConfig = {
     maxFileSize: 10 * 1024 * 1024 * 1024,
     // 10GB for large files and folders
@@ -68,8 +70,22 @@ const Index = () => {
       
       {/* Content */}
       <div className="relative z-10 container mx-auto px-2 sm:px-4 py-6 sm:py-8 lg:py-12">
-        {/* Theme Toggle */}
-        <div className="fixed top-4 right-4 z-50">
+        {/* Header with Theme Toggle and User Info */}
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-2">
+            <User className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-foreground truncate max-w-[150px]">
+              {user?.email}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={signOut}
+              className="h-6 px-2 text-xs hover:bg-destructive/10 hover:text-destructive"
+            >
+              <LogOut className="w-3 h-3" />
+            </Button>
+          </div>
           <ThemeToggle />
         </div>
         <div className="text-center mb-12 md:mb-16 animate-fade-in px-4">

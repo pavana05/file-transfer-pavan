@@ -23,6 +23,7 @@ export type Database = {
           download_count: number
           id: string
           share_token: string
+          user_id: string
         }
         Insert: {
           collection_name?: string
@@ -32,6 +33,7 @@ export type Database = {
           download_count?: number
           id?: string
           share_token?: string
+          user_id: string
         }
         Update: {
           collection_name?: string
@@ -41,6 +43,34 @@ export type Database = {
           download_count?: number
           id?: string
           share_token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -57,6 +87,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date: string
+          user_id: string
         }
         Insert: {
           collection_id?: string | null
@@ -70,6 +101,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date?: string
+          user_id: string
         }
         Update: {
           collection_id?: string | null
@@ -83,6 +115,7 @@ export type Database = {
           share_token?: string
           storage_path?: string
           upload_date?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -125,6 +158,7 @@ export type Database = {
           download_count: number
           id: string
           share_token: string
+          user_id: string
         }[]
       }
       get_file_by_pin: {
@@ -141,6 +175,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date: string
+          user_id: string
         }[]
       }
       get_file_by_token: {
@@ -157,6 +192,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date: string
+          user_id: string
         }[]
       }
       get_files_by_collection_token: {
@@ -173,6 +209,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date: string
+          user_id: string
         }[]
       }
       increment_collection_download_count: {
