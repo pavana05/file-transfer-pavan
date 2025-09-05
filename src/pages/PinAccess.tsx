@@ -149,38 +149,38 @@ const PinAccess = () => {
         </div>
       </div>
       
-      <div className="relative z-10 container mx-auto px-6 py-24 max-w-3xl">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 max-w-7xl">
         {/* Professional Header Section */}
-        <div className="mb-16 text-center">
-          <div className="space-y-6">
+        <div className="mb-12 sm:mb-16 lg:mb-20 text-center">
+          <div className="space-y-6 sm:space-y-8">
             {/* Hero Icon */}
-            <div className="relative mx-auto w-24 h-24">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 rounded-2xl shadow-lg shadow-primary/20" />
+            <div className="relative mx-auto w-20 h-20 sm:w-24 sm:h-24">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 rounded-2xl shadow-lg shadow-primary/20 animate-fade-in" />
               <div className="absolute inset-0.5 bg-gradient-to-tl from-white/20 to-transparent rounded-2xl" />
               <div className="relative w-full h-full flex items-center justify-center rounded-2xl">
-                <KeyRound className="w-12 h-12 text-white drop-shadow-sm" />
+                <KeyRound className="w-10 h-10 sm:w-12 sm:h-12 text-white drop-shadow-sm" />
               </div>
             </div>
             
             {/* Hero Text */}
-            <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+            <div className="space-y-4 sm:space-y-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight">
                 <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent">
                   Secure File Access
                 </span>
               </h1>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
                 Enter the 4-digit PIN code to securely access and download the shared file
               </p>
             </div>
             
             {/* Status Indicators */}
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 <span>System Online</span>
               </div>
-              <div className="w-px h-4 bg-border" />
+              <div className="hidden sm:block w-px h-4 bg-border" />
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4" />
                 <span>256-bit Encryption</span>
@@ -191,193 +191,197 @@ const PinAccess = () => {
 
         {!fileInfo ? (
           // Professional PIN Entry Card
-          <Card className="relative bg-card/50 backdrop-blur-xl border border-border/50 shadow-2xl shadow-black/5 overflow-hidden group">
-            {/* Card Background Effects */}
-            <div className="absolute inset-0 bg-gradient-to-br from-background via-card to-background/95" />
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/3 via-transparent to-accent/2" />
-            <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
-            
-            <div className="relative z-10 p-12">
-              {/* Card Header */}
-              <div className="text-center mb-10">
-                <div className="relative mx-auto w-16 h-16 mb-6">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl border border-primary/20" />
-                  <div className="relative w-full h-full flex items-center justify-center rounded-xl">
-                    <Lock className="w-8 h-8 text-primary" />
+          <div className="max-w-2xl mx-auto">
+            <Card className="relative bg-card/50 backdrop-blur-xl border border-border/50 shadow-2xl shadow-black/5 overflow-hidden group">
+              {/* Card Background Effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-background via-card to-background/95" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/3 via-transparent to-accent/2" />
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
+              
+              <div className="relative z-10 p-6 sm:p-10 lg:p-12">
+                {/* Card Header */}
+                <div className="text-center mb-8 sm:mb-10">
+                  <div className="relative mx-auto w-14 h-14 sm:w-16 sm:h-16 mb-4 sm:mb-6">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl border border-primary/20" />
+                    <div className="relative w-full h-full flex items-center justify-center rounded-xl">
+                      <Lock className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
+                    </div>
                   </div>
-                </div>
-                
-                <h2 className="text-3xl font-bold text-foreground mb-3 tracking-tight">Enter PIN Code</h2>
-                <p className="text-muted-foreground text-lg leading-relaxed max-w-md mx-auto">
-                  Please enter the 4-digit PIN provided by the sender to access the file
-                </p>
-              </div>
-
-              <form onSubmit={handlePinSubmit} className="space-y-8">
-                {/* Professional PIN Input */}
-                <div className="relative max-w-xs mx-auto">
-                  <Input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={4}
-                    value={pin}
-                    onChange={handlePinChange}
-                    placeholder="0000"
-                    className="text-center text-3xl font-mono h-20 tracking-[0.5em] border-2 border-border focus:border-primary/60 bg-background/80 backdrop-blur-sm shadow-inner transition-all duration-200 focus:shadow-lg focus:shadow-primary/10"
-                    autoComplete="off"
-                  />
                   
-                  {/* PIN Indicators */}
-                  <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-                    <div className="flex items-center space-x-3">
-                      {[0, 1, 2, 3].map((i) => (
-                        <div
-                          key={i}
-                          className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                            i < pin.length 
-                              ? 'bg-primary shadow-lg shadow-primary/30 scale-110' 
-                              : 'bg-muted/50 border border-border'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-3 sm:mb-4 tracking-tight">Enter PIN Code</h2>
+                  <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-md mx-auto px-4">
+                    Please enter the 4-digit PIN provided by the sender to access the file
+                  </p>
                 </div>
 
-                {/* Error Display */}
-                {error && (
-                  <div className="max-w-md mx-auto">
-                    <div className="bg-destructive/5 border border-destructive/20 rounded-xl px-6 py-4 text-center">
-                      <p className="text-destructive font-medium">{error}</p>
+                <form onSubmit={handlePinSubmit} className="space-y-6 sm:space-y-8">
+                  {/* Professional PIN Input */}
+                  <div className="relative max-w-xs mx-auto">
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={4}
+                      value={pin}
+                      onChange={handlePinChange}
+                      placeholder="0000"
+                      className="text-center text-2xl sm:text-3xl font-mono h-16 sm:h-20 tracking-[0.5em] border-2 border-border focus:border-primary/60 bg-background/80 backdrop-blur-sm shadow-inner transition-all duration-200 focus:shadow-lg focus:shadow-primary/10 rounded-xl"
+                      autoComplete="off"
+                    />
+                    
+                    {/* PIN Indicators */}
+                    <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
+                      <div className="flex items-center space-x-3">
+                        {[0, 1, 2, 3].map((i) => (
+                          <div
+                            key={i}
+                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                              i < pin.length 
+                                ? 'bg-primary shadow-lg shadow-primary/30 scale-110' 
+                                : 'bg-muted/50 border border-border'
+                            }`}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
-                )}
 
-                {/* Submit Button */}
-                <div className="max-w-sm mx-auto">
-                  <Button 
-                    type="submit"
-                    disabled={loading || pin.length !== 4}
-                    size="lg"
-                    className="w-full h-14 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary hover:via-primary/90 hover:to-primary text-white font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100 hover:scale-[1.02] text-lg"
-                  >
-                    {loading ? (
-                      <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Verifying PIN...</span>
+                  {/* Error Display */}
+                  {error && (
+                    <div className="max-w-md mx-auto">
+                      <div className="bg-destructive/5 border border-destructive/20 rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-center">
+                        <p className="text-destructive font-medium text-sm sm:text-base">{error}</p>
                       </div>
-                    ) : (
-                      <div className="flex items-center gap-3">
-                        <KeyRound className="w-5 h-5" />
-                        <span>Access File</span>
-                      </div>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </Card>
+                    </div>
+                  )}
+
+                  {/* Submit Button */}
+                  <div className="max-w-sm mx-auto">
+                    <Button 
+                      type="submit"
+                      disabled={loading || pin.length !== 4}
+                      size="lg"
+                      className="w-full h-12 sm:h-14 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary hover:via-primary/90 hover:to-primary text-white font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100 hover:scale-[1.02] text-base sm:text-lg rounded-xl"
+                    >
+                      {loading ? (
+                        <div className="flex items-center gap-3">
+                          <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Verifying PIN...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3">
+                          <KeyRound className="w-4 h-4 sm:w-5 sm:h-5" />
+                          <span>Access File</span>
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </Card>
+          </div>
         ) : (
           // Professional File Display Card
-          <Card className="relative bg-card/50 backdrop-blur-xl border border-border/50 shadow-2xl shadow-black/5 overflow-hidden">
-            {/* Card Background Effects */}
-            <div className="absolute inset-0 bg-gradient-to-br from-background via-card to-background/95" />
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/3 via-transparent to-accent/2" />
-            <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
-            
-            <div className="relative z-10 p-10">
-              <div className="grid lg:grid-cols-5 gap-8 items-start">
-                {/* Professional File Preview */}
-                <div className="lg:col-span-2">
-                  <div className="sticky top-8">
-                    <FilePreview
-                      fileName={fileInfo.original_name}
-                      fileType={fileInfo.file_type}
-                      storagePath={fileInfo.storage_path}
-                      fileSize={fileInfo.file_size}
-                    />
-                  </div>
-                </div>
-
-                {/* Professional File Details */}
-                <div className="lg:col-span-3 space-y-8">
-                  {/* File Header */}
-                  <div className="space-y-4">
-                    <h2 className="text-3xl font-bold text-foreground break-words leading-tight tracking-tight">
-                      {fileInfo.original_name}
-                    </h2>
-                    
-                    {/* File Metadata Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/30 border border-border/30">
-                        <File className="w-4 h-4 text-primary flex-shrink-0" />
-                        <div>
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Size</p>
-                          <p className="text-sm font-semibold text-foreground">{formatFileSize(fileInfo.file_size)}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/30 border border-border/30">
-                        <div className="w-4 h-4 bg-accent rounded flex-shrink-0" />
-                        <div>
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Type</p>
-                          <p className="text-sm font-semibold text-foreground">{fileInfo.file_type}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/30 border border-border/30">
-                        <div className="w-4 h-4 bg-primary/60 rounded flex-shrink-0" />
-                        <div>
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Uploaded</p>
-                          <p className="text-sm font-semibold text-foreground">
-                            {new Date(fileInfo.upload_date).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Status Badges */}
-                    <div className="flex flex-wrap gap-3">
-                      <Badge className="px-4 py-2 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary font-semibold">
-                        {fileInfo.download_count} downloads
-                      </Badge>
-                      <Badge className="px-4 py-2 bg-gradient-to-r from-accent/10 to-accent/5 border border-accent/20 text-accent font-semibold">
-                        PIN: {pin}
-                      </Badge>
+          <div className="max-w-5xl mx-auto">
+            <Card className="relative bg-card/50 backdrop-blur-xl border border-border/50 shadow-2xl shadow-black/5 overflow-hidden">
+              {/* Card Background Effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-background via-card to-background/95" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/3 via-transparent to-accent/2" />
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
+              
+              <div className="relative z-10 p-6 sm:p-8 lg:p-10">
+                <div className="grid lg:grid-cols-5 gap-6 sm:gap-8 items-start">
+                  {/* Professional File Preview */}
+                  <div className="lg:col-span-2 order-2 lg:order-1">
+                    <div className="lg:sticky lg:top-8">
+                      <FilePreview
+                        fileName={fileInfo.original_name}
+                        fileType={fileInfo.file_type}
+                        storagePath={fileInfo.storage_path}
+                        fileSize={fileInfo.file_size}
+                      />
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="space-y-4">
-                    <Button 
-                      onClick={handleDownload} 
-                      disabled={downloading}
-                      size="lg"
-                      className="w-full h-14 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary hover:via-primary/90 hover:to-primary text-white font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:scale-[1.02] text-lg"
-                    >
-                      <Download className="w-5 h-5 mr-3" />
-                      {downloading ? 'Downloading...' : 'Download File'}
-                    </Button>
-                    
-                    <Button 
-                      variant="outline" 
-                      onClick={() => {
-                        setFileInfo(null);
-                        setPin('');
-                        setError(null);
-                      }}
-                      size="lg"
-                      className="w-full h-12 border-2 border-border hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 hover:scale-[1.02] font-semibold"
-                    >
-                      <KeyRound className="w-5 h-5 mr-3" />
-                      Try Another PIN
-                    </Button>
+                  {/* Professional File Details */}
+                  <div className="lg:col-span-3 space-y-6 sm:space-y-8 order-1 lg:order-2">
+                    {/* File Header */}
+                    <div className="space-y-4 sm:space-y-6">
+                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground break-words leading-tight tracking-tight">
+                        {fileInfo.original_name}
+                      </h2>
+                      
+                      {/* File Metadata Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                        <div className="flex items-center gap-3 px-3 sm:px-4 py-3 rounded-xl bg-muted/30 border border-border/30">
+                          <File className="w-4 h-4 text-primary flex-shrink-0" />
+                          <div>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Size</p>
+                            <p className="text-sm font-semibold text-foreground">{formatFileSize(fileInfo.file_size)}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 px-3 sm:px-4 py-3 rounded-xl bg-muted/30 border border-border/30">
+                          <div className="w-4 h-4 bg-accent rounded flex-shrink-0" />
+                          <div>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Type</p>
+                            <p className="text-sm font-semibold text-foreground">{fileInfo.file_type}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 px-3 sm:px-4 py-3 rounded-xl bg-muted/30 border border-border/30 sm:col-span-3 lg:col-span-1">
+                          <div className="w-4 h-4 bg-primary/60 rounded flex-shrink-0" />
+                          <div>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Uploaded</p>
+                            <p className="text-sm font-semibold text-foreground">
+                              {new Date(fileInfo.upload_date).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Status Badges */}
+                      <div className="flex flex-wrap gap-3">
+                        <Badge className="px-3 sm:px-4 py-2 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary font-semibold">
+                          {fileInfo.download_count} downloads
+                        </Badge>
+                        <Badge className="px-3 sm:px-4 py-2 bg-gradient-to-r from-accent/10 to-accent/5 border border-accent/20 text-accent font-semibold">
+                          PIN: {pin}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="space-y-3 sm:space-y-4">
+                      <Button 
+                        onClick={handleDownload} 
+                        disabled={downloading}
+                        size="lg"
+                        className="w-full h-12 sm:h-14 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary hover:via-primary/90 hover:to-primary text-white font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:scale-[1.02] text-base sm:text-lg rounded-xl"
+                      >
+                        <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                        {downloading ? 'Downloading...' : 'Download File'}
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          setFileInfo(null);
+                          setPin('');
+                          setError(null);
+                        }}
+                        size="lg"
+                        className="w-full h-10 sm:h-12 border-2 border-border hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 hover:scale-[1.02] font-semibold text-sm sm:text-base rounded-xl"
+                      >
+                        <KeyRound className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                        Try Another PIN
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         )}
 
         {/* Professional Security Information */}
