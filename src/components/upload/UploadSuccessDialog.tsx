@@ -39,13 +39,13 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-glass border border-border/50 backdrop-blur-xl shadow-glass">
+      <DialogContent className="w-screen h-screen max-w-none max-h-none m-0 p-8 bg-gradient-mesh border-0 backdrop-blur-xl overflow-y-auto">
         {/* Background Effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90 rounded-lg"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90"></div>
         <div className="absolute -top-4 -right-4 w-32 h-32 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-accent/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
-        <div className="relative z-10">
+        <div className="relative z-10 max-w-4xl mx-auto flex flex-col justify-center min-h-screen py-8">
           <DialogHeader>
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6">
               <div className="w-16 h-16 sm:w-14 sm:h-14 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow animate-scale-in flex-shrink-0">
