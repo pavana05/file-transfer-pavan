@@ -60,11 +60,8 @@ export class UploadService {
 
         const sharePin = pinData;
 
-        // Get current user
+        // Get current user (optional for anonymous uploads)
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          throw new Error('Authentication required to upload files');
-        }
 
         // Save file metadata to database
         const { error: dbError } = await supabase
@@ -77,7 +74,7 @@ export class UploadService {
             storage_path: storagePath,
             share_token: shareToken,
             share_pin: sharePin,
-            user_id: user.id
+            user_id: user?.id || null
           });
 
         if (dbError) {
@@ -144,11 +141,8 @@ export class UploadService {
     onProgress?: (fileIndex: number, progress: number) => void
   ): Promise<CollectionUploadResult> {
     try {
-      // Get current user
+      // Get current user (optional for anonymous uploads)
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('Authentication required to create collections');
-      }
 
       // Create file collection first
       const { data: collectionData, error: collectionError } = await supabase
@@ -156,7 +150,7 @@ export class UploadService {
         .insert({
           collection_name: collectionName,
           description,
-          user_id: user.id
+          user_id: user?.id || null
         })
         .select()
         .single();
@@ -211,7 +205,7 @@ export class UploadService {
                 share_token: shareToken,
                 share_pin: sharePin,
                 collection_id: collectionId,
-                user_id: user.id
+                user_id: user?.id || null
               });
 
           if (dbError) {

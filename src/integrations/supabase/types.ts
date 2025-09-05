@@ -23,7 +23,7 @@ export type Database = {
           download_count: number
           id: string
           share_token: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           collection_name?: string
@@ -33,7 +33,7 @@ export type Database = {
           download_count?: number
           id?: string
           share_token?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           collection_name?: string
@@ -43,7 +43,7 @@ export type Database = {
           download_count?: number
           id?: string
           share_token?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -87,7 +87,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           collection_id?: string | null
@@ -101,7 +101,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           collection_id?: string | null
@@ -115,7 +115,7 @@ export type Database = {
           share_token?: string
           storage_path?: string
           upload_date?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -158,7 +158,7 @@ export type Database = {
           download_count: number
           id: string
           share_token: string
-          user_id: string
+          user_id: string | null
         }[]
       }
       get_file_by_pin: {
@@ -175,7 +175,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date: string
-          user_id: string
+          user_id: string | null
         }[]
       }
       get_file_by_token: {
@@ -192,7 +192,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date: string
-          user_id: string
+          user_id: string | null
         }[]
       }
       get_files_by_collection_token: {
@@ -209,7 +209,7 @@ export type Database = {
           share_token: string
           storage_path: string
           upload_date: string
-          user_id: string
+          user_id: string | null
         }[]
       }
       increment_collection_download_count: {

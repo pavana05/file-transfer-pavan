@@ -70,22 +70,33 @@ const Index = () => {
       
       {/* Content */}
       <div className="relative z-10 container mx-auto px-2 sm:px-4 py-6 sm:py-8 lg:py-12">
-        {/* Header with Theme Toggle and User Info */}
+        {/* Header with Theme Toggle and Optional User Info */}
         <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-          <div className="flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-2">
-            <User className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-foreground truncate max-w-[150px]">
-              {user?.email}
-            </span>
+          {user ? (
+            <div className="flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-2">
+              <User className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-foreground truncate max-w-[150px]">
+                {user.email}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={signOut}
+                className="h-6 px-2 text-xs hover:bg-destructive/10 hover:text-destructive"
+              >
+                <LogOut className="w-3 h-3" />
+              </Button>
+            </div>
+          ) : (
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              onClick={signOut}
-              className="h-6 px-2 text-xs hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => window.location.href = '/auth'}
+              className="bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-primary/10"
             >
-              <LogOut className="w-3 h-3" />
+              Sign In
             </Button>
-          </div>
+          )}
           <ThemeToggle />
         </div>
         <div className="text-center mb-12 md:mb-16 animate-fade-in px-4">
