@@ -7,7 +7,10 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useAuth } from '@/contexts/AuthContext';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 const Index = () => {
-  const { user, signOut } = useAuth();
+  const {
+    user,
+    signOut
+  } = useAuth();
   const uploadConfig = {
     maxFileSize: 10 * 1024 * 1024 * 1024,
     // 10GB for large files and folders
@@ -72,31 +75,17 @@ const Index = () => {
       <div className="relative z-10 container mx-auto px-2 sm:px-4 py-6 sm:py-8 lg:py-12">
         {/* Header with Theme Toggle and Optional User Info */}
         <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-          {user ? (
-            <div className="flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-2">
+          {user ? <div className="flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-2">
               <User className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm text-foreground truncate max-w-[150px]">
                 {user.email}
               </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={signOut}
-                className="h-6 px-2 text-xs hover:bg-destructive/10 hover:text-destructive"
-              >
+              <Button variant="ghost" size="sm" onClick={signOut} className="h-6 px-2 text-xs hover:bg-destructive/10 hover:text-destructive">
                 <LogOut className="w-3 h-3" />
               </Button>
-            </div>
-          ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.location.href = '/auth'}
-              className="bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-primary/10"
-            >
+            </div> : <Button variant="outline" size="sm" onClick={() => window.location.href = '/auth'} className="bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-primary/10">
               Sign In
-            </Button>
-          )}
+            </Button>}
           <ThemeToggle />
         </div>
         <div className="text-center mb-12 md:mb-16 animate-fade-in px-4">
@@ -133,11 +122,7 @@ const Index = () => {
             <p className="text-sm text-muted-foreground mb-4">
               Have a 4-digit PIN from someone? Access their file directly:
             </p>
-            <Button
-              variant="outline"
-              onClick={() => window.open('/pin', '_blank')}
-              className="h-11 px-6 border-2 border-primary/30 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
-            >
+            <Button variant="outline" onClick={() => window.open('/pin', '_blank')} className="h-11 px-6 border-2 border-primary/30 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200">
               <KeyRound className="w-4 h-4 mr-2" />
               Access with PIN
             </Button>
@@ -188,56 +173,7 @@ const Index = () => {
           <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 via-primary-glow/30 to-secondary/20 rounded-3xl blur-xl opacity-50"></div>
           <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-3xl blur-lg opacity-30"></div>
           
-          <Card className="relative p-6 sm:p-8 lg:p-10 text-center bg-gradient-to-br from-background/95 via-background/90 to-background/95 border-2 border-primary/20 backdrop-blur-xl rounded-3xl shadow-2xl hover:shadow-glow transition-all duration-700 hover:scale-[1.02] group overflow-hidden">
-            {/* Animated Background Pattern */}
-            <div className="absolute inset-0 opacity-5 dark:opacity-10">
-              <div className="absolute top-4 left-4 w-20 h-20 bg-primary/30 rounded-full blur-2xl animate-pulse"></div>
-              <div className="absolute bottom-4 right-4 w-32 h-32 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{
-              animationDelay: '1s'
-            }}></div>
-              <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-accent/25 rounded-full blur-xl animate-pulse" style={{
-              animationDelay: '2s'
-            }}></div>
-            </div>
-
-            {/* Enhanced Icon Container */}
-            <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-3xl mx-auto mb-6 sm:mb-8 group-hover:animate-float">
-              {/* Multiple gradient layers for depth */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-glow to-secondary rounded-3xl shadow-2xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/20 to-white/10 rounded-3xl"></div>
-              <div className="absolute -inset-1 bg-gradient-conic from-primary/60 via-primary-glow/60 to-secondary/60 rounded-3xl blur-sm opacity-60 group-hover:opacity-100 transition-opacity"></div>
-              
-              {/* Icon with enhanced styling */}
-              <div className="relative w-full h-full flex items-center justify-center rounded-3xl ring-4 ring-primary/30">
-                <Smartphone className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white drop-shadow-2xl group-hover:scale-110 transition-transform duration-300" />
-              </div>
-            </div>
-
-            {/* Enhanced Typography */}
-            <div className="relative z-10 space-y-4 sm:space-y-6 mb-6 sm:mb-8">
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-                <span className="bg-gradient-to-r from-primary via-primary-glow to-secondary bg-clip-text text-transparent animate-fade-in">Quick Share</span>
-              </h3>
-              <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary-glow rounded-full mx-auto opacity-60"></div>
-              
-              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
-                Share files directly with nearby devices without uploading to the cloud.<br />
-                <span className="text-foreground/80 font-medium">Create a room or scan a QR code to start peer-to-peer file sharing.</span>
-              </p>
-            </div>
-
-            {/* Enhanced Call-to-Action */}
-            <div className="relative z-10">
-              <NearbyShareDialog trigger={<Button size="lg" className="relative px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-2xl bg-gradient-to-r from-primary via-primary-glow to-primary hover:from-primary-glow hover:via-primary hover:to-primary-glow shadow-xl hover:shadow-2xl hover:shadow-primary/25 border-2 border-primary/20 hover:border-primary/40 transition-all duration-500 transform hover:scale-105 group/btn overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-700 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000"></div>
-                    <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 mr-2 relative z-10" />
-                    <span className="relative z-10">Start Quick Share</span>
-                  </Button>} />
-            </div>
-
-            {/* Bottom accent line */}
-            <div className="absolute bottom-0 left-1/4 right-1/4 h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
-          </Card>
+          
         </div>
 
 
