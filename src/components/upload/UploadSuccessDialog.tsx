@@ -39,114 +39,146 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-              <Check className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <DialogTitle className="text-xl text-left">Upload Successful!</DialogTitle>
-              <DialogDescription className="text-left">
-                Your file has been uploaded and is ready to share.
-              </DialogDescription>
-            </div>
-          </div>
-        </DialogHeader>
+      <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-glass border border-border/50 backdrop-blur-xl shadow-glass">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90 rounded-lg"></div>
+        <div className="absolute -top-4 -right-4 w-32 h-32 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-accent/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
-        <div className="space-y-6">
-          {/* File Info */}
-          <Card className="p-4 bg-muted/30 border-border/30">
-            <div className="flex items-center gap-2 mb-2">
-              <Badge variant="secondary" className="text-xs">
-                {fileName}
-              </Badge>
-            </div>
-          </Card>
-
-          {/* PIN Section */}
-          {sharePin && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-primary" />
-                <h4 className="font-semibold">4-Digit PIN</h4>
+        <div className="relative z-10">
+          <DialogHeader>
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6">
+              <div className="w-16 h-16 sm:w-14 sm:h-14 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow animate-scale-in flex-shrink-0">
+                <Check className="w-8 h-8 sm:w-7 sm:h-7 text-white drop-shadow-lg" />
               </div>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-primary/5 to-accent/5 border-2 border-primary/20 rounded-lg">
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground mb-1">Share this PIN with recipients:</p>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-2xl font-bold text-primary tracking-widest">
-                      {sharePin}
-                    </span>
+              <div className="text-center sm:text-left">
+                <DialogTitle className="text-2xl sm:text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent mb-2">
+                  Upload Successful!
+                </DialogTitle>
+                <DialogDescription className="text-base sm:text-sm text-muted-foreground leading-relaxed">
+                  Your file has been uploaded and is ready to share with the world.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* File Info */}
+            <Card className="p-4 sm:p-6 bg-gradient-glass border border-border/50 backdrop-blur-sm shadow-glass rounded-xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-secondary flex items-center justify-center">
+                    <ExternalLink className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">File Ready</h4>
+                    <Badge variant="secondary" className="text-xs font-mono bg-primary/10 text-primary border-primary/20">
+                      {fileName}
+                    </Badge>
                   </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => copyToClipboard(sharePin, 'PIN')}
-                  className="flex-shrink-0"
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Recipients can access your file at <strong>/pin</strong> using this PIN
-              </p>
-            </div>
-          )}
+            </Card>
 
-          {/* Share URL Section */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Share2 className="w-4 h-4 text-primary" />
-              <h4 className="font-semibold">Direct Share Link</h4>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-muted/30 border border-border/30 rounded-lg">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-mono truncate">{shareUrl}</p>
+            {/* PIN Section */}
+            {sharePin && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+                    <KeyRound className="w-4 h-4 text-white" />
+                  </div>
+                  <h4 className="font-bold text-lg">4-Digit PIN Access</h4>
+                </div>
+                <Card className="p-6 bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 border-2 border-primary/30 rounded-xl shadow-glow">
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <div className="flex-1 text-center sm:text-left">
+                      <p className="text-sm text-muted-foreground mb-3">Share this PIN with recipients:</p>
+                      <div className="flex items-center justify-center sm:justify-start gap-3">
+                        <span className="font-mono text-3xl sm:text-4xl font-bold text-primary tracking-[0.3em] bg-background/50 px-4 py-2 rounded-lg border border-primary/20">
+                          {sharePin}
+                        </span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={() => copyToClipboard(sharePin, 'PIN')}
+                      className="bg-background/80 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-200"
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy PIN
+                    </Button>
+                  </div>
+                  <div className="mt-4 text-center sm:text-left">
+                    <p className="text-xs text-muted-foreground bg-background/30 px-3 py-2 rounded-lg border border-border/30">
+                      💡 Recipients can access your file at <span className="font-mono text-primary">/pin</span> using this PIN
+                    </p>
+                  </div>
+                </Card>
               </div>
+            )}
+
+            {/* Share URL Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-secondary flex items-center justify-center">
+                  <Share2 className="w-4 h-4 text-white" />
+                </div>
+                <h4 className="font-bold text-lg">Direct Share Link</h4>
+              </div>
+              <Card className="p-4 sm:p-6 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-xl">
+                <div className="flex flex-col sm:flex-row items-stretch gap-3">
+                  <div className="flex-1 min-w-0 bg-background/50 px-4 py-3 rounded-lg border border-border/30">
+                    <p className="text-sm font-mono truncate text-foreground">{shareUrl}</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => copyToClipboard(shareUrl, 'Share link')}
+                    className="bg-background/80 border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-all duration-200 flex-shrink-0"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy Link
+                  </Button>
+                </div>
+              </Card>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
               <Button
                 variant="outline"
-                size="sm"
-                onClick={() => copyToClipboard(shareUrl, 'Share link')}
-                className="flex-shrink-0"
+                onClick={() => window.open(shareUrl, '_blank')}
+                className="h-12 bg-gradient-glass border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-all duration-200"
               >
-                <Copy className="w-4 h-4" />
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Preview File
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => window.open('/pin', '_blank')}
+                className="h-12 bg-gradient-glass border-border/50 hover:bg-accent/10 hover:border-accent/30 transition-all duration-200"
+              >
+                <KeyRound className="w-4 h-4 mr-2" />
+                PIN Access
+              </Button>
+              <Button
+                onClick={onClose}
+                className="h-12 bg-gradient-primary hover:opacity-90 transition-all duration-200 text-white font-semibold"
+              >
+                All Done ✨
               </Button>
             </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => window.open(shareUrl, '_blank')}
-              className="flex-1"
-            >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Open File
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => window.open('/pin', '_blank')}
-              className="flex-1"
-            >
-              <KeyRound className="w-4 h-4 mr-2" />
-              PIN Access
-            </Button>
-            <Button
-              onClick={onClose}
-              className="flex-1"
-            >
-              Done
-            </Button>
-          </div>
-
-          {/* Info */}
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground">
-              Keep the PIN safe - it's the only way to access your file without the direct link
-            </p>
+            {/* Security Info */}
+            <div className="text-center pt-2">
+              <div className="inline-flex items-center gap-2 bg-background/50 px-4 py-2 rounded-full border border-border/30">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <p className="text-xs text-muted-foreground">
+                  🔐 Secure upload • Keep PIN safe for access control
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </DialogContent>
