@@ -59,6 +59,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pin_attempts: {
+        Row: {
+          attempt_time: string | null
+          id: string
+          ip_address: unknown | null
+          share_pin: string
+          success: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          attempt_time?: string | null
+          id?: string
+          ip_address?: unknown | null
+          share_pin: string
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          attempt_time?: string | null
+          id?: string
+          ip_address?: unknown | null
+          share_pin?: string
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -83,6 +110,30 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      upload_rate_limits: {
+        Row: {
+          created_at: string | null
+          id: string
+          uploads_count: number | null
+          user_id: string
+          window_start: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          uploads_count?: number | null
+          user_id: string
+          window_start?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          uploads_count?: number | null
+          user_id?: string
+          window_start?: string | null
         }
         Relationships: []
       }
@@ -162,6 +213,14 @@ export type Database = {
           p_share_pin?: string
           p_share_token?: string
         }
+        Returns: boolean
+      }
+      check_pin_rate_limit: {
+        Args: { p_ip_address: unknown; p_share_pin: string }
+        Returns: boolean
+      }
+      check_upload_rate_limit: {
+        Args: { p_user_id: string }
         Returns: boolean
       }
       generate_share_pin: {
@@ -285,6 +344,15 @@ export type Database = {
       increment_file_download_count: {
         Args: { p_share_token: string }
         Returns: boolean
+      }
+      log_pin_attempt: {
+        Args: {
+          p_ip_address: unknown
+          p_share_pin: string
+          p_success: boolean
+          p_user_id: string
+        }
+        Returns: undefined
       }
       revoke_collection_access: {
         Args: { p_share_token: string }
