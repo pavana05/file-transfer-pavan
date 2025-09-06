@@ -17,14 +17,19 @@ export interface CollectionUploadResult {
 }
 
 export class UploadService {
-  private static generateShareToken(): string {
-    return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  // Use database function for cryptographically secure token generation
+  private static async generateShareToken(): Promise<string> {
+    const { data, error } = await supabase.rpc('generate_share_token');
+    if (error) {
+      throw new Error(`Token generation failed: ${error.message}`);
+    }
+    return data;
   }
 
   // Upload single file with progress simulation for better UX
   static async uploadFile(file: UploadedFile, onProgress?: (progress: number) => void): Promise<FileUploadResult> {
     try {
-      const shareToken = this.generateShareToken();
+      const shareToken = await this.generateShareToken();
       const fileExtension = file.name.split('.').pop();
       const filename = `${shareToken}.${fileExtension}`;
       const storagePath = `files/${filename}`;
@@ -164,7 +169,7 @@ export class UploadService {
 
       // Upload files in parallel for better speed (max 3 concurrent uploads)
       const uploadPromises = files.map(async (file, i) => {
-        const shareToken = this.generateShareToken();
+        const shareToken = await this.generateShareToken();
         const fileExtension = file.name.split('.').pop();
         const filename = `${shareToken}.${fileExtension}`;
         const storagePath = `collections/${collectionId}/${filename}`;

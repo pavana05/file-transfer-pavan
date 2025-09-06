@@ -21,7 +21,11 @@ export type Database = {
           created_date: string
           description: string | null
           download_count: number
+          expires_at: string | null
           id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
           share_token: string
           user_id: string | null
         }
@@ -31,7 +35,11 @@ export type Database = {
           created_date?: string
           description?: string | null
           download_count?: number
+          expires_at?: string | null
           id?: string
+          is_public?: boolean | null
+          last_accessed_at?: string | null
+          max_downloads?: number | null
           share_token?: string
           user_id?: string | null
         }
@@ -41,7 +49,11 @@ export type Database = {
           created_date?: string
           description?: string | null
           download_count?: number
+          expires_at?: string | null
           id?: string
+          is_public?: boolean | null
+          last_accessed_at?: string | null
+          max_downloads?: number | null
           share_token?: string
           user_id?: string | null
         }
@@ -78,10 +90,14 @@ export type Database = {
         Row: {
           collection_id: string | null
           download_count: number
+          expires_at: string | null
           file_size: number
           file_type: string
           filename: string
           id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
           original_name: string
           share_pin: string | null
           share_token: string
@@ -92,10 +108,14 @@ export type Database = {
         Insert: {
           collection_id?: string | null
           download_count?: number
+          expires_at?: string | null
           file_size: number
           file_type: string
           filename: string
           id?: string
+          is_public?: boolean | null
+          last_accessed_at?: string | null
+          max_downloads?: number | null
           original_name: string
           share_pin?: string | null
           share_token: string
@@ -106,10 +126,14 @@ export type Database = {
         Update: {
           collection_id?: string | null
           download_count?: number
+          expires_at?: string | null
           file_size?: number
           file_type?: string
           filename?: string
           id?: string
+          is_public?: boolean | null
+          last_accessed_at?: string | null
+          max_downloads?: number | null
           original_name?: string
           share_pin?: string | null
           share_token?: string
@@ -156,7 +180,11 @@ export type Database = {
           created_date: string
           description: string | null
           download_count: number
+          expires_at: string | null
           id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
           share_token: string
           user_id: string | null
         }[]
@@ -166,10 +194,14 @@ export type Database = {
         Returns: {
           collection_id: string | null
           download_count: number
+          expires_at: string | null
           file_size: number
           file_type: string
           filename: string
           id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
           original_name: string
           share_pin: string | null
           share_token: string
@@ -183,10 +215,14 @@ export type Database = {
         Returns: {
           collection_id: string | null
           download_count: number
+          expires_at: string | null
           file_size: number
           file_type: string
           filename: string
           id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
           original_name: string
           share_pin: string | null
           share_token: string
@@ -200,10 +236,14 @@ export type Database = {
         Returns: {
           collection_id: string | null
           download_count: number
+          expires_at: string | null
           file_size: number
           file_type: string
           filename: string
           id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
           original_name: string
           share_pin: string | null
           share_token: string
@@ -218,6 +258,22 @@ export type Database = {
       }
       increment_file_download_count: {
         Args: { p_share_token: string }
+        Returns: boolean
+      }
+      revoke_collection_access: {
+        Args: { p_share_token: string }
+        Returns: boolean
+      }
+      revoke_file_access: {
+        Args: { p_share_token: string }
+        Returns: boolean
+      }
+      validate_collection_access: {
+        Args: { p_share_token: string }
+        Returns: boolean
+      }
+      validate_file_access: {
+        Args: { p_share_pin?: string; p_share_token?: string }
         Returns: boolean
       }
     }
