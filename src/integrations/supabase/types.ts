@@ -370,6 +370,15 @@ export type Database = {
         Args: { p_share_pin?: string; p_share_token?: string }
         Returns: boolean
       }
+      validate_file_upload: {
+        Args: {
+          p_file_size: number
+          p_file_type: string
+          p_filename: string
+          p_user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
