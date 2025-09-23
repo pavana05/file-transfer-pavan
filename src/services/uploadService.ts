@@ -23,10 +23,22 @@ export class UploadService {
     if (error) {
       throw new Error(`Token generation failed: ${error.message}`);
     }
-    return data;
-  }
+      return data;
+    }
 
-  // Upload single file with enhanced security validation
+    // Normalize token variants for robust lookups (handles missing padding)
+    private static getTokenVariants(token: string): string[] {
+      const variants = [token];
+      if (!token.includes('=')) {
+        const mod = token.length % 4;
+        if (mod !== 0) {
+          variants.unshift(token + '='.repeat(4 - mod));
+        }
+      }
+      return Array.from(new Set(variants));
+    }
+
+    // Upload single file with enhanced security validation
   static async uploadFile(file: UploadedFile, onProgress?: (progress: number) => void): Promise<FileUploadResult> {
     try {
       // Get current user (optional - allow anonymous uploads)
@@ -105,8 +117,8 @@ export class UploadService {
           throw new Error(`Database error: ${dbError.message}`);
         }
 
-        // Generate shareable URL
-        const shareUrl = `${window.location.origin}/share/${shareToken}`;
+        // Generate shareable URL (encode token for URL-safety)
+        const shareUrl = `${window.location.origin}/share/${encodeURIComponent(shareToken)}`;
 
         return {
           success: true,
@@ -282,7 +294,7 @@ export class UploadService {
         }
       }
 
-      const shareUrl = `${window.location.origin}/collection/${collectionData.share_token}`;
+      const shareUrl = `${window.location.origin}/collection/${encodeURIComponent(collectionData.share_token)}`;
 
       return {
         success: true,
@@ -299,15 +311,15 @@ export class UploadService {
   }
 
   static async getFileInfo(shareToken: string) {
-    // Use secure RPC function to prevent direct table enumeration
-    const { data, error } = await supabase
-      .rpc('get_file_by_token', { p_share_token: shareToken });
-
-    if (error || !data || data.length === 0) {
-      throw new Error('File not found');
+    const variants = this.getTokenVariants(shareToken);
+    for (const tok of variants) {
+      const { data } = await supabase
+        .rpc('get_file_by_token', { p_share_token: tok });
+      if (data && data.length > 0) {
+        return data[0];
+      }
     }
-
-    return data[0];
+    throw new Error('File not found');
   }
 
   static async getFileInfoByPin(pin: string) {
@@ -323,51 +335,42 @@ export class UploadService {
   }
 
   static async getCollectionInfo(shareToken: string): Promise<CollectionInfo> {
-    // Use secure RPC function to prevent direct table enumeration
-    const { data: collectionData, error: collectionError } = await supabase
-      .rpc('get_collection_by_token', { p_share_token: shareToken });
+    const variants = this.getTokenVariants(shareToken);
+    for (const tok of variants) {
+      const { data: collectionData } = await supabase
+        .rpc('get_collection_by_token', { p_share_token: tok });
 
-    if (collectionError || !collectionData || collectionData.length === 0) {
-      throw new Error('Collection not found');
+      if (collectionData && collectionData.length > 0) {
+        const collection = collectionData[0];
+        const { data: filesData } = await supabase
+          .rpc('get_files_by_collection_token', { p_collection_token: tok });
+        const fileCount = filesData?.length || 0;
+        return { ...collection, file_count: fileCount };
+      }
     }
-
-    const collection = collectionData[0];
-
-    // Get file count using secure RPC function
-    const { data: filesData, error: filesError } = await supabase
-      .rpc('get_files_by_collection_token', { p_collection_token: shareToken });
-
-    const fileCount = filesError ? 0 : (filesData?.length || 0);
-
-    return {
-      ...collection,
-      file_count: fileCount
-    };
+    throw new Error('Collection not found');
   }
 
   static async getCollectionFiles(shareToken: string): Promise<FileCollection> {
-    // Use secure RPC function to prevent direct table enumeration
-    const { data: collectionData, error: collectionError } = await supabase
-      .rpc('get_collection_by_token', { p_share_token: shareToken });
+    const variants = this.getTokenVariants(shareToken);
+    for (const tok of variants) {
+      const { data: collectionData } = await supabase
+        .rpc('get_collection_by_token', { p_share_token: tok });
 
-    if (collectionError || !collectionData || collectionData.length === 0) {
-      throw new Error('Collection not found');
+      if (collectionData && collectionData.length > 0) {
+        const collection = collectionData[0];
+
+        // Get all files in the collection using secure RPC function
+        const { data: filesData } = await supabase
+          .rpc('get_files_by_collection_token', { p_collection_token: tok });
+
+        return {
+          ...collection,
+          files: filesData || []
+        };
+      }
     }
-
-    const collection = collectionData[0];
-
-    // Get all files in the collection using secure RPC function
-    const { data: filesData, error: filesError } = await supabase
-      .rpc('get_files_by_collection_token', { p_collection_token: shareToken });
-
-    if (filesError) {
-      throw new Error('Failed to load collection files');
-    }
-
-    return {
-      ...collection,
-      files: filesData || []
-    };
+    throw new Error('Collection not found');
   }
 
   static async getFileUrl(storagePath: string): Promise<string> {
