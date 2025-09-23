@@ -23,7 +23,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
+            <Route path="/" element={<Index />} />
             <Route path="/share/:token" element={<FileShare />} />
             <Route path="/collection/:token" element={<CollectionShare />} />
             <Route path="/pin" element={<PinAccess />} />

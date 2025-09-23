@@ -29,20 +29,16 @@ export class UploadService {
   // Upload single file with enhanced security validation
   static async uploadFile(file: UploadedFile, onProgress?: (progress: number) => void): Promise<FileUploadResult> {
     try {
-      // Get current user (required for uploads now)
+      // Get current user (optional - allow anonymous uploads)
       const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error('Authentication required for file uploads');
-      }
 
-      // Server-side validation using secure RPC function
+      // Server-side validation using secure RPC function (pass null for anonymous users)
       const { data: isValid, error: validationError } = await supabase
         .rpc('validate_file_upload', {
           p_filename: file.name,
           p_file_size: file.size,
           p_file_type: file.type,
-          p_user_id: user.id
+          p_user_id: user?.id || null
         });
 
       if (validationError) {
@@ -89,7 +85,7 @@ export class UploadService {
 
         const sharePin = pinData;
 
-        // Save file metadata to database (user_id now required)
+        // Save file metadata to database (user_id optional for anonymous uploads)
         const { error: dbError } = await supabase
           .from('uploaded_files')
           .insert({
@@ -100,7 +96,7 @@ export class UploadService {
             storage_path: storagePath,
             share_token: shareToken,
             share_pin: sharePin,
-            user_id: user.id
+            user_id: user?.id || null
           });
 
         if (dbError) {
