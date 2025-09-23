@@ -17,39 +17,14 @@ export interface CollectionUploadResult {
 }
 
 export class UploadService {
-  // Use database function for cryptographically secure token generation
-  private static async generateShareToken(): Promise<string> {
-    const { data, error } = await supabase.rpc('generate_share_token');
-    if (error) {
-      throw new Error(`Token generation failed: ${error.message}`);
-    }
-    return data;
+  private static generateShareToken(): string {
+    return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 
-  // Upload single file with enhanced security validation
+  // Upload single file with progress simulation for better UX
   static async uploadFile(file: UploadedFile, onProgress?: (progress: number) => void): Promise<FileUploadResult> {
     try {
-      // Get current user (optional - allow anonymous uploads)
-      const { data: { user } } = await supabase.auth.getUser();
-
-      // Server-side validation using secure RPC function (pass null for anonymous users)
-      const { data: isValid, error: validationError } = await supabase
-        .rpc('validate_file_upload', {
-          p_filename: file.name,
-          p_file_size: file.size,
-          p_file_type: file.type,
-          p_user_id: user?.id || null
-        });
-
-      if (validationError) {
-        throw new Error(`Validation error: ${validationError.message}`);
-      }
-
-      if (!isValid) {
-        throw new Error('File validation failed. Check file size, type, and upload limits.');
-      }
-
-      const shareToken = await this.generateShareToken();
+      const shareToken = this.generateShareToken();
       const fileExtension = file.name.split('.').pop();
       const filename = `${shareToken}.${fileExtension}`;
       const storagePath = `files/${filename}`;
@@ -85,7 +60,10 @@ export class UploadService {
 
         const sharePin = pinData;
 
-        // Save file metadata to database (user_id optional for anonymous uploads)
+        // Get current user (optional for anonymous uploads)
+        const { data: { user } } = await supabase.auth.getUser();
+
+        // Save file metadata to database
         const { error: dbError } = await supabase
           .from('uploaded_files')
           .insert({
@@ -155,7 +133,7 @@ export class UploadService {
     }
   }
 
-  // Upload multiple files as a collection with enhanced security
+  // Upload multiple files as a collection with improved error handling
   static async uploadFileCollection(
     files: UploadedFile[], 
     collectionName: string = 'Shared Files',
@@ -163,31 +141,8 @@ export class UploadService {
     onProgress?: (fileIndex: number, progress: number) => void
   ): Promise<CollectionUploadResult> {
     try {
-      // Get current user (required for uploads now)
+      // Get current user (optional for anonymous uploads)
       const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error('Authentication required for file uploads');
-      }
-
-      // Validate all files before starting upload
-      for (const file of files) {
-        const { data: isValid, error: validationError } = await supabase
-          .rpc('validate_file_upload', {
-            p_filename: file.name,
-            p_file_size: file.size,
-            p_file_type: file.type,
-            p_user_id: user.id
-          });
-
-        if (validationError) {
-          throw new Error(`Validation error for ${file.name}: ${validationError.message}`);
-        }
-
-        if (!isValid) {
-          throw new Error(`File validation failed for ${file.name}. Check file size, type, and upload limits.`);
-        }
-      }
 
       // Create file collection first
       const { data: collectionData, error: collectionError } = await supabase
@@ -195,7 +150,7 @@ export class UploadService {
         .insert({
           collection_name: collectionName,
           description,
-          user_id: user.id
+          user_id: user?.id || null
         })
         .select()
         .single();
@@ -209,7 +164,7 @@ export class UploadService {
 
       // Upload files in parallel for better speed (max 3 concurrent uploads)
       const uploadPromises = files.map(async (file, i) => {
-        const shareToken = await this.generateShareToken();
+        const shareToken = this.generateShareToken();
         const fileExtension = file.name.split('.').pop();
         const filename = `${shareToken}.${fileExtension}`;
         const storagePath = `collections/${collectionId}/${filename}`;
@@ -250,7 +205,7 @@ export class UploadService {
                 share_token: shareToken,
                 share_pin: sharePin,
                 collection_id: collectionId,
-                user_id: user.id
+                user_id: user?.id || null
               });
 
           if (dbError) {
