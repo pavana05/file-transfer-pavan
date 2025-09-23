@@ -17,6 +17,9 @@ import { useToast } from '@/hooks/use-toast';
 import { UploadService } from '@/services/uploadService';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 import UploadSuccessDialog from './UploadSuccessDialog';
+import { SecurityUtils } from '@/lib/security-utils';
+import { SecurityAlerts, useSecurityAlerts } from '@/components/SecurityAlerts';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface FileFolder {
   id: string;
@@ -37,6 +40,8 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
   callbacks = {},
   className
 }) => {
+  const { user } = useAuth();
+  const { addAlert, alerts } = useSecurityAlerts();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [folders, setFolders] = useState<FileFolder[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
@@ -77,11 +82,61 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     return matchesSearch && matchesFilter;
   });
 
-  // Handle file addition with preview generation
+  // Handle file addition with preview generation and security validation
   const handleFilesAdded = useCallback(async (newFiles: UploadedFile[]) => {
+    // Validate files with security checks
+    const validatedFiles: UploadedFile[] = [];
+    const rejectedFiles: { file: UploadedFile; errors: string[] }[] = [];
+
+    for (const file of newFiles) {
+      const validation = SecurityUtils.validateFile(file.file);
+      
+      if (!validation.isValid) {
+        rejectedFiles.push({ file, errors: validation.errors });
+        addAlert({
+          type: 'file-security',
+          severity: 'high',
+          message: `File "${SecurityUtils.sanitizeForDisplay(file.name)}" rejected`,
+          details: validation.errors.join(', ')
+        });
+      } else {
+        validatedFiles.push(file);
+      }
+    }
+
+    // Show rejection summary if any files were rejected
+    if (rejectedFiles.length > 0) {
+      toast({
+        title: "Some files were rejected",
+        description: `${rejectedFiles.length} file(s) failed security validation. Check the security alerts for details.`,
+        variant: "destructive"
+      });
+    }
+
+    if (validatedFiles.length === 0) {
+      return; // No valid files to process
+    }
+
+    // Rate limiting check for authenticated users
+    if (user && !SecurityUtils.checkClientRateLimit(`upload_${user.id}`, 10, 60000)) {
+      addAlert({
+        type: 'rate-limit',
+        severity: 'medium',
+        message: 'Upload rate limit exceeded',
+        details: 'Please wait before uploading more files (max 10 files per minute)'
+      });
+      
+      toast({
+        title: "Rate limit exceeded",
+        description: "Please wait before uploading more files.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     // Generate previews for image files
     const filesWithPreviews = await Promise.all(
-      newFiles.map(async (file) => {
+      validatedFiles.map(async (file) => {
         if (file.type.startsWith('image/')) {
           const preview = await generateFilePreview(file.file);
           return { ...file, preview };
@@ -96,6 +151,13 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
       const duplicateIds = detectDuplicateFiles(allFiles);
       
       if (duplicateIds.length > 0) {
+        addAlert({
+          type: 'validation',
+          severity: 'low',
+          message: 'Duplicate files detected',
+          details: `${duplicateIds.length} duplicate file(s) found and marked for review`
+        });
+        
         toast({
           title: "Duplicate files detected",
           description: `${duplicateIds.length} duplicate file(s) found. They will be marked for review.`,
@@ -403,6 +465,11 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
   return (
     <div className={cn("w-full max-w-6xl mx-auto space-y-6", className)}>
+      {/* Security Alerts */}
+      {alerts.length > 0 && (
+        <SecurityAlerts alerts={alerts} className="mb-4" />
+      )}
+
       {/* Upload Zone */}
       <FileUploadZone
         config={config}

@@ -21,7 +21,11 @@ export type Database = {
           created_date: string
           description: string | null
           download_count: number
+          expires_at: string | null
           id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
           share_token: string
           user_id: string | null
         }
@@ -31,7 +35,11 @@ export type Database = {
           created_date?: string
           description?: string | null
           download_count?: number
+          expires_at?: string | null
           id?: string
+          is_public?: boolean | null
+          last_accessed_at?: string | null
+          max_downloads?: number | null
           share_token?: string
           user_id?: string | null
         }
@@ -41,8 +49,39 @@ export type Database = {
           created_date?: string
           description?: string | null
           download_count?: number
+          expires_at?: string | null
           id?: string
+          is_public?: boolean | null
+          last_accessed_at?: string | null
+          max_downloads?: number | null
           share_token?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      pin_attempts: {
+        Row: {
+          attempt_time: string | null
+          id: string
+          ip_address: unknown | null
+          share_pin: string
+          success: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          attempt_time?: string | null
+          id?: string
+          ip_address?: unknown | null
+          share_pin: string
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          attempt_time?: string | null
+          id?: string
+          ip_address?: unknown | null
+          share_pin?: string
+          success?: boolean | null
           user_id?: string | null
         }
         Relationships: []
@@ -74,14 +113,42 @@ export type Database = {
         }
         Relationships: []
       }
+      upload_rate_limits: {
+        Row: {
+          created_at: string | null
+          id: string
+          uploads_count: number | null
+          user_id: string
+          window_start: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          uploads_count?: number | null
+          user_id: string
+          window_start?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          uploads_count?: number | null
+          user_id?: string
+          window_start?: string | null
+        }
+        Relationships: []
+      }
       uploaded_files: {
         Row: {
           collection_id: string | null
           download_count: number
+          expires_at: string | null
           file_size: number
           file_type: string
           filename: string
           id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
           original_name: string
           share_pin: string | null
           share_token: string
@@ -92,10 +159,14 @@ export type Database = {
         Insert: {
           collection_id?: string | null
           download_count?: number
+          expires_at?: string | null
           file_size: number
           file_type: string
           filename: string
           id?: string
+          is_public?: boolean | null
+          last_accessed_at?: string | null
+          max_downloads?: number | null
           original_name: string
           share_pin?: string | null
           share_token: string
@@ -106,10 +177,14 @@ export type Database = {
         Update: {
           collection_id?: string | null
           download_count?: number
+          expires_at?: string | null
           file_size?: number
           file_type?: string
           filename?: string
           id?: string
+          is_public?: boolean | null
+          last_accessed_at?: string | null
+          max_downloads?: number | null
           original_name?: string
           share_pin?: string | null
           share_token?: string
@@ -140,6 +215,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_pin_rate_limit: {
+        Args: { p_ip_address: unknown; p_share_pin: string }
+        Returns: boolean
+      }
+      check_upload_rate_limit: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
       generate_share_pin: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -154,45 +237,45 @@ export type Database = {
           collection_name: string
           collection_size: number
           created_date: string
-          description: string | null
+          description: string
           download_count: number
           id: string
           share_token: string
-          user_id: string | null
+          user_id: string
         }[]
       }
       get_file_by_pin: {
         Args: { p_share_pin: string }
         Returns: {
-          collection_id: string | null
+          collection_id: string
           download_count: number
           file_size: number
           file_type: string
           filename: string
           id: string
           original_name: string
-          share_pin: string | null
+          share_pin: string
           share_token: string
           storage_path: string
           upload_date: string
-          user_id: string | null
+          user_id: string
         }[]
       }
       get_file_by_token: {
         Args: { p_share_token: string }
         Returns: {
-          collection_id: string | null
+          collection_id: string
           download_count: number
           file_size: number
           file_type: string
           filename: string
           id: string
           original_name: string
-          share_pin: string | null
+          share_pin: string
           share_token: string
           storage_path: string
           upload_date: string
-          user_id: string | null
+          user_id: string
         }[]
       }
       get_files_by_collection_token: {
@@ -200,10 +283,52 @@ export type Database = {
         Returns: {
           collection_id: string | null
           download_count: number
+          expires_at: string | null
           file_size: number
           file_type: string
           filename: string
           id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
+          original_name: string
+          share_pin: string | null
+          share_token: string
+          storage_path: string
+          upload_date: string
+          user_id: string | null
+        }[]
+      }
+      get_user_collections: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          collection_name: string
+          collection_size: number
+          created_date: string
+          description: string | null
+          download_count: number
+          expires_at: string | null
+          id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
+          share_token: string
+          user_id: string | null
+        }[]
+      }
+      get_user_files: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          collection_id: string | null
+          download_count: number
+          expires_at: string | null
+          file_size: number
+          file_type: string
+          filename: string
+          id: string
+          is_public: boolean | null
+          last_accessed_at: string | null
+          max_downloads: number | null
           original_name: string
           share_pin: string | null
           share_token: string
@@ -218,6 +343,40 @@ export type Database = {
       }
       increment_file_download_count: {
         Args: { p_share_token: string }
+        Returns: boolean
+      }
+      log_pin_attempt: {
+        Args: {
+          p_ip_address: unknown
+          p_share_pin: string
+          p_success: boolean
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      revoke_collection_access: {
+        Args: { p_share_token: string }
+        Returns: boolean
+      }
+      revoke_file_access: {
+        Args: { p_share_token: string }
+        Returns: boolean
+      }
+      validate_collection_access: {
+        Args: { p_share_token: string }
+        Returns: boolean
+      }
+      validate_file_access: {
+        Args: { p_share_pin?: string; p_share_token?: string }
+        Returns: boolean
+      }
+      validate_file_upload: {
+        Args: {
+          p_file_size: number
+          p_file_type: string
+          p_filename: string
+          p_user_id: string
+        }
         Returns: boolean
       }
     }

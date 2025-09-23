@@ -58,3 +58,6 @@ verify_jwt = false
 
 [functions.nearby-share-signaling]
 verify_jwt = false
+
+[functions.security-monitor]
+verify_jwt = false
