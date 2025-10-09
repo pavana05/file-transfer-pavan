@@ -42,7 +42,9 @@ const FileShare = () => {
 
   const loadFileInfo = async () => {
     try {
-      const info = await UploadService.getFileInfo(token!);
+      // Ensure token is properly decoded and trimmed
+      const normalizedToken = decodeURIComponent(token!).trim();
+      const info = await UploadService.getFileInfo(normalizedToken);
       setFileInfo(info);
     } catch (err) {
       setError('File not found or link has expired');

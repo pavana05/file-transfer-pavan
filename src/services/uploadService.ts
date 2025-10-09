@@ -26,16 +26,27 @@ export class UploadService {
       return data;
     }
 
-    // Normalize token variants for robust lookups (handles missing padding)
+    // Normalize token variants for robust lookups (handles missing or extra padding)
     private static getTokenVariants(token: string): string[] {
-      const variants = [token];
-      if (!token.includes('=')) {
-        const mod = token.length % 4;
+      const original = token.trim();
+      const withoutPadding = original.replace(/=+$/g, '');
+      const variants = new Set<string>();
+
+      // Original first
+      variants.add(original);
+
+      // Without padding
+      variants.add(withoutPadding);
+
+      // Add padded variant to nearest length divisible by 4
+      if (!original.includes('=')) {
+        const mod = original.length % 4;
         if (mod !== 0) {
-          variants.unshift(token + '='.repeat(4 - mod));
+          variants.add(original + '='.repeat(4 - mod));
         }
       }
-      return Array.from(new Set(variants));
+
+      return Array.from(variants);
     }
 
     // Upload single file with enhanced security validation
