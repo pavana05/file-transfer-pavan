@@ -55,10 +55,36 @@ serve(async (req) => {
     });
   }
 
+  // Authenticate the user
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader) {
+    return new Response('Authentication required', { 
+      status: 401,
+      headers: { ...corsHeaders, ...securityHeaders }
+    });
+  }
+
+  // Initialize Supabase client with user's auth token
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    { global: { headers: { Authorization: authHeader } } }
+  );
+
+  // Validate the user's authentication
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return new Response('Invalid authentication', { 
+      status: 401,
+      headers: { ...corsHeaders, ...securityHeaders }
+    });
+  }
+
+  console.log(`Authenticated user ${user.id} attempting to connect`);
+
   const url = new URL(req.url);
   const roomId = url.searchParams.get("room");
   const deviceName = url.searchParams.get("device");
-  const authToken = url.searchParams.get("auth");
 
   if (!roomId || !deviceName) {
     return new Response("Missing room or device parameter", { 
@@ -92,6 +118,7 @@ serve(async (req) => {
     socket,
     roomId,
     joinedAt: new Date(),
+    userId: user.id, // Track authenticated user
     messageCount: 0,
     lastMessageTime: new Date()
   };

@@ -57,7 +57,7 @@ enable_sms_confirmations = false
 verify_jwt = false
 
 [functions.nearby-share-signaling]
-verify_jwt = false
+verify_jwt = true
 
 [functions.security-monitor]
 verify_jwt = false
