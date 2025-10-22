@@ -44,9 +44,12 @@ const FileShare = () => {
     try {
       // Ensure token is properly decoded and trimmed
       const normalizedToken = decodeURIComponent(token!).trim();
+      console.log('Attempting to load file with token:', normalizedToken);
       const info = await UploadService.getFileInfo(normalizedToken);
+      console.log('File info loaded successfully:', info);
       setFileInfo(info);
     } catch (err) {
+      console.error('Failed to load file info:', err);
       setError('File not found or link has expired');
     } finally {
       setLoading(false);

@@ -323,10 +323,22 @@ export class UploadService {
 
   static async getFileInfo(shareToken: string) {
     const variants = this.getTokenVariants(shareToken);
+    console.log('Getting file info for token variants:', variants);
+    
     for (const tok of variants) {
-      const { data } = await supabase
+      console.log('Trying token variant:', tok);
+      const { data, error } = await supabase
         .rpc('get_file_by_token', { p_share_token: tok });
+      
+      console.log('RPC response:', { data, error });
+      
+      if (error) {
+        console.error('RPC error:', error);
+        continue;
+      }
+      
       if (data && data.length > 0) {
+        console.log('Found file:', data[0]);
         return data[0];
       }
     }
