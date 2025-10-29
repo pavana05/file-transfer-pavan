@@ -63,7 +63,7 @@ export type Database = {
         Row: {
           attempt_time: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           share_pin: string
           success: boolean | null
           user_id: string | null
@@ -71,7 +71,7 @@ export type Database = {
         Insert: {
           attempt_time?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           share_pin: string
           success?: boolean | null
           user_id?: string | null
@@ -79,7 +79,7 @@ export type Database = {
         Update: {
           attempt_time?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           share_pin?: string
           success?: boolean | null
           user_id?: string | null
@@ -219,18 +219,9 @@ export type Database = {
         Args: { p_ip_address: unknown; p_share_pin: string }
         Returns: boolean
       }
-      check_upload_rate_limit: {
-        Args: { p_user_id: string }
-        Returns: boolean
-      }
-      generate_share_pin: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_share_token: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      check_upload_rate_limit: { Args: { p_user_id: string }; Returns: boolean }
+      generate_share_pin: { Args: never; Returns: string }
+      generate_share_token: { Args: never; Returns: string }
       get_collection_by_token: {
         Args: { p_share_token: string }
         Returns: {
@@ -298,9 +289,15 @@ export type Database = {
           upload_date: string
           user_id: string | null
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "uploaded_files"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_user_collections: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           collection_name: string
           collection_size: number
@@ -315,9 +312,15 @@ export type Database = {
           share_token: string
           user_id: string | null
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "file_collections"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_user_files: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           collection_id: string | null
           download_count: number
@@ -336,6 +339,12 @@ export type Database = {
           upload_date: string
           user_id: string | null
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "uploaded_files"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       increment_collection_download_count: {
         Args: { p_share_token: string }
@@ -358,10 +367,7 @@ export type Database = {
         Args: { p_share_token: string }
         Returns: boolean
       }
-      revoke_file_access: {
-        Args: { p_share_token: string }
-        Returns: boolean
-      }
+      revoke_file_access: { Args: { p_share_token: string }; Returns: boolean }
       validate_collection_access: {
         Args: { p_share_token: string }
         Returns: boolean
