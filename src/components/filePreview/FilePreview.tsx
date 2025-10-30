@@ -94,44 +94,58 @@ const FilePreview: React.FC<FilePreviewProps> = ({
 
   if (fileCategory === 'image' && previewUrl && !error) {
     return (
-      <div className="relative group/preview">
-        <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg shadow-primary/25 group-hover/preview:scale-105 transition-transform duration-200">
+      <div className="relative group/preview w-full">
+        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-muted/20 shadow-xl shadow-black/10 transition-all duration-300 group-hover/preview:shadow-2xl group-hover/preview:shadow-primary/20">
           <img
             src={previewUrl}
             alt={fileName}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain transition-transform duration-500 group-hover/preview:scale-105"
             onError={() => setError(true)}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
+          
+          {/* Elegant corner accent */}
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/10 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-accent/10 to-transparent pointer-events-none" />
         </div>
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent blur-md" />
       </div>
     );
   }
 
   if (fileCategory === 'image' && loading) {
     return (
-      <div className="relative group/preview">
-        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-muted to-muted/80 flex items-center justify-center shadow-lg shadow-primary/25 animate-pulse">
-          <FileImage className="w-10 h-10 text-muted-foreground" />
+      <div className="relative w-full">
+        <div className="w-full aspect-[4/3] rounded-xl bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center shadow-xl shadow-black/10 border border-border/50">
+          <div className="text-center space-y-3">
+            <FileImage className="w-16 h-16 text-muted-foreground/50 mx-auto animate-pulse" />
+            <p className="text-sm text-muted-foreground font-medium">Loading preview...</p>
+          </div>
         </div>
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 to-transparent blur-md" />
       </div>
     );
   }
 
   // Default icon view for non-images or failed image loads
   return (
-    <div className="relative group/preview">
-      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex flex-col items-center justify-center shadow-lg shadow-primary/25 group-hover/preview:scale-105 transition-transform duration-200">
-        <IconComponent className="w-8 h-8 text-white mb-1" />
+    <div className="relative w-full">
+      <div className="w-full aspect-[4/3] rounded-xl bg-gradient-to-br from-primary/10 via-muted/20 to-accent/10 flex flex-col items-center justify-center shadow-xl shadow-black/10 border border-border/50 transition-all duration-300 group-hover/preview:shadow-2xl group-hover/preview:border-primary/30">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-2xl" />
+          <div className="relative bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-6 shadow-lg">
+            <IconComponent className="w-16 h-16 text-white" />
+          </div>
+        </div>
         {extension && (
-          <span className="text-xs font-bold text-white/90 leading-none">
-            {extension}
-          </span>
+          <div className="mt-6 px-6 py-2.5 bg-background/80 backdrop-blur-sm rounded-full border border-border/50 shadow-lg">
+            <span className="text-sm font-bold text-foreground tracking-wider">
+              {extension}
+            </span>
+          </div>
         )}
+        <p className="mt-4 text-xs text-muted-foreground font-medium max-w-[80%] text-center truncate">
+          {fileName}
+        </p>
       </div>
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 to-transparent blur-md" />
     </div>
   );
 };
