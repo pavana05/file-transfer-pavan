@@ -291,47 +291,71 @@ const PinAccess = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-6 lg:gap-8 xl:gap-10 items-start">
                   {/* Professional File Preview */}
                   <div className="xl:col-span-2 order-2 lg:order-1">
-                    <div className="lg:sticky lg:top-8">
-                      <FilePreview
-                        fileName={fileInfo.original_name}
-                        fileType={fileInfo.file_type}
-                        storagePath={fileInfo.storage_path}
-                        fileSize={fileInfo.file_size}
-                      />
+                    <div className="lg:sticky lg:top-8 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                      <div className="group relative overflow-hidden rounded-2xl border-2 border-border/50 bg-gradient-to-br from-muted/20 to-muted/5 p-1 transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                        <div className="relative rounded-xl overflow-hidden bg-background">
+                          <FilePreview
+                            fileName={fileInfo.original_name}
+                            fileType={fileInfo.file_type}
+                            storagePath={fileInfo.storage_path}
+                            fileSize={fileInfo.file_size}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   {/* Professional File Details */}
                   <div className="xl:col-span-3 space-y-5 sm:space-y-6 lg:space-y-8 order-1 lg:order-2">
                     {/* File Header */}
-                    <div className="space-y-4 sm:space-y-5 lg:space-y-6">
-                      <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground break-words leading-tight tracking-tight">
-                        {fileInfo.original_name}
-                      </h2>
+                    <div className="space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="relative flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 animate-scale-in">
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl shadow-lg shadow-primary/30 transition-transform duration-300 group-hover:scale-110" />
+                          <div className="relative w-full h-full flex items-center justify-center rounded-xl">
+                            <File className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground break-words leading-tight tracking-tight">
+                            {fileInfo.original_name}
+                          </h2>
+                        </div>
+                      </div>
                       
                       {/* File Metadata Grid */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
-                        <div className="flex items-center gap-3 px-3 sm:px-4 py-3 lg:py-4 rounded-xl bg-muted/30 border border-border/30 hover:bg-muted/40 transition-colors">
-                          <File className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-                          <div className="min-w-0">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium mb-0.5">Size</p>
-                            <p className="text-sm sm:text-base font-semibold text-foreground truncate">{formatFileSize(fileInfo.file_size)}</p>
+                        <div className="group relative overflow-hidden flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 lg:py-5 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/40 transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                          <div className="relative flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                            <File className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                          </div>
+                          <div className="relative min-w-0">
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">File Size</p>
+                            <p className="text-base sm:text-lg font-bold text-foreground truncate">{formatFileSize(fileInfo.file_size)}</p>
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-3 px-3 sm:px-4 py-3 lg:py-4 rounded-xl bg-muted/30 border border-border/30 hover:bg-muted/40 transition-colors">
-                          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-accent rounded flex-shrink-0" />
-                          <div className="min-w-0">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium mb-0.5">Type</p>
-                            <p className="text-sm sm:text-base font-semibold text-foreground truncate">{fileInfo.file_type}</p>
+                        <div className="group relative overflow-hidden flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 lg:py-5 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/40 transition-all duration-300 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-0.5 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                          <div className="relative flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-accent rounded" />
+                          </div>
+                          <div className="relative min-w-0">
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">File Type</p>
+                            <p className="text-base sm:text-lg font-bold text-foreground truncate">{fileInfo.file_type}</p>
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-3 px-3 sm:px-4 py-3 lg:py-4 rounded-xl bg-muted/30 border border-border/30 hover:bg-muted/40 transition-colors sm:col-span-2 xl:col-span-1">
-                          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-primary/60 rounded flex-shrink-0" />
-                          <div className="min-w-0">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium mb-0.5">Uploaded</p>
-                            <p className="text-sm sm:text-base font-semibold text-foreground truncate">
+                        <div className="group relative overflow-hidden flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 lg:py-5 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/40 transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 sm:col-span-2 xl:col-span-1 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                          <div className="relative flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                            <div className="w-2.5 h-2.5 bg-primary rounded-full animate-pulse" />
+                          </div>
+                          <div className="relative min-w-0">
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">Uploaded</p>
+                            <p className="text-base sm:text-lg font-bold text-foreground truncate">
                               {new Date(fileInfo.upload_date).toLocaleDateString()}
                             </p>
                           </div>
@@ -339,26 +363,29 @@ const PinAccess = () => {
                       </div>
 
                       {/* Status Badges */}
-                      <div className="flex flex-wrap gap-2 sm:gap-3">
-                        <Badge className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary font-semibold">
+                      <div className="flex flex-wrap gap-2 sm:gap-3 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                        <Badge className="group px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm bg-gradient-to-r from-primary/15 to-primary/5 border border-primary/30 text-primary font-bold transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:scale-105 hover:from-primary/20 hover:to-primary/10">
+                          <Download className="w-3.5 h-3.5 mr-1.5 transition-transform duration-300 group-hover:scale-110" />
                           {fileInfo.download_count} downloads
                         </Badge>
-                        <Badge className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-gradient-to-r from-accent/10 to-accent/5 border border-accent/20 text-accent font-semibold">
+                        <Badge className="group px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm bg-gradient-to-r from-accent/15 to-accent/5 border border-accent/30 text-accent font-bold transition-all duration-300 hover:shadow-lg hover:shadow-accent/20 hover:scale-105 hover:from-accent/20 hover:to-accent/10">
+                          <KeyRound className="w-3.5 h-3.5 mr-1.5 transition-transform duration-300 group-hover:rotate-12" />
                           PIN: {pin}
                         </Badge>
                       </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="space-y-3 lg:space-y-4">
+                    <div className="space-y-3 lg:space-y-4 animate-fade-in" style={{ animationDelay: '0.7s' }}>
                       <Button 
                         onClick={handleDownload} 
                         disabled={downloading}
                         size="lg"
-                        className="w-full h-12 sm:h-13 lg:h-14 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary hover:via-primary/90 hover:to-primary text-white font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base lg:text-lg rounded-xl"
+                        className="group relative w-full h-14 sm:h-15 lg:h-16 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary hover:via-primary/90 hover:to-primary text-white font-bold shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-base sm:text-lg lg:text-xl rounded-xl overflow-hidden"
                       >
-                        <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-2 lg:mr-3" />
-                        {downloading ? 'Downloading...' : 'Download File'}
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                        <Download className="relative w-5 h-5 sm:w-6 sm:h-6 mr-2 lg:mr-3 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-0.5" />
+                        <span className="relative">{downloading ? 'Downloading...' : 'Download File'}</span>
                       </Button>
                       
                       <Button 
@@ -369,9 +396,9 @@ const PinAccess = () => {
                           setError(null);
                         }}
                         size="lg"
-                        className="w-full h-10 sm:h-12 border-2 border-border hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 hover:scale-[1.02] font-semibold text-sm sm:text-base rounded-xl"
+                        className="group w-full h-12 sm:h-13 border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] font-semibold text-sm sm:text-base rounded-xl"
                       >
-                        <KeyRound className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                        <KeyRound className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 transition-transform duration-300 group-hover:rotate-12" />
                         Try Another PIN
                       </Button>
                     </div>
