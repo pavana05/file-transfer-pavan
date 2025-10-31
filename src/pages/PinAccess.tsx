@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Download, File, ArrowLeft, Lock, KeyRound } from 'lucide-react';
+import { Download, File, ArrowLeft, Lock, KeyRound, FileType, Calendar, HardDrive, Shield, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -174,13 +174,13 @@ const PinAccess = () => {
             
             {/* Status Indicators */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 text-xs sm:text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/30 border border-border/50 transition-all duration-200 hover:bg-muted/50">
+                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
                 <span>System Online</span>
               </div>
               <div className="hidden sm:block w-px h-4 bg-border" />
-              <div className="flex items-center gap-2">
-                <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/30 border border-border/50 transition-all duration-200 hover:bg-muted/50">
+                <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                 <span>256-bit Encryption</span>
               </div>
             </div>
@@ -336,37 +336,37 @@ const PinAccess = () => {
                     </div>
                       
                     {/* File Metadata Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                      <div className="group relative overflow-hidden flex items-center gap-4 px-5 py-5 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/40 transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                      <div className="group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 sm:py-5 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/40 transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5">
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         <div className="relative flex-shrink-0 w-11 h-11 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                          <File className="w-6 h-6 text-primary" />
+                          <HardDrive className="w-5 h-5 text-primary" />
                         </div>
-                        <div className="relative min-w-0">
+                        <div className="relative min-w-0 flex-1">
                           <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">File Size</p>
-                          <p className="text-lg font-bold text-foreground truncate">{formatFileSize(fileInfo.file_size)}</p>
+                          <p className="text-base sm:text-lg font-bold text-foreground truncate">{formatFileSize(fileInfo.file_size)}</p>
                         </div>
                       </div>
                       
-                      <div className="group relative overflow-hidden flex items-center gap-4 px-5 py-5 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/40 transition-all duration-300 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-0.5">
+                      <div className="group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 sm:py-5 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/40 transition-all duration-300 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-0.5">
                         <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         <div className="relative flex-shrink-0 w-11 h-11 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                          <div className="w-6 h-6 bg-accent rounded" />
+                          <FileType className="w-5 h-5 text-accent" />
                         </div>
-                        <div className="relative min-w-0">
+                        <div className="relative min-w-0 flex-1">
                           <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">File Type</p>
-                          <p className="text-lg font-bold text-foreground truncate">{fileInfo.file_type}</p>
+                          <p className="text-base sm:text-lg font-bold text-foreground truncate">{fileInfo.file_type}</p>
                         </div>
                       </div>
                       
-                      <div className="group relative overflow-hidden flex items-center gap-4 px-5 py-5 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/40 transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5">
+                      <div className="group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 sm:py-5 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/40 transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5">
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         <div className="relative flex-shrink-0 w-11 h-11 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                          <div className="w-2.5 h-2.5 bg-primary rounded-full animate-pulse" />
+                          <Calendar className="w-5 h-5 text-primary" />
                         </div>
-                        <div className="relative min-w-0">
+                        <div className="relative min-w-0 flex-1">
                           <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">Uploaded</p>
-                          <p className="text-lg font-bold text-foreground truncate">
+                          <p className="text-base sm:text-lg font-bold text-foreground truncate">
                             {new Date(fileInfo.upload_date).toLocaleDateString()}
                           </p>
                         </div>
