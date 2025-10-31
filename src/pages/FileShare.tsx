@@ -216,33 +216,35 @@ const FileShare = () => {
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-radial from-primary/20 to-transparent rounded-full blur-2xl" />
           
           <div className="relative z-10">
-            <div className="flex flex-col md:flex-row items-start gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* Enhanced File Preview */}
-              {fileInfo && (
-                <FilePreview
-                  fileName={fileInfo.original_name}
-                  fileType={fileInfo.file_type}
-                  storagePath={fileInfo.storage_path}
-                  fileSize={fileInfo.file_size}
-                />
-              )}
+              <div className="lg:col-span-5 xl:col-span-4 w-full">
+                {fileInfo && (
+                  <FilePreview
+                    fileName={fileInfo.original_name}
+                    fileType={fileInfo.file_type}
+                    storagePath={fileInfo.storage_path}
+                    fileSize={fileInfo.file_size}
+                  />
+                )}
+              </div>
 
               {/* Enhanced File Details */}
-              <div className="flex-1 min-w-0 space-y-6">
-                <div className="space-y-3">
-                  <h2 className="text-2xl font-bold text-foreground break-words leading-tight">
+              <div className="lg:col-span-7 xl:col-span-8 w-full space-y-6">
+                <div className="space-y-4">
+                  <h2 className="text-2xl md:text-3xl font-bold text-foreground break-words leading-tight">
                     {fileInfo?.original_name}
                   </h2>
                   
-                  <div className="flex flex-wrap gap-4 text-muted-foreground">
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
-                      <span className="text-sm font-medium">{formatFileSize(fileInfo?.file_size || 0)}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-muted/50 border border-border/30 transition-all duration-200 hover:bg-muted/70 hover:border-border/50">
+                      <span className="text-sm font-medium text-foreground">{formatFileSize(fileInfo?.file_size || 0)}</span>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
-                      <span className="text-sm font-medium">{fileInfo?.file_type}</span>
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-muted/50 border border-border/30 transition-all duration-200 hover:bg-muted/70 hover:border-border/50">
+                      <span className="text-sm font-medium text-foreground">{fileInfo?.file_type}</span>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
-                      <span className="text-sm font-medium">
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-muted/50 border border-border/30 transition-all duration-200 hover:bg-muted/70 hover:border-border/50">
+                      <span className="text-sm font-medium text-foreground">
                         {new Date(fileInfo?.upload_date || '').toLocaleDateString()}
                       </span>
                     </div>
@@ -251,7 +253,7 @@ const FileShare = () => {
                   <div className="flex flex-wrap gap-3">
                     <Badge 
                       variant="secondary" 
-                      className="px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20 text-foreground font-medium"
+                      className="px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20 text-foreground font-medium transition-all duration-200 hover:scale-105 hover:shadow-md"
                     >
                       {fileInfo?.download_count} downloads
                     </Badge>
@@ -259,12 +261,12 @@ const FileShare = () => {
                 </div>
 
                 {/* Enhanced Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Button 
                     onClick={handleDownload} 
                     disabled={downloading}
                     size="lg"
-                    className="flex-1 sm:flex-none h-12 px-8 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 hover:scale-105"
+                    className="w-full h-12 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 hover:scale-105"
                   >
                     <Download className="w-5 h-5 mr-3" />
                     {downloading ? 'Downloading...' : 'Download File'}
@@ -274,7 +276,7 @@ const FileShare = () => {
                     variant="outline" 
                     onClick={copyShareLink}
                     size="lg"
-                    className="flex-1 sm:flex-none h-12 px-8 border-2 border-border/60 hover:border-primary/30 hover:bg-primary/5 backdrop-blur-sm transition-all duration-200 hover:scale-105 font-semibold"
+                    className="w-full h-12 border-2 border-border/60 hover:border-primary/30 hover:bg-primary/5 backdrop-blur-sm transition-all duration-200 hover:scale-105 font-semibold"
                   >
                     <Share2 className="w-5 h-5 mr-3" />
                     Copy Link
