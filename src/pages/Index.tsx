@@ -76,6 +76,14 @@ const Index = () => {
         {/* Professional Header */}
         <div className="fixed top-6 right-6 z-50 flex items-center gap-3 animate-fade-in">
           {user ? <div className="flex items-center gap-3 bg-card/95 backdrop-blur-md border border-border/60 rounded-xl px-4 py-2.5 shadow-glass transition-all duration-300">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => window.location.href = '/dashboard'}
+                className="h-8 px-3 text-xs rounded-lg hover:bg-primary/10 transition-all duration-200"
+              >
+                My Files
+              </Button>
               <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>

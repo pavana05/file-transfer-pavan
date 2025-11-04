@@ -49,8 +49,12 @@ export class UploadService {
       return Array.from(variants);
     }
 
-    // Upload single file with enhanced security validation
-  static async uploadFile(file: UploadedFile, onProgress?: (progress: number) => void): Promise<FileUploadResult> {
+  // Upload single file with enhanced security validation
+  static async uploadFile(
+    file: UploadedFile, 
+    onProgress?: (progress: number) => void,
+    password?: string
+  ): Promise<FileUploadResult> {
     try {
       // Get current user (optional - allow anonymous uploads)
       const { data: { user } } = await supabase.auth.getUser();
@@ -108,19 +112,37 @@ export class UploadService {
 
         const sharePin = pinData;
 
+        // Save file metadata with password if provided
+        // Password will be hashed by database trigger/function
+        const insertData: any = {
+          filename,
+          original_name: file.name,
+          file_size: file.size,
+          file_type: file.type,
+          storage_path: storagePath,
+          share_token: shareToken,
+          share_pin: sharePin,
+          user_id: user?.id || null
+        };
+
+        // Add password hash using pgcrypto crypt function
+        if (password) {
+          // Use SQL to hash password with crypt function
+          const { data: cryptData, error: cryptError } = await supabase
+            .rpc('crypt' as any, { 
+              password: password,
+              salt: await supabase.rpc('gen_salt' as any, { type: 'bf' }).then(r => r.data)
+            } as any);
+
+          if (!cryptError && cryptData) {
+            insertData.password_hash = cryptData;
+          }
+        }
+
         // Save file metadata to database (user_id optional for anonymous uploads)
         const { error: dbError } = await supabase
           .from('uploaded_files')
-          .insert({
-            filename,
-            original_name: file.name,
-            file_size: file.size,
-            file_type: file.type,
-            storage_path: storagePath,
-            share_token: shareToken,
-            share_pin: sharePin,
-            user_id: user?.id || null
-          });
+          .insert(insertData);
 
         if (dbError) {
           // Clean up uploaded file if database insert fails
@@ -355,6 +377,20 @@ export class UploadService {
     }
 
     return data[0];
+  }
+
+  static async validateFilePassword(pin: string, password: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .rpc('validate_file_password', { 
+        p_share_pin: pin, 
+        p_password: password 
+      });
+
+    if (error) {
+      throw new Error('Failed to validate password');
+    }
+
+    return data === true;
   }
 
   static async getCollectionInfo(shareToken: string): Promise<CollectionInfo> {

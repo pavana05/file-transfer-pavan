@@ -21,15 +21,18 @@ interface FileInfo {
   share_token: string;
   upload_date: string;
   download_count: number;
+  has_password: boolean;
 }
 
 const PinAccess = () => {
   const navigate = useNavigate();
   const [pin, setPin] = useState('');
+  const [password, setPassword] = useState('');
   const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPasswordInput, setShowPasswordInput] = useState(false);
   const { toast } = useToast();
 
   const handlePinSubmit = async (e: React.FormEvent) => {
@@ -44,9 +47,47 @@ const PinAccess = () => {
 
     try {
       const info = await UploadService.getFileInfoByPin(pin);
+      
+      // Check if file requires password
+      if (info.has_password) {
+        setShowPasswordInput(true);
+        setFileInfo(info);
+        setLoading(false);
+        return;
+      }
+      
       setFileInfo(info);
     } catch (err) {
       setError('Invalid PIN or file not found');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!password) {
+      setError('Please enter the password');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const isValid = await UploadService.validateFilePassword(pin, password);
+      if (isValid) {
+        setShowPasswordInput(false);
+        toast({
+          title: 'Access granted',
+          description: 'Password verified successfully',
+        });
+      } else {
+        setError('Incorrect password');
+        setPassword('');
+      }
+    } catch (err) {
+      setError('Failed to verify password');
     } finally {
       setLoading(false);
     }
@@ -206,7 +247,67 @@ const PinAccess = () => {
           </div>
         </div>
 
-        {!fileInfo ? (
+        {showPasswordInput ? (
+          // Password Input Card
+          <div className="max-w-2xl mx-auto animate-fade-in">
+            <Card className="relative bg-card/30 backdrop-blur-2xl border border-border/40 shadow-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-card/80 via-card/60 to-card/80" />
+              <div className="relative z-10 p-8 sm:p-12">
+                <div className="text-center mb-10">
+                  <div className="mx-auto w-20 h-20 mb-6 rounded-2xl bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 border-2 border-primary/20 flex items-center justify-center">
+                    <Lock className="w-10 h-10 text-primary" />
+                  </div>
+                  <h2 className="text-3xl font-bold mb-3">Password Required</h2>
+                  <p className="text-muted-foreground">
+                    This file is password protected. Enter the password to access it.
+                  </p>
+                </div>
+
+                <form onSubmit={handlePasswordSubmit} className="space-y-6">
+                  <div>
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter password"
+                      className="h-14 text-center text-lg border-2 border-border/60 focus:border-primary/50 bg-background/95 backdrop-blur-sm rounded-xl"
+                      autoFocus
+                    />
+                  </div>
+
+                  {error && (
+                    <div className="bg-destructive/10 border-2 border-destructive/30 rounded-xl px-6 py-4 text-center">
+                      <p className="text-destructive font-semibold">{error}</p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowPasswordInput(false);
+                        setFileInfo(null);
+                        setPin('');
+                        setPassword('');
+                      }}
+                      className="flex-1 h-14 rounded-xl"
+                    >
+                      Back
+                    </Button>
+                    <Button 
+                      type="submit"
+                      disabled={loading || !password}
+                      className="flex-1 h-14 bg-gradient-primary text-white rounded-xl"
+                    >
+                      {loading ? 'Verifying...' : 'Verify Password'}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </Card>
+          </div>
+        ) : !fileInfo ? (
           // Enhanced Professional PIN Entry Card
           <div className="max-w-2xl mx-auto animate-fade-in">
             <Card className="relative bg-card/30 backdrop-blur-2xl border border-border/40 shadow-2xl shadow-black/10 overflow-hidden group">

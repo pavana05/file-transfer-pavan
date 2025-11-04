@@ -150,6 +150,7 @@ export type Database = {
           last_accessed_at: string | null
           max_downloads: number | null
           original_name: string
+          password_hash: string | null
           share_pin: string | null
           share_token: string
           storage_path: string
@@ -168,6 +169,7 @@ export type Database = {
           last_accessed_at?: string | null
           max_downloads?: number | null
           original_name: string
+          password_hash?: string | null
           share_pin?: string | null
           share_token: string
           storage_path: string
@@ -186,6 +188,7 @@ export type Database = {
           last_accessed_at?: string | null
           max_downloads?: number | null
           original_name?: string
+          password_hash?: string | null
           share_pin?: string | null
           share_token?: string
           storage_path?: string
@@ -243,6 +246,7 @@ export type Database = {
           file_size: number
           file_type: string
           filename: string
+          has_password: boolean
           id: string
           original_name: string
           share_pin: string
@@ -283,6 +287,7 @@ export type Database = {
           last_accessed_at: string | null
           max_downloads: number | null
           original_name: string
+          password_hash: string | null
           share_pin: string | null
           share_token: string
           storage_path: string
@@ -333,6 +338,7 @@ export type Database = {
           last_accessed_at: string | null
           max_downloads: number | null
           original_name: string
+          password_hash: string | null
           share_pin: string | null
           share_token: string
           storage_path: string
@@ -374,6 +380,10 @@ export type Database = {
       }
       validate_file_access: {
         Args: { p_share_pin?: string; p_share_token?: string }
+        Returns: boolean
+      }
+      validate_file_password: {
+        Args: { p_password: string; p_share_pin: string }
         Returns: boolean
       }
       validate_file_upload: {

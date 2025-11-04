@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Copy, Share2, KeyRound, ExternalLink } from 'lucide-react';
+import { Check, Copy, Share2, KeyRound, ExternalLink, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -18,6 +18,7 @@ interface UploadSuccessDialogProps {
   shareUrl: string;
   sharePin?: string;
   fileName: string;
+  hasPassword?: boolean;
 }
 
 const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
@@ -25,7 +26,8 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
   onClose,
   shareUrl,
   sharePin,
-  fileName
+  fileName,
+  hasPassword = false
 }) => {
   const { toast } = useToast();
 
@@ -109,10 +111,16 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
                       Copy PIN
                     </Button>
                   </div>
-                  <div className="mt-4 text-center sm:text-left">
+                  <div className="mt-4 text-center sm:text-left space-y-2">
                     <p className="text-xs text-muted-foreground bg-background/30 px-3 py-2 rounded-lg border border-border/30">
                       💡 Recipients can access your file at <span className="font-mono text-primary">/pin</span> using this PIN
                     </p>
+                    {hasPassword && (
+                      <p className="text-xs text-amber-600 dark:text-amber-500 bg-amber-500/10 px-3 py-2 rounded-lg border border-amber-500/30 flex items-center gap-2">
+                        <Lock className="w-3 h-3" />
+                        Password protection enabled
+                      </p>
+                    )}
                   </div>
                 </Card>
               </div>
