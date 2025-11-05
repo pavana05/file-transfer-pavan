@@ -112,37 +112,19 @@ export class UploadService {
 
         const sharePin = pinData;
 
-        // Save file metadata with password if provided
-        // Password will be hashed by database trigger/function
-        const insertData: any = {
-          filename,
-          original_name: file.name,
-          file_size: file.size,
-          file_type: file.type,
-          storage_path: storagePath,
-          share_token: shareToken,
-          share_pin: sharePin,
-          user_id: user?.id || null
-        };
-
-        // Add password hash using pgcrypto crypt function
-        if (password) {
-          // Use SQL to hash password with crypt function
-          const { data: cryptData, error: cryptError } = await supabase
-            .rpc('crypt' as any, { 
-              password: password,
-              salt: await supabase.rpc('gen_salt' as any, { type: 'bf' }).then(r => r.data)
-            } as any);
-
-          if (!cryptError && cryptData) {
-            insertData.password_hash = cryptData;
-          }
-        }
-
-        // Save file metadata to database (user_id optional for anonymous uploads)
-        const { error: dbError } = await supabase
-          .from('uploaded_files')
-          .insert(insertData);
+        // Use database function to insert file with password hashing
+        const { data: fileIdData, error: dbError } = await supabase
+          .rpc('insert_file_with_password', {
+            p_filename: filename,
+            p_original_name: file.name,
+            p_file_size: file.size,
+            p_file_type: file.type,
+            p_storage_path: storagePath,
+            p_share_token: shareToken,
+            p_share_pin: sharePin,
+            p_user_id: user?.id || null,
+            p_password: password || null
+          });
 
         if (dbError) {
           // Clean up uploaded file if database insert fails

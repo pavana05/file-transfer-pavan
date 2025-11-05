@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { UploadService } from '@/services/uploadService';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 import UploadSuccessDialog from './UploadSuccessDialog';
+import PasswordProtectionDialog from './PasswordProtectionDialog';
 import { SecurityUtils } from '@/lib/security-utils';
 import { SecurityAlerts, useSecurityAlerts } from '@/components/SecurityAlerts';
 import { useAuth } from '@/contexts/AuthContext';
@@ -57,10 +58,21 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     shareUrl: string;
     sharePin?: string;
     fileName: string;
+    hasPassword?: boolean;
   }>({
     isOpen: false,
     shareUrl: '',
     sharePin: '',
+    fileName: '',
+    hasPassword: false
+  });
+  const [passwordDialog, setPasswordDialog] = useState<{
+    isOpen: boolean;
+    fileId: string;
+    fileName: string;
+  }>({
+    isOpen: false,
+    fileId: '',
     fileName: ''
   });
   const { toast } = useToast();
@@ -187,16 +199,16 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
       }
     }, 100);
 
-    // Auto-upload if enabled
+    // Auto-upload if enabled (without password for auto-uploads)
     if (config.autoUpload) {
       filesWithPreviews.forEach(file => {
-        realUpload(file.id);
+        realUpload(file.id, undefined);
       });
     }
   }, [files, config, callbacks, toast]);
 
   // Real file upload to Supabase
-  const realUpload = useCallback(async (fileId: string) => {
+  const realUpload = useCallback(async (fileId: string, password?: string) => {
     const file = files.find(f => f.id === fileId);
     if (!file) return;
 
@@ -212,7 +224,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
           f.id === fileId ? { ...f, progress } : f
         ));
         callbacks.onUploadProgress?.(file, progress);
-      });
+      }, password);
 
       if (result.success) {
         setFiles(prev => prev.map(f => 
@@ -233,7 +245,8 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
           isOpen: true,
           shareUrl: result.shareUrl || '',
           sharePin: result.sharePin || '',
-          fileName: file.name
+          fileName: file.name,
+          hasPassword: !!password
         });
       } else {
         throw new Error(result.error || 'Upload failed');
@@ -257,6 +270,12 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     }
   }, [files, callbacks, toast]);
 
+  // Handle password confirmation and start upload
+  const handlePasswordConfirm = useCallback((fileId: string, password?: string) => {
+    setPasswordDialog({ isOpen: false, fileId: '', fileName: '' });
+    realUpload(fileId, password);
+  }, [realUpload]);
+
   // Handle file removal
   const handleRemoveFile = useCallback((fileId: string) => {
     setFiles(prev => prev.filter(f => f.id !== fileId));
@@ -272,16 +291,31 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
   }, []);
 
   const handleResumeFile = useCallback((fileId: string) => {
-    realUpload(fileId);
-  }, [realUpload]);
+    const file = files.find(f => f.id === fileId);
+    if (!file) return;
+
+    setPasswordDialog({
+      isOpen: true,
+      fileId,
+      fileName: file.name
+    });
+  }, [files]);
 
   // Handle retry
   const handleRetryFile = useCallback((fileId: string) => {
+    const file = files.find(f => f.id === fileId);
+    if (!file) return;
+
     setFiles(prev => prev.map(f => 
       f.id === fileId ? { ...f, status: 'pending' as const, error: undefined } : f
     ));
-    realUpload(fileId);
-  }, [realUpload]);
+
+    setPasswordDialog({
+      isOpen: true,
+      fileId,
+      fileName: file.name
+    });
+  }, [files]);
 
   // Bulk operations
   const handleSelectAll = useCallback(() => {
@@ -853,6 +887,14 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
         </Card>
       )}
       
+      {/* Password Protection Dialog */}
+      <PasswordProtectionDialog
+        isOpen={passwordDialog.isOpen}
+        onClose={() => setPasswordDialog({ isOpen: false, fileId: '', fileName: '' })}
+        onConfirm={(password) => handlePasswordConfirm(passwordDialog.fileId, password)}
+        fileName={passwordDialog.fileName}
+      />
+
       {/* Upload Success Dialog */}
       <UploadSuccessDialog
         isOpen={uploadSuccess.isOpen}
@@ -860,6 +902,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
         shareUrl={uploadSuccess.shareUrl}
         sharePin={uploadSuccess.sharePin}
         fileName={uploadSuccess.fileName}
+        hasPassword={uploadSuccess.hasPassword}
       />
     </div>
   );

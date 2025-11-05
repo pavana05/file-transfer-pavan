@@ -360,6 +360,20 @@ export type Database = {
         Args: { p_share_token: string }
         Returns: boolean
       }
+      insert_file_with_password: {
+        Args: {
+          p_file_size: number
+          p_file_type: string
+          p_filename: string
+          p_original_name: string
+          p_password?: string
+          p_share_pin: string
+          p_share_token: string
+          p_storage_path: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       log_pin_attempt: {
         Args: {
           p_ip_address: unknown
