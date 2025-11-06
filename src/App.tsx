@@ -28,7 +28,7 @@ const App = () => (
             <Route path="/share/:token" element={<FileShare />} />
             <Route path="/collection/:token" element={<CollectionShare />} />
             <Route path="/pin" element={<PinAccess />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -36,19 +36,21 @@ interface SharedFile {
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [files, setFiles] = useState<SharedFile[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+    
     if (!user) {
       navigate('/auth');
       return;
     }
     
     loadFiles();
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const loadFiles = async () => {
     setLoading(true);
