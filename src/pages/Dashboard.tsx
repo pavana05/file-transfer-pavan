@@ -21,6 +21,7 @@ import {
 import { formatFileSize } from '@/lib/file-utils';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { FileAnalytics } from '@/components/dashboard/FileAnalytics';
 
 interface SharedFile {
   id: string;
@@ -128,6 +129,13 @@ const Dashboard = () => {
             Manage and access all your uploaded files and their share links
           </p>
         </div>
+
+        {/* Analytics Section */}
+        {!loading && files.length > 0 && (
+          <div className="mb-8">
+            <FileAnalytics />
+          </div>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center py-20">

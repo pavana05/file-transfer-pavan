@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      file_analytics: {
+        Row: {
+          accessed_at: string
+          created_at: string
+          event_type: string
+          file_id: string
+          id: string
+          ip_address: unknown
+          user_agent: string | null
+        }
+        Insert: {
+          accessed_at?: string
+          created_at?: string
+          event_type: string
+          file_id: string
+          id?: string
+          ip_address?: unknown
+          user_agent?: string | null
+        }
+        Update: {
+          accessed_at?: string
+          created_at?: string
+          event_type?: string
+          file_id?: string
+          id?: string
+          ip_address?: unknown
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "file_analytics_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "uploaded_files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       file_collections: {
         Row: {
           collection_name: string
@@ -373,6 +411,15 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      log_file_access: {
+        Args: {
+          p_event_type: string
+          p_file_id: string
+          p_ip_address?: unknown
+          p_user_agent?: string
+        }
+        Returns: undefined
       }
       log_pin_attempt: {
         Args: {
