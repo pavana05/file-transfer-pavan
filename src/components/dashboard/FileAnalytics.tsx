@@ -10,6 +10,7 @@ import {
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Eye, Download, Activity } from 'lucide-react';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
+import { FileAnalyticsSkeleton } from './FileAnalyticsSkeleton';
 
 interface AnalyticsData {
   date: string;
@@ -113,13 +114,7 @@ export const FileAnalytics = () => {
   };
 
   if (loading) {
-    return (
-      <Card className="p-6 bg-card/40 backdrop-blur-md border border-border/60">
-        <div className="flex items-center justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-        </div>
-      </Card>
-    );
+    return <FileAnalyticsSkeleton />;
   }
 
   return (

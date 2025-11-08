@@ -22,6 +22,7 @@ import { formatFileSize } from '@/lib/file-utils';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { FileAnalytics } from '@/components/dashboard/FileAnalytics';
+import { FileListSkeleton } from '@/components/dashboard/FileListSkeleton';
 
 interface SharedFile {
   id: string;
@@ -139,9 +140,7 @@ const Dashboard = () => {
         )}
 
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-          </div>
+          <FileListSkeleton />
         ) : files.length === 0 ? (
           <Card className="p-16 text-center bg-card/60 backdrop-blur-xl border border-border/50 rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
             <Upload className="w-20 h-20 mx-auto mb-6 text-muted-foreground" />
