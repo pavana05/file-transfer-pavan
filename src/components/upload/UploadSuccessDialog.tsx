@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Check, Copy, Share2, KeyRound, ExternalLink, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import confetti from 'canvas-confetti';
 
 interface UploadSuccessDialogProps {
   isOpen: boolean;
@@ -30,9 +31,48 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
   hasPassword = false
 }) => {
   const { toast } = useToast();
+  const pinButtonRef = useRef<HTMLButtonElement>(null);
+  const linkButtonRef = useRef<HTMLButtonElement>(null);
 
-  const copyToClipboard = (text: string, label: string) => {
+  const triggerConfetti = (buttonRef: React.RefObject<HTMLButtonElement>) => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+      // Main confetti burst
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { x, y },
+        colors: ['#4F46E5', '#7C3AED', '#EC4899', '#F59E0B', '#10B981'],
+        ticks: 200,
+        gravity: 1,
+        decay: 0.94,
+        startVelocity: 30,
+        scalar: 1.2,
+      });
+
+      // Secondary smaller burst
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          spread: 50,
+          origin: { x, y },
+          colors: ['#4F46E5', '#7C3AED', '#EC4899'],
+          ticks: 150,
+          gravity: 1.2,
+          decay: 0.95,
+          startVelocity: 20,
+          scalar: 0.8,
+        });
+      }, 100);
+    }
+  };
+
+  const copyToClipboard = (text: string, label: string, buttonRef: React.RefObject<HTMLButtonElement>) => {
     navigator.clipboard.writeText(text);
+    triggerConfetti(buttonRef);
     toast({
       title: `${label} copied!`,
       description: `${label} has been copied to your clipboard.`,
@@ -108,10 +148,11 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
                       </div>
                     </div>
                     <Button
+                      ref={pinButtonRef}
                       variant="outline"
                       size="lg"
-                      onClick={() => copyToClipboard(sharePin, 'PIN')}
-                      className="h-14 px-8 bg-background/90 border-2 border-primary/40 hover:bg-primary/10 hover:border-primary/60 transition-all duration-200 rounded-2xl text-base font-semibold"
+                      onClick={() => copyToClipboard(sharePin, 'PIN', pinButtonRef)}
+                      className="h-14 px-8 bg-background/90 border-2 border-primary/40 hover:bg-primary/10 hover:border-primary/60 hover:scale-105 transition-all duration-200 rounded-2xl text-base font-semibold active:scale-95"
                     >
                       <Copy className="w-5 h-5 mr-2" />
                       Copy PIN
@@ -146,10 +187,11 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
                     <p className="text-base font-mono truncate text-foreground">{shareUrl}</p>
                   </div>
                   <Button
+                    ref={linkButtonRef}
                     variant="outline"
                     size="lg"
-                    onClick={() => copyToClipboard(shareUrl, 'Share link')}
-                    className="h-14 px-8 bg-background/90 border-2 border-border/60 hover:bg-primary/10 hover:border-primary/40 transition-all duration-200 flex-shrink-0 rounded-2xl text-base font-semibold"
+                    onClick={() => copyToClipboard(shareUrl, 'Share link', linkButtonRef)}
+                    className="h-14 px-8 bg-background/90 border-2 border-border/60 hover:bg-primary/10 hover:border-primary/40 hover:scale-105 transition-all duration-200 flex-shrink-0 rounded-2xl text-base font-semibold active:scale-95"
                   >
                     <Copy className="w-5 h-5 mr-2" />
                     Copy Link
