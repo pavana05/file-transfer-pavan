@@ -518,71 +518,78 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
       {/* File Management - Enhanced Professional Design */}
       {files.length > 0 && (
-        <Card className="overflow-hidden bg-gradient-to-br from-card to-card/50 shadow-xl shadow-black/5 border-border/50 backdrop-blur-sm" data-file-management>
-          {/* Header with gradient background */}
-          <div className="bg-gradient-to-r from-primary/5 via-primary/3 to-primary/5 border-b border-border/50 p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                <Folder className="w-5 h-5 text-primary" />
+        <Card className="overflow-hidden relative bg-gradient-to-br from-card via-card/95 to-card/80 shadow-2xl shadow-primary/5 border-border/40 backdrop-blur-xl" data-file-management>
+          {/* Decorative background elements */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-primary/10 via-transparent to-transparent blur-3xl pointer-events-none"></div>
+          
+          {/* Header with enhanced gradient background */}
+          <div className="relative bg-gradient-to-r from-primary/10 via-primary/5 to-accent/10 border-b border-border/40 p-8">
+            <div className="flex items-center gap-4">
+              <div className="relative p-3 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 shadow-lg shadow-primary/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-2xl blur-md"></div>
+                <Folder className="relative w-6 h-6 text-primary" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-foreground">File Management</h2>
-                <p className="text-sm text-muted-foreground">Organize and manage your uploaded files</p>
+                <h2 className="text-2xl font-bold text-foreground tracking-tight">File Management</h2>
+                <p className="text-sm text-muted-foreground font-medium mt-1">Organize and manage your uploaded files with ease</p>
               </div>
             </div>
           </div>
 
-          <div className="p-6 space-y-6">
+          <div className="relative p-8 space-y-8">
             {/* Enhanced Controls Bar */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Search with modern styling */}
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 rounded-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 -z-10"></div>
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <Input
-                  placeholder="Search files..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-12 bg-background/50 border-border/60 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-base font-medium placeholder:text-muted-foreground/70 transition-all duration-200"
-                />
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/30 rounded-2xl opacity-0 group-focus-within:opacity-100 blur-xl transition-all duration-500"></div>
+                <div className="relative">
+                  <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-all duration-200" />
+                  <Input
+                    placeholder="Search files by name..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-14 pr-6 h-14 bg-background/60 border-2 border-border/50 focus:border-primary/60 focus:ring-4 focus:ring-primary/10 text-base font-medium placeholder:text-muted-foreground/60 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200"
+                  />
+                </div>
               </div>
 
               {/* Filter and View Mode - Enhanced styling */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1 min-w-0">
                   <Select value={filterType} onValueChange={setFilterType}>
-                    <SelectTrigger className="h-12 bg-background/50 border-border/60 hover:border-primary/30 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-base font-medium transition-all duration-200">
+                    <SelectTrigger className="h-14 bg-background/60 border-2 border-border/50 hover:border-primary/40 focus:border-primary/60 focus:ring-4 focus:ring-primary/10 text-base font-semibold rounded-2xl shadow-sm hover:shadow-md transition-all duration-200">
                       <div className="flex items-center">
-                        <Filter className="w-4 h-4 mr-3 text-primary/70" />
+                        <Filter className="w-5 h-5 mr-3 text-primary" />
                         <SelectValue placeholder="Filter files" />
                       </div>
                     </SelectTrigger>
-                    <SelectContent className="bg-popover/95 backdrop-blur-md border-border/50">
-                      <SelectItem value="all" className="font-medium">All Files</SelectItem>
-                      <SelectItem value="images">Images</SelectItem>
-                      <SelectItem value="documents">Documents</SelectItem>
-                      <SelectItem value="videos">Videos</SelectItem>
-                      <SelectItem value="completed" className="text-success">Completed</SelectItem>
-                      <SelectItem value="pending" className="text-warning">Pending</SelectItem>
-                      <SelectItem value="error" className="text-destructive">Failed</SelectItem>
+                    <SelectContent className="bg-popover/98 backdrop-blur-xl border-2 border-border/50 rounded-2xl shadow-xl">
+                      <SelectItem value="all" className="font-semibold text-base h-11">All Files</SelectItem>
+                      <SelectItem value="images" className="text-base h-11">📷 Images</SelectItem>
+                      <SelectItem value="documents" className="text-base h-11">📄 Documents</SelectItem>
+                      <SelectItem value="videos" className="text-base h-11">🎬 Videos</SelectItem>
+                      <SelectItem value="completed" className="text-success text-base h-11">✓ Completed</SelectItem>
+                      <SelectItem value="pending" className="text-warning text-base h-11">⏳ Pending</SelectItem>
+                      <SelectItem value="error" className="text-destructive text-base h-11">✗ Failed</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Enhanced View Mode Buttons */}
-                <div className="flex gap-2 p-1 bg-muted/50 rounded-lg border border-border/40">
+                <div className="flex gap-2 p-1.5 bg-muted/60 rounded-2xl border-2 border-border/40 shadow-sm">
                   <Button
                     variant={viewMode === 'list' ? 'default' : 'ghost'}
                     size="default"
                     onClick={() => setViewMode('list')}
                     className={cn(
-                      "h-10 px-4 font-medium transition-all duration-200",
+                      "h-11 px-6 font-semibold rounded-xl transition-all duration-200",
                       viewMode === 'list' 
-                        ? "bg-primary text-primary-foreground shadow-sm" 
-                        : "hover:bg-background/60 text-muted-foreground hover:text-foreground"
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
+                        : "hover:bg-background/80 text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    <List className="w-4 h-4 mr-2" />
+                    <List className="w-5 h-5 mr-2" />
                     <span className="hidden sm:inline">List</span>
                   </Button>
                   <Button
@@ -590,13 +597,13 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                     size="default"
                     onClick={() => setViewMode('grid')}
                     className={cn(
-                      "h-10 px-4 font-medium transition-all duration-200",
+                      "h-11 px-6 font-semibold rounded-xl transition-all duration-200",
                       viewMode === 'grid' 
-                        ? "bg-primary text-primary-foreground shadow-sm" 
-                        : "hover:bg-background/60 text-muted-foreground hover:text-foreground"
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
+                        : "hover:bg-background/80 text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    <Grid className="w-4 h-4 mr-2" />
+                    <Grid className="w-5 h-5 mr-2" />
                     <span className="hidden sm:inline">Grid</span>
                   </Button>
                 </div>
@@ -609,7 +616,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                     variant="outline"
                     size="default"
                     onClick={handleSelectAll}
-                    className="h-11 px-6 font-medium border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all duration-200"
+                    className="h-12 px-8 font-semibold border-2 border-border/50 hover:border-primary/50 hover:bg-primary/10 hover:shadow-md transition-all duration-200 rounded-2xl"
                   >
                     Select All ({filteredFiles.length})
                   </Button>
@@ -619,32 +626,36 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
             {/* Enhanced Upload Buttons Section */}
             {!config.autoUpload && pendingCount > 0 && (
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-xl"></div>
-                <div className="relative p-6 bg-background/40 border border-primary/20 rounded-xl backdrop-blur-sm">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-full bg-primary/15 border border-primary/30">
-                      <Upload className="w-4 h-4 text-primary" />
+              <div className="relative group">
+                {/* Animated gradient background */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/30 rounded-3xl opacity-75 blur-2xl group-hover:opacity-100 transition-all duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 rounded-3xl"></div>
+                
+                <div className="relative p-8 bg-background/60 border-2 border-primary/30 rounded-3xl backdrop-blur-xl shadow-xl">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="relative p-3 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 border-2 border-primary/40 shadow-lg">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent rounded-2xl blur-md animate-pulse"></div>
+                      <Upload className="relative w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <span className="text-base font-semibold text-foreground">
+                      <span className="text-xl font-bold text-foreground tracking-tight">
                         {pendingCount} file{pendingCount !== 1 ? 's' : ''} ready to upload
                       </span>
-                      <p className="text-sm text-muted-foreground">Choose your upload method</p>
+                      <p className="text-sm text-muted-foreground font-medium mt-1">Choose your preferred upload method</p>
                     </div>
                   </div>
                   
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex flex-col sm:flex-row gap-4">
                     <Button
                       onClick={handleUploadAll}
                       size="default"
                       variant="outline"
                       className={cn(
-                        "h-12 flex-1 font-medium border-primary/30 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300",
-                        showUploadGlow && "ring-2 ring-primary/50 ring-offset-2 bg-primary/10 shadow-lg animate-pulse border-primary/50"
+                        "h-14 flex-1 font-semibold text-base border-2 border-primary/40 hover:border-primary/60 hover:bg-primary/10 hover:scale-105 active:scale-95 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300",
+                        showUploadGlow && "ring-4 ring-primary/40 ring-offset-2 bg-primary/15 shadow-2xl animate-pulse border-primary/60"
                       )}
                     >
-                      <Upload className="w-4 h-4 mr-2" />
+                      <Upload className="w-5 h-5 mr-2" />
                       Upload Individual Files
                     </Button>
                     
@@ -652,9 +663,9 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                       <Button
                         onClick={handleUploadAsCollection}
                         size="default"
-                        className="h-12 flex-1 font-medium bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300"
+                        className="h-14 flex-1 font-semibold text-base bg-gradient-to-r from-primary via-primary/90 to-primary/80 hover:from-primary/90 hover:via-primary/80 hover:to-primary/70 hover:scale-105 active:scale-95 rounded-2xl shadow-xl hover:shadow-2xl shadow-primary/20 hover:shadow-primary/30 transition-all duration-300"
                       >
-                        <Package className="w-4 h-4 mr-2" />
+                        <Package className="w-5 h-5 mr-2" />
                         Upload as Collection
                       </Button>
                     )}
@@ -664,9 +675,9 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                         <Button 
                           size="default" 
                           variant="outline" 
-                          className="h-12 flex-1 sm:flex-none font-medium border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all duration-200"
+                          className="h-14 flex-1 sm:flex-none font-semibold text-base border-2 border-border/60 hover:border-primary/40 hover:bg-primary/10 hover:scale-105 active:scale-95 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
                         >
-                          <Smartphone className="w-4 h-4 mr-2" />
+                          <Smartphone className="w-5 h-5 mr-2" />
                           Nearby Share
                         </Button>
                       }
@@ -679,45 +690,48 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
             {/* Enhanced Bulk Actions */}
             {selectedFiles.length > 0 && (
-              <div className="p-4 bg-gradient-to-r from-accent/30 via-accent/20 to-accent/30 border border-accent/40 rounded-lg backdrop-blur-sm">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                    <span className="font-medium text-foreground">
-                      {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected
-                    </span>
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-accent/30 via-accent/20 to-accent/30 rounded-2xl blur-xl"></div>
+                <div className="relative p-6 bg-gradient-to-r from-accent/20 via-accent/15 to-accent/20 border-2 border-accent/50 rounded-2xl backdrop-blur-sm shadow-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full bg-primary animate-pulse shadow-lg shadow-primary/50"></div>
+                      <span className="text-lg font-bold text-foreground">
+                        {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected
+                      </span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="default"
+                      onClick={handleDeleteSelected}
+                      className="w-full sm:w-auto sm:ml-auto h-12 px-6 font-semibold text-base border-2 border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive/60 hover:scale-105 active:scale-95 rounded-2xl shadow-md hover:shadow-lg transition-all duration-200"
+                    >
+                      <Trash2 className="w-5 h-5 mr-2" />
+                      Delete Selected
+                    </Button>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="default"
-                    onClick={handleDeleteSelected}
-                    className="w-full sm:w-auto sm:ml-auto h-11 font-medium border-destructive/30 text-destructive hover:bg-destructive/5 hover:border-destructive/50 transition-all duration-200"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Selected
-                  </Button>
                 </div>
               </div>
             )}
 
             {/* Enhanced File List Tabs */}
             <Tabs value="files" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 h-12 p-1 bg-muted/40 border border-border/40 rounded-lg">
+              <TabsList className="grid w-full grid-cols-2 h-14 p-1.5 bg-muted/60 border-2 border-border/40 rounded-2xl shadow-sm">
                 <TabsTrigger 
                   value="files" 
-                  className="h-10 font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all duration-200"
+                  className="h-11 font-semibold text-base data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:shadow-primary/10 data-[state=active]:border-2 data-[state=active]:border-primary/30 rounded-xl transition-all duration-300"
                 >
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2.5 h-2.5 rounded-full bg-primary shadow-md shadow-primary/50"></div>
                     Files ({filteredFiles.length})
                   </div>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="folders" 
-                  className="h-10 font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all duration-200"
+                  className="h-11 font-semibold text-base data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:shadow-primary/10 data-[state=active]:border-2 data-[state=active]:border-primary/30 rounded-xl transition-all duration-300"
                 >
-                  <div className="flex items-center gap-2">
-                    <Folder className="w-4 h-4" />
+                  <div className="flex items-center gap-3">
+                    <Folder className="w-5 h-5" />
                     Folders
                   </div>
                 </TabsTrigger>
