@@ -212,19 +212,31 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     const file = files.find(f => f.id === fileId);
     if (!file) return;
 
+    const startTime = Date.now();
+    
     setFiles(prev => prev.map(f => 
-      f.id === fileId ? { ...f, status: 'uploading' as const } : f
+      f.id === fileId ? { ...f, status: 'uploading' as const, startTime } : f
     ));
 
     callbacks.onUploadStart?.(file);
 
     try {
-      const result = await UploadService.uploadFile(file, (progress) => {
-        setFiles(prev => prev.map(f => 
-          f.id === fileId ? { ...f, progress } : f
-        ));
-        callbacks.onUploadProgress?.(file, progress);
-      }, password);
+      const result = await UploadService.uploadFile(
+        file, 
+        (progress, uploadSpeed, estimatedTime, uploadedBytes) => {
+          setFiles(prev => prev.map(f => 
+            f.id === fileId ? { 
+              ...f, 
+              progress,
+              uploadSpeed,
+              estimatedTimeRemaining: estimatedTime,
+              uploadedBytes
+            } : f
+          ));
+          callbacks.onUploadProgress?.(file, progress);
+        }, 
+        password
+      );
 
       if (result.success) {
         setFiles(prev => prev.map(f => 
@@ -233,7 +245,10 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
             status: 'completed' as const, 
             progress: 100,
             uploadedAt: new Date(),
-            url: result.shareUrl
+            url: result.shareUrl,
+            uploadSpeed: undefined,
+            estimatedTimeRemaining: undefined,
+            uploadedBytes: f.size
           } : f
         ));
 
