@@ -10,6 +10,9 @@ import { formatFileSize } from '@/lib/file-utils';
 import { UploadService } from '@/services/uploadService';
 import { useToast } from '@/hooks/use-toast';
 import FilePreview from '@/components/filePreview/FilePreview';
+import DownloadProgress from '@/components/download/DownloadProgress';
+import FileAccessHistory from '@/components/history/FileAccessHistory';
+import { downloadFileWithProgress, addToAccessHistory, DownloadProgress as IDownloadProgress } from '@/lib/download-utils';
 
 interface FileInfo {
   id: string;
@@ -31,6 +34,7 @@ const PinAccess = () => {
   const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState<IDownloadProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const { toast } = useToast();
@@ -57,6 +61,9 @@ const PinAccess = () => {
       }
       
       setFileInfo(info);
+      
+      // Add to access history
+      addToAccessHistory(pin, info.original_name, info.file_size, info.file_type);
     } catch (err) {
       setError('Invalid PIN or file not found');
     } finally {
@@ -97,33 +104,22 @@ const PinAccess = () => {
     if (!fileInfo) return;
 
     setDownloading(true);
+    setDownloadProgress(null);
+    
     try {
       const url = await UploadService.getFileUrl(fileInfo.storage_path);
       
       // Increment download count
       await UploadService.incrementDownloadCount(fileInfo.share_token);
       
-      // Enhanced direct download with better compatibility
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch file');
-      }
-      
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = fileInfo.original_name;
-      link.setAttribute('download', fileInfo.original_name);
-      
-      // Better cross-browser support
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
+      // Download with progress tracking
+      await downloadFileWithProgress(
+        url,
+        fileInfo.original_name,
+        (progress) => {
+          setDownloadProgress(progress);
+        }
+      );
 
       // Update download count in UI
       setFileInfo(prev => prev ? { ...prev, download_count: prev.download_count + 1 } : null);
@@ -150,6 +146,18 @@ const PinAccess = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Download progress indicator */}
+      {downloading && downloadProgress && (
+        <DownloadProgress
+          fileName={fileInfo?.original_name || ''}
+          progress={downloadProgress.progress}
+          downloadedBytes={downloadProgress.downloadedBytes}
+          totalBytes={downloadProgress.totalBytes}
+          speed={downloadProgress.speed}
+          timeRemaining={downloadProgress.timeRemaining}
+        />
+      )}
+      
         {/* Enhanced Professional Background System */}
       <div className="absolute inset-0">
         {/* Base gradient layers */}
@@ -246,6 +254,9 @@ const PinAccess = () => {
             </div>
           </div>
         </div>
+
+        {/* File Access History */}
+        {!fileInfo && !showPasswordInput && <div className="max-w-2xl mx-auto mb-8"><FileAccessHistory /></div>}
 
         {showPasswordInput ? (
           // Password Input Card
@@ -417,7 +428,7 @@ const PinAccess = () => {
         ) : (
           // Enhanced Professional File Display Card
           <div className="max-w-7xl mx-auto animate-fade-in">
-            <Card className="relative bg-card/40 backdrop-blur-2xl border-2 border-border/30 shadow-2xl shadow-black/10 overflow-hidden">
+            <Card className="relative bg-card/40 backdrop-blur-2xl border-2 border-border/30 shadow-2xl shadow-black/10 overflow-hidden animate-in fade-in-50 slide-in-from-bottom-5 duration-500">
               {/* Enhanced Card Background Effects */}
               <div className="absolute inset-0 bg-gradient-to-br from-card/90 via-card/70 to-card/90" />
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.10),transparent_50%)]" />
@@ -429,7 +440,7 @@ const PinAccess = () => {
                 {/* Enhanced Professional File Details - Top Section */}
                 <div className="space-y-10 mb-10 lg:mb-12">
                   {/* Enhanced File Header */}
-                  <div className="space-y-8 animate-fade-in">
+                  <div className="space-y-8 animate-in fade-in-50 duration-700 delay-100">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
                       {/* File Info Section */}
                       <div className="flex items-start gap-6 flex-1">
@@ -460,7 +471,7 @@ const PinAccess = () => {
                     </div>
                   </div>
                   {/* Enhanced File Metadata Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 animate-in fade-in-50 duration-700 delay-200">
                     <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-muted/60 to-muted/40 border-2 border-border/40 transition-all duration-500 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1 hover:scale-[1.02]">
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -520,7 +531,7 @@ const PinAccess = () => {
                 </div>
                 
                 {/* File Preview and Action Buttons Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 animate-in fade-in-50 duration-700 delay-300">
                   {/* Enhanced Professional File Preview */}
                   <div className="lg:col-span-5">
                     <div className="group relative overflow-hidden rounded-3xl border-2 border-border/40 bg-gradient-to-br from-muted/40 to-muted/20 p-3 transition-all duration-500 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 hover:scale-[1.02]">
