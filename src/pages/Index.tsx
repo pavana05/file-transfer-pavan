@@ -324,6 +324,15 @@ const Index = () => {
                   <Button
                     size="lg"
                     variant="outline"
+                    onClick={() => window.location.href = '/scan'}
+                    className="w-full sm:w-auto text-base sm:text-lg px-8 py-6 border-2"
+                  >
+                    <ScanLine className="mr-2 h-5 w-5" />
+                    Scan QR Code
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
                     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                     className="w-full sm:w-auto text-base sm:text-lg px-8 py-6 border-2"
                   >

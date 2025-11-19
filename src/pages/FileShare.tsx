@@ -9,6 +9,8 @@ import { formatFileSize } from '@/lib/file-utils';
 import { UploadService } from '@/services/uploadService';
 import { useToast } from '@/hooks/use-toast';
 import FilePreview from '@/components/filePreview/FilePreview';
+import RealtimeCollaboration from '@/components/collaboration/RealtimeCollaboration';
+import { cacheFileForOffline } from '@/lib/service-worker';
 
 interface FileInfo {
   id: string;
@@ -73,6 +75,15 @@ const FileShare = () => {
       }
       
       const blob = await response.blob();
+      
+      // Cache file for offline access
+      try {
+        await cacheFileForOffline(url, blob);
+        console.log('File cached for offline access');
+      } catch (cacheError) {
+        console.error('Failed to cache file:', cacheError);
+      }
+      
       const downloadUrl = window.URL.createObjectURL(blob);
       
       const link = document.createElement('a');
@@ -93,7 +104,7 @@ const FileShare = () => {
 
       toast({
         title: "Download completed",
-        description: "File has been downloaded to your system.",
+        description: "File downloaded and saved for offline access.",
       });
     } catch (err) {
       toast({
@@ -286,6 +297,16 @@ const FileShare = () => {
             </div>
           </div>
         </Card>
+
+        {/* Real-time Collaboration */}
+        {fileInfo && (
+          <div className="mt-8 animate-fade-in">
+            <RealtimeCollaboration 
+              fileId={fileInfo.id} 
+              fileName={fileInfo.original_name}
+            />
+          </div>
+        )}
 
         {/* Enhanced Info Card */}
         <Card className="mt-8 p-8 backdrop-blur-sm bg-card/95 border-border/50 shadow-lg shadow-accent/5 hover:shadow-xl hover:shadow-accent/10 transition-all duration-300">
