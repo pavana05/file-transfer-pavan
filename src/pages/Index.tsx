@@ -210,10 +210,19 @@ const Index = () => {
         <TestimonialsSection />
 
         {/* Features Grid */}
-        <div className="mb-16 sm:mb-24">
-          <div className="text-center mb-12 sm:mb-16 animate-fade-in">
+        <div className="mb-16 sm:mb-24 relative">
+          {/* Decorative Elements */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/5 rounded-full blur-[120px] -z-10"></div>
+          
+          <div className="text-center mb-12 sm:mb-16 animate-fade-in relative">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium text-primary">Premium Features</span>
+            </div>
+            
             <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent">
                 Powerful Features
               </span>
             </h3>
@@ -223,96 +232,150 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <Card className="group hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 border-border/50 bg-card/50 backdrop-blur-sm animate-fade-in">
-              <div className="p-6 sm:p-8">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center mb-5 shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-shadow">
-                  <Shield className="h-7 w-7 text-primary-foreground" />
+            <Card className="group relative overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 border-border/50 bg-gradient-to-br from-card/80 via-card/50 to-card/80 backdrop-blur-sm animate-fade-in">
+              {/* Card Glow Effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
+              </div>
+              
+              <div className="p-6 sm:p-8 relative z-10">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                  <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center mb-5 shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-all duration-300 group-hover:scale-110">
+                    <Shield className="h-7 w-7 text-primary-foreground" />
+                  </div>
                 </div>
-                <h4 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+                <h4 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
                   Military-Grade Security
                 </h4>
                 <p className="text-muted-foreground leading-relaxed">
                   Your files are protected with AES-256 encryption. Add passwords and expiration dates for extra security.
                 </p>
+                
+                {/* Decorative Line */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
             </Card>
 
-            <Card className="group hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 border-border/50 bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '100ms' }}>
-              <div className="p-6 sm:p-8">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-success to-success/80 flex items-center justify-center mb-5 shadow-lg shadow-success/25 group-hover:shadow-success/40 transition-shadow">
-                  <Zap className="h-7 w-7 text-success-foreground" />
+            <Card className="group relative overflow-hidden hover:shadow-2xl hover:shadow-success/20 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 border-border/50 bg-gradient-to-br from-card/80 via-card/50 to-card/80 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '100ms' }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-success/10 via-transparent to-transparent"></div>
+              </div>
+              
+              <div className="p-6 sm:p-8 relative z-10">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-success/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                  <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-success to-success/80 flex items-center justify-center mb-5 shadow-lg shadow-success/30 group-hover:shadow-success/50 transition-all duration-300 group-hover:scale-110">
+                    <Zap className="h-7 w-7 text-success-foreground" />
+                  </div>
                 </div>
-                <h4 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+                <h4 className="text-xl font-bold mb-3 group-hover:text-success transition-colors">
                   Lightning Fast Uploads
                 </h4>
                 <p className="text-muted-foreground leading-relaxed">
                   Chunked uploads with resume capability. Transfer up to 10GB files with blazing speed.
                 </p>
+                
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-success to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
             </Card>
 
-            <Card className="group hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 border-border/50 bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '200ms' }}>
-              <div className="p-6 sm:p-8">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-warning to-warning/80 flex items-center justify-center mb-5 shadow-lg shadow-warning/25 group-hover:shadow-warning/40 transition-shadow">
-                  <KeyRound className="h-7 w-7 text-warning-foreground" />
+            <Card className="group relative overflow-hidden hover:shadow-2xl hover:shadow-warning/20 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 border-border/50 bg-gradient-to-br from-card/80 via-card/50 to-card/80 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '200ms' }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-warning/10 via-transparent to-transparent"></div>
+              </div>
+              
+              <div className="p-6 sm:p-8 relative z-10">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-warning/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                  <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-warning to-warning/80 flex items-center justify-center mb-5 shadow-lg shadow-warning/30 group-hover:shadow-warning/50 transition-all duration-300 group-hover:scale-110">
+                    <KeyRound className="h-7 w-7 text-warning-foreground" />
+                  </div>
                 </div>
-                <h4 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+                <h4 className="text-xl font-bold mb-3 group-hover:text-warning transition-colors">
                   PIN Protection
                 </h4>
                 <p className="text-muted-foreground leading-relaxed">
                   Share files with unique PIN codes. Track access attempts and maintain complete control.
                 </p>
+                
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-warning to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
             </Card>
 
-            <Card className="group hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 border-border/50 bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '300ms' }}>
-              <div className="p-6 sm:p-8">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary-glow to-primary flex items-center justify-center mb-5 shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-shadow">
-                  <Smartphone className="h-7 w-7 text-primary-foreground" />
+            <Card className="group relative overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 border-border/50 bg-gradient-to-br from-card/80 via-card/50 to-card/80 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '300ms' }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-glow/10 via-transparent to-transparent"></div>
+              </div>
+              
+              <div className="p-6 sm:p-8 relative z-10">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-primary-glow/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                  <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-primary-glow to-primary flex items-center justify-center mb-5 shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-all duration-300 group-hover:scale-110">
+                    <Smartphone className="h-7 w-7 text-primary-foreground" />
+                  </div>
                 </div>
-                <h4 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+                <h4 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
                   Nearby Share
                 </h4>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed mb-4">
                   Peer-to-peer file sharing with WebRTC. Transfer files directly between devices without servers.
                 </p>
-                <div className="mt-4">
-                  <NearbyShareDialog 
-                    trigger={
-                      <Button variant="outline" size="sm" className="w-full">
-                        Try Nearby Share
-                      </Button>
-                    }
-                  />
-                </div>
+                <NearbyShareDialog 
+                  trigger={
+                    <Button variant="outline" size="sm" className="w-full group-hover:border-primary group-hover:text-primary transition-colors">
+                      Try Nearby Share
+                    </Button>
+                  }
+                />
+                
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
             </Card>
 
-            <Card className="group hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 border-border/50 bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '400ms' }}>
-              <div className="p-6 sm:p-8">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center mb-5 shadow-lg shadow-accent/25 group-hover:shadow-accent/40 transition-shadow">
-                  <Users className="h-7 w-7 text-accent-foreground" />
+            <Card className="group relative overflow-hidden hover:shadow-2xl hover:shadow-accent/20 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 border-border/50 bg-gradient-to-br from-card/80 via-card/50 to-card/80 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '400ms' }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-transparent"></div>
+              </div>
+              
+              <div className="p-6 sm:p-8 relative z-10">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-accent/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                  <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center mb-5 shadow-lg shadow-accent/30 group-hover:shadow-accent/50 transition-all duration-300 group-hover:scale-110">
+                    <Users className="h-7 w-7 text-accent-foreground" />
+                  </div>
                 </div>
-                <h4 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+                <h4 className="text-xl font-bold mb-3 group-hover:text-accent transition-colors">
                   Team Collaboration
                 </h4>
                 <p className="text-muted-foreground leading-relaxed">
                   Create collections, share with teams, and track downloads. Perfect for businesses.
                 </p>
+                
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
             </Card>
 
-            <Card className="group hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 border-border/50 bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '500ms' }}>
-              <div className="p-6 sm:p-8">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-destructive to-destructive/80 flex items-center justify-center mb-5 shadow-lg shadow-destructive/25 group-hover:shadow-destructive/40 transition-shadow">
-                  <Clock className="h-7 w-7 text-destructive-foreground" />
+            <Card className="group relative overflow-hidden hover:shadow-2xl hover:shadow-destructive/20 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 border-border/50 bg-gradient-to-br from-card/80 via-card/50 to-card/80 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '500ms' }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-destructive/10 via-transparent to-transparent"></div>
+              </div>
+              
+              <div className="p-6 sm:p-8 relative z-10">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-destructive/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                  <div className="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-destructive to-destructive/80 flex items-center justify-center mb-5 shadow-lg shadow-destructive/30 group-hover:shadow-destructive/50 transition-all duration-300 group-hover:scale-110">
+                    <Clock className="h-7 w-7 text-destructive-foreground" />
+                  </div>
                 </div>
-                <h4 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+                <h4 className="text-xl font-bold mb-3 group-hover:text-destructive transition-colors">
                   Auto-Expiration
                 </h4>
                 <p className="text-muted-foreground leading-relaxed">
                   Set expiration dates and download limits. Files automatically delete for your privacy.
                 </p>
+                
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-destructive to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
             </Card>
           </div>
