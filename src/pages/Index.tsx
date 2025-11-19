@@ -323,7 +323,12 @@ const Index = () => {
                 </p>
                 <NearbyShareDialog 
                   trigger={
-                    <Button variant="outline" size="sm" className="w-full group-hover:border-primary group-hover:text-primary transition-colors">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full font-semibold border-2 border-primary/20 bg-background/50 backdrop-blur-sm hover:border-primary hover:bg-primary/5 hover:text-primary transition-all duration-300 hover:shadow-md hover:shadow-primary/20 group-hover:scale-105"
+                    >
+                      <Sparkles className="mr-2 h-4 w-4" />
                       Try Nearby Share
                     </Button>
                   }
@@ -382,46 +387,89 @@ const Index = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="text-center animate-fade-in">
-          <Card className="border-2 border-primary/30 shadow-2xl shadow-primary/20 bg-gradient-to-br from-card via-card to-primary/5 backdrop-blur-sm overflow-hidden">
-            <div className="p-8 sm:p-12 lg:p-16 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent"></div>
+        <div className="text-center animate-fade-in relative">
+          {/* Decorative Background */}
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/10 rounded-full blur-[150px]"></div>
+          </div>
+          
+          <Card className="relative border-2 border-primary/20 shadow-2xl shadow-primary/25 bg-gradient-to-br from-card/90 via-card/80 to-primary/5 backdrop-blur-md overflow-hidden">
+            {/* Animated Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary-glow/5 to-transparent opacity-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
+            
+            {/* Decorative Elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-glow/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+            
+            <div className="p-8 sm:p-12 lg:p-16 relative z-10">
               <div className="relative z-10">
+                {/* Premium Badge */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 animate-pulse">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-semibold text-primary">Start Free Today</span>
+                </div>
+                
                 <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
-                  <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent">
                     Ready to Get Started?
                   </span>
                 </h3>
-                <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto">
-                  Join thousands of users sharing files securely every day
+                <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
+                  Join thousands of users sharing files securely every day. No credit card required.
                 </p>
+                
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <Button
                     size="lg"
                     onClick={() => window.location.href = '/auth'}
-                    className="w-full sm:w-auto text-base sm:text-lg px-8 py-6 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all"
+                    className="group relative w-full sm:w-auto text-base sm:text-lg px-10 py-7 font-semibold overflow-hidden bg-gradient-to-r from-primary via-primary-glow to-primary hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300 hover:scale-105"
                   >
-                    <User className="mr-2 h-5 w-5" />
-                    Create Free Account
+                    {/* Button Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700"></div>
+                    <User className="mr-2 h-5 w-5 relative z-10" />
+                    <span className="relative z-10">Create Free Account</span>
                   </Button>
+                  
                   <Button
                     size="lg"
                     variant="outline"
                     onClick={() => window.location.href = '/scan'}
-                    className="w-full sm:w-auto text-base sm:text-lg px-8 py-6 border-2"
+                    className="group relative w-full sm:w-auto text-base sm:text-lg px-10 py-7 font-semibold border-2 border-primary/30 hover:border-primary bg-background/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
                   >
-                    <ScanLine className="mr-2 h-5 w-5" />
-                    Scan QR Code
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <ScanLine className="mr-2 h-5 w-5 relative z-10 group-hover:text-primary transition-colors" />
+                    <span className="relative z-10 group-hover:text-primary transition-colors">Scan QR Code</span>
                   </Button>
+                  
                   <Button
                     size="lg"
-                    variant="outline"
+                    variant="ghost"
                     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    className="w-full sm:w-auto text-base sm:text-lg px-8 py-6 border-2"
+                    className="group w-full sm:w-auto text-base sm:text-lg px-10 py-7 font-semibold hover:bg-primary/10 transition-all duration-300 hover:scale-105"
                   >
-                    <Upload className="mr-2 h-5 w-5" />
-                    Start Uploading
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <Upload className="mr-2 h-5 w-5 relative z-10 group-hover:text-primary transition-colors" />
+                    <span className="relative z-10 group-hover:text-primary transition-colors">Start Uploading</span>
                   </Button>
+                </div>
+                
+                {/* Trust Indicators */}
+                <div className="mt-10 pt-10 border-t border-border/30">
+                  <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-primary" />
+                      <span>256-bit Encryption</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-primary" />
+                      <span>10,000+ Active Users</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-primary" />
+                      <span>99.9% Uptime</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
