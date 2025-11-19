@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useAuth } from '@/contexts/AuthContext';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
+import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
 
 const Index = () => {
   const { user, signOut } = useAuth();
@@ -175,6 +176,9 @@ const Index = () => {
             </div>
           </Card>
         </div>
+
+        {/* Testimonials Section */}
+        <TestimonialsSection />
 
         {/* Features Grid */}
         <div className="mb-16 sm:mb-24">
