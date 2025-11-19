@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, RefreshCw, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +11,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import PasswordStrengthMeter from './PasswordStrengthMeter';
+import { generateSecurePassword } from '@/lib/password-generator';
+import { useToast } from '@/hooks/use-toast';
 
 interface PasswordProtectionDialogProps {
   isOpen: boolean;
@@ -29,6 +32,38 @@ const PasswordProtectionDialog: React.FC<PasswordProtectionDialogProps> = ({
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
+
+  const handleGeneratePassword = () => {
+    const newPassword = generateSecurePassword(16);
+    setPassword(newPassword);
+    setConfirmPassword(newPassword);
+    setShowPassword(true);
+    toast({
+      title: 'Password Generated',
+      description: 'A secure password has been generated. Copy it now!',
+    });
+  };
+
+  const handleCopyPassword = async () => {
+    try {
+      await navigator.clipboard.writeText(password);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast({
+        title: 'Copied!',
+        description: 'Password copied to clipboard',
+      });
+    } catch (err) {
+      toast({
+        title: 'Failed to copy',
+        description: 'Please copy the password manually',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,8 +74,8 @@ const PasswordProtectionDialog: React.FC<PasswordProtectionDialogProps> = ({
         setError('Please enter a password');
         return;
       }
-      if (password.length < 4) {
-        setError('Password must be at least 4 characters');
+      if (password.length < 8) {
+        setError('Password must be at least 8 characters');
         return;
       }
       if (password !== confirmPassword) {
@@ -53,6 +88,7 @@ const PasswordProtectionDialog: React.FC<PasswordProtectionDialogProps> = ({
     setPassword('');
     setConfirmPassword('');
     setUsePassword(false);
+    setShowPassword(false);
   };
 
   const handleCancel = () => {
@@ -60,6 +96,7 @@ const PasswordProtectionDialog: React.FC<PasswordProtectionDialogProps> = ({
     setConfirmPassword('');
     setUsePassword(false);
     setError('');
+    setShowPassword(false);
     onClose();
   };
 
@@ -95,14 +132,40 @@ const PasswordProtectionDialog: React.FC<PasswordProtectionDialogProps> = ({
 
           {usePassword && (
             <div className="space-y-4 animate-fade-in">
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleGeneratePassword}
+                  className="flex-1 gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Generate Secure Password
+                </Button>
+                {password && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleCopyPassword}
+                  >
+                    {copied ? (
+                      <Check className="h-4 w-4 text-success" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+              </div>
+
               <div>
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password (min 4 characters)"
+                  placeholder="Enter password (min 8 characters)"
                   className="mt-1.5"
                   autoFocus
                 />
@@ -112,13 +175,15 @@ const PasswordProtectionDialog: React.FC<PasswordProtectionDialogProps> = ({
                 <Label htmlFor="confirm-password">Confirm Password</Label>
                 <Input
                   id="confirm-password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter password"
                   className="mt-1.5"
                 />
               </div>
+
+              <PasswordStrengthMeter password={password} />
 
               {error && (
                 <div className="bg-destructive/10 border border-destructive/30 rounded-lg px-4 py-3 text-sm text-destructive">
