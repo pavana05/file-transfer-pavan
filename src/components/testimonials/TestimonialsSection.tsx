@@ -1,7 +1,7 @@
+import React, { useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Star, BadgeCheck, Building2 } from 'lucide-react';
-import { useEffect, useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 
