@@ -70,39 +70,49 @@ const Index = () => {
       <div className="absolute bottom-0 right-1/4 w-[800px] h-[800px] bg-accent/5 rounded-full blur-[120px] animate-float" style={{ animationDelay: '2s' }}></div>
       
       {/* Header Navigation */}
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/50">
+      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl bg-background/95 border-b border-border/40 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
-            <div className="flex items-center gap-3 animate-fade-in">
-              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shadow-lg shadow-primary/25">
-                <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
+          <div className="flex items-center justify-between h-18 sm:h-20">
+            {/* Logo & Branding */}
+            <div className="flex items-center gap-4 animate-fade-in group cursor-pointer" onClick={() => window.location.href = '/'}>
+              <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-gradient-primary shadow-glow ring-2 ring-primary/10 flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:shadow-hover">
+                <Upload className="h-6 w-6 sm:h-7 sm:w-7 text-primary-foreground transition-transform duration-300 group-hover:rotate-12" />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-transparent via-primary-foreground/5 to-primary-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent transition-all duration-300 group-hover:from-primary group-hover:via-primary group-hover:to-primary-glow">
                   FileShare Pro
                 </h1>
-                <p className="text-xs text-muted-foreground">Secure & Lightning Fast</p>
+                <p className="text-xs font-medium text-muted-foreground mt-0.5 flex items-center gap-2">
+                  <Shield className="h-3 w-3" />
+                  Secure & Lightning Fast
+                </p>
               </div>
             </div>
             
-            <div className="flex items-center gap-2 sm:gap-4">
+            {/* Navigation Actions */}
+            <nav className="flex items-center gap-2 sm:gap-3">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => window.location.href = '/scan'}
-                className="gap-2"
+                className="gap-2 hover:bg-primary/10 hover:text-primary transition-all duration-300 font-medium"
               >
                 <ScanLine className="h-4 w-4" />
                 <span className="hidden sm:inline">Scan QR</span>
               </Button>
+              
+              <div className="h-6 w-px bg-border/60 hidden sm:block"></div>
+              
               <ThemeToggle />
+              
               {user && (
                 <>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => window.location.href = '/dashboard'}
-                    className="hidden sm:flex items-center gap-2"
+                    className="hidden sm:flex items-center gap-2 hover:bg-accent hover:text-accent-foreground transition-all duration-300 font-medium"
                   >
                     <User className="h-4 w-4" />
                     Dashboard
@@ -111,7 +121,7 @@ const Index = () => {
                     variant="outline"
                     size="sm"
                     onClick={signOut}
-                    className="gap-2"
+                    className="gap-2 border-border/60 hover:border-destructive/40 hover:text-destructive hover:bg-destructive/5 transition-all duration-300 font-medium"
                   >
                     <LogOut className="h-4 w-4" />
                     <span className="hidden sm:inline">Sign Out</span>
@@ -122,13 +132,13 @@ const Index = () => {
                 <Button
                   onClick={() => window.location.href = '/auth'}
                   size="sm"
-                  className="gap-2"
+                  className="gap-2 shadow-md hover:shadow-hover transition-all duration-300 font-medium"
                 >
                   <User className="h-4 w-4" />
                   <span className="hidden sm:inline">Sign In</span>
                 </Button>
               )}
-            </div>
+            </nav>
           </div>
         </div>
       </header>
