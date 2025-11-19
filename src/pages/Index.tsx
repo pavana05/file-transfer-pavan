@@ -95,6 +95,16 @@ const Index = () => {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => window.location.href = '/pin'}
+                className="gap-2 hover:bg-primary/10 hover:text-primary transition-all duration-300 font-medium"
+              >
+                <KeyRound className="h-4 w-4" />
+                <span className="hidden sm:inline">PIN Access</span>
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => window.location.href = '/scan'}
                 className="gap-2 hover:bg-primary/10 hover:text-primary transition-all duration-300 font-medium"
               >
