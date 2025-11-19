@@ -474,7 +474,7 @@ const PinAccess = () => {
                               <Download className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:scale-125 group-hover:-translate-y-0.5" />
                               {fileInfo.download_count} downloads
                             </Badge>
-                            <Badge className="group px-6 py-3 text-sm bg-gradient-to-br from-blue-500/25 via-blue-500/20 to-blue-500/15 border-2 border-blue-500/40 text-blue-500 font-bold transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105 hover:border-blue-500/60 rounded-xl">
+                            <Badge className="group px-6 py-3 text-sm bg-gradient-to-br from-blue-500/25 via-blue-500/20 to-blue-500/15 border-2 border-blue-500/40 text-white font-bold transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105 hover:border-blue-500/60 rounded-xl">
                               <KeyRound className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-180" />
                               PIN: {pin}
                             </Badge>
