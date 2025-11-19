@@ -60,4 +60,4 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.security-monitor]
-verify_jwt = false
+verify_jwt = true
