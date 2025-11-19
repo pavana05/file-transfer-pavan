@@ -1,4 +1,20 @@
-// Security utilities for client-side validation and sanitization
+/**
+ * Security utilities for client-side validation and sanitization
+ * 
+ * ⚠️ SECURITY WARNING: CLIENT-SIDE VALIDATION IS FOR UX ONLY
+ * 
+ * All validation functions in this class run in the browser and can be bypassed
+ * by attackers. They provide immediate user feedback and prevent accidental errors,
+ * but offer NO security protection.
+ * 
+ * REAL SECURITY ENFORCEMENT happens server-side via:
+ * - validate_file_upload() RPC function (database-backed)
+ * - check_upload_rate_limit() RPC function (database-backed)
+ * - check_pin_rate_limit() RPC function (database-backed)
+ * - Row-Level Security (RLS) policies on database tables
+ * 
+ * Never rely on these client-side checks for security decisions.
+ */
 export class SecurityUtils {
   // File type validation - matches server-side validation
   private static readonly ALLOWED_FILE_TYPES = [
@@ -13,7 +29,12 @@ export class SecurityUtils {
   private static readonly MAX_FILENAME_LENGTH = 255;
 
   /**
-   * Validates file before upload
+   * CLIENT-SIDE VALIDATION FOR UX ONLY
+   * 
+   * Validates file before upload to provide immediate user feedback.
+   * This can be bypassed by attackers - real validation happens server-side.
+   * 
+   * Server-side enforcement: validate_file_upload() RPC function
    */
   static validateFile(file: File): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
@@ -110,7 +131,23 @@ export class SecurityUtils {
   }
 
   /**
-   * Rate limiting helper for client-side
+   * CLIENT-SIDE RATE LIMITING FOR UX ONLY - NOT FOR SECURITY
+   * 
+   * ⚠️ CRITICAL WARNING: This provides NO security protection!
+   * 
+   * This function stores rate limit data in localStorage, which attackers can:
+   * - Clear between requests
+   * - Modify at will using browser DevTools
+   * - Bypass completely with automated scripts
+   * - Reset using private browsing mode
+   * 
+   * This is ONLY for providing immediate feedback to legitimate users.
+   * 
+   * REAL RATE LIMITING is enforced server-side via:
+   * - check_upload_rate_limit() RPC function (database-backed)
+   * - check_pin_rate_limit() RPC function (database-backed)
+   * 
+   * DO NOT rely on this function for any security decisions.
    */
   static checkClientRateLimit(key: string, maxRequests: number, windowMs: number): boolean {
     const now = Date.now();
