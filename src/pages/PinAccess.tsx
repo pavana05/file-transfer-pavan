@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Download, File, ArrowLeft, Lock, KeyRound, FileType, Calendar, HardDrive, Shield, CheckCircle2, QrCode, Share2, Maximize2 } from 'lucide-react';
+import { Download, File, ArrowLeft, Lock, KeyRound, FileType, Calendar, HardDrive, Shield, CheckCircle2, QrCode, Share2, Maximize2, ScanLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -413,7 +413,7 @@ const PinAccess = () => {
                   )}
 
                   {/* Enhanced Submit Button */}
-                  <div className="max-w-md mx-auto">
+                  <div className="max-w-md mx-auto space-y-4">
                     <Button 
                       type="submit"
                       disabled={loading || pin.length !== 4}
@@ -432,6 +432,28 @@ const PinAccess = () => {
                           <span className="font-bold">Access File</span>
                         </div>
                       )}
+                    </Button>
+                    
+                    {/* Divider */}
+                    <div className="relative py-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-border/50"></div>
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-3 text-muted-foreground font-medium">Or</span>
+                      </div>
+                    </div>
+
+                    {/* Scan QR Code Button */}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="lg"
+                      onClick={() => window.location.href = '/scan'}
+                      className="group w-full h-12 sm:h-14 gap-3 border-2 hover:border-primary/50 transition-all duration-300 hover:scale-[1.02] text-base rounded-2xl"
+                    >
+                      <ScanLine className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                      <span>Scan QR Code Instead</span>
                     </Button>
                   </div>
                 </form>
