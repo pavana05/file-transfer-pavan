@@ -1,5 +1,5 @@
 import { FileUploadManager } from '@/components/upload/FileUploadManager';
-import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -86,6 +86,15 @@ const Index = () => {
             </div>
             
             <div className="flex items-center gap-2 sm:gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.location.href = '/scan'}
+                className="gap-2"
+              >
+                <ScanLine className="h-4 w-4" />
+                <span className="hidden sm:inline">Scan QR</span>
+              </Button>
               <ThemeToggle />
               {user && (
                 <>
