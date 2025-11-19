@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Download, File, ArrowLeft, Lock, KeyRound, FileType, Calendar, HardDrive, Shield, CheckCircle2 } from 'lucide-react';
+import { Download, File, ArrowLeft, Lock, KeyRound, FileType, Calendar, HardDrive, Shield, CheckCircle2, QrCode, Share2, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,9 @@ import { useToast } from '@/hooks/use-toast';
 import FilePreview from '@/components/filePreview/FilePreview';
 import DownloadProgress from '@/components/download/DownloadProgress';
 import FileAccessHistory from '@/components/history/FileAccessHistory';
+import QRCodeModal from '@/components/pin/QRCodeModal';
+import EnhancedFilePreviewModal from '@/components/preview/EnhancedFilePreviewModal';
+import SocialShareButtons from '@/components/share/SocialShareButtons';
 import { downloadFileWithProgress, addToAccessHistory, DownloadProgress as IDownloadProgress } from '@/lib/download-utils';
 
 interface FileInfo {
@@ -32,11 +35,15 @@ const PinAccess = () => {
   const [pin, setPin] = useState('');
   const [password, setPassword] = useState('');
   const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
+  const [fileUrl, setFileUrl] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState<IDownloadProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showPasswordInput, setShowPasswordInput] = useState(false);
+  const [showQRCode, setShowQRCode] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const { toast } = useToast();
 
   const handlePinSubmit = async (e: React.FormEvent) => {
@@ -61,6 +68,12 @@ const PinAccess = () => {
       }
       
       setFileInfo(info);
+      
+      // Load file URL for preview
+      if (info.storage_path) {
+        const url = await UploadService.getFileUrl(info.storage_path);
+        setFileUrl(url);
+      }
       
       // Add to access history
       addToAccessHistory(pin, info.original_name, info.file_size, info.file_type);
@@ -562,6 +575,39 @@ const PinAccess = () => {
                       <span className="relative drop-shadow">{downloading ? 'Downloading...' : 'Download File'}</span>
                     </Button>
                     
+                    {/* Additional Action Buttons */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        onClick={() => setShowPreviewModal(true)}
+                        className="group h-14 border-2 border-border/60 hover:border-primary/50 hover:bg-gradient-to-br hover:from-primary/10 hover:to-primary/5 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] font-semibold rounded-xl"
+                      >
+                        <Maximize2 className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:scale-110" />
+                        Preview
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        onClick={() => setShowQRCode(true)}
+                        className="group h-14 border-2 border-border/60 hover:border-blue-500/50 hover:bg-gradient-to-br hover:from-blue-500/10 hover:to-blue-500/5 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] font-semibold rounded-xl"
+                      >
+                        <QrCode className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:scale-110" />
+                        QR Code
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        onClick={() => setShowShareModal(true)}
+                        className="group h-14 border-2 border-border/60 hover:border-success/50 hover:bg-gradient-to-br hover:from-success/10 hover:to-success/5 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] font-semibold rounded-xl"
+                      >
+                        <Share2 className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:scale-110" />
+                        Share
+                      </Button>
+                    </div>
+                    
                     <Button 
                       variant="outline" 
                       onClick={() => {
@@ -657,6 +703,33 @@ const PinAccess = () => {
           </div>
         </Card>
       </div>
+      
+      {/* Modals */}
+      {fileInfo && (
+        <>
+          <QRCodeModal
+            open={showQRCode}
+            onOpenChange={setShowQRCode}
+            pin={pin}
+            fileName={fileInfo.original_name}
+          />
+          
+          <EnhancedFilePreviewModal
+            open={showPreviewModal}
+            onOpenChange={setShowPreviewModal}
+            fileUrl={fileUrl}
+            fileName={fileInfo.original_name}
+            fileType={fileInfo.file_type}
+          />
+          
+          <SocialShareButtons
+            open={showShareModal}
+            onOpenChange={setShowShareModal}
+            pin={pin}
+            fileName={fileInfo.original_name}
+          />
+        </>
+      )}
     </div>
   );
 };
