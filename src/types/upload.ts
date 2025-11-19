@@ -11,6 +11,10 @@ export interface UploadedFile {
   uploadedAt?: Date;
   error?: string;
   folderId?: string; // ID of folder containing this file
+  uploadSpeed?: number; // bytes per second
+  estimatedTimeRemaining?: number; // seconds
+  startTime?: number; // timestamp when upload started
+  uploadedBytes?: number; // total bytes uploaded so far
   metadata?: {
     dimensions?: { width: number; height: number };
     duration?: number;

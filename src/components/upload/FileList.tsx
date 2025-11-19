@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Pause, Play, RotateCcw, Check, AlertCircle, File, Share, Copy, Code, FileText, Image, Video, Music, Archive, Database, Braces, Globe } from 'lucide-react';
+import { X, Pause, Play, RotateCcw, Check, AlertCircle, File, Share, Copy, Code, FileText, Image, Video, Music, Archive, Database, Braces, Globe, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card } from '@/components/ui/card';
@@ -255,15 +255,48 @@ export const FileList: React.FC<FileListProps> = ({
 
               {/* Progress Bar */}
               {showProgress && (file.status === 'uploading' || file.status === 'paused') && (
-                <div className="mt-3 p-3 rounded-lg bg-upload-zone/50 border border-border/30">
+                <div className="mt-3 p-4 rounded-xl bg-gradient-to-br from-card via-card to-muted/5 border border-border/40 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
+                      <span className="text-sm font-semibold text-foreground">
+                        {file.status === 'uploading' ? 'Uploading' : 'Paused'}
+                      </span>
+                    </div>
+                    <span className="text-2xl font-bold text-primary tabular-nums">
+                      {file.progress}%
+                    </span>
+                  </div>
+                  
                   <Progress 
                     value={file.progress} 
-                    className="h-3 bg-muted/50"
+                    className="h-2.5 bg-muted/50 shadow-inner"
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                    <span className="font-medium">{file.progress}%</span>
-                    {file.status === 'uploading' && (
-                      <span className="animate-pulse">Uploading...</span>
+                  
+                  <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-4">
+                      {file.uploadSpeed && file.uploadSpeed > 0 && (
+                        <div className="flex items-center gap-1.5">
+                          <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse"></div>
+                          <span className="font-medium tabular-nums">
+                            {formatFileSize(file.uploadSpeed)}/s
+                          </span>
+                        </div>
+                      )}
+                      {file.uploadedBytes && (
+                        <span className="font-medium tabular-nums">
+                          {formatFileSize(file.uploadedBytes)} / {formatFileSize(file.size)}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {file.estimatedTimeRemaining !== undefined && file.estimatedTimeRemaining > 0 && (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 border border-primary/20">
+                        <Clock className="h-3 w-3 text-primary" />
+                        <span className="font-semibold text-primary tabular-nums">
+                          {formatDuration(file.estimatedTimeRemaining)}
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>

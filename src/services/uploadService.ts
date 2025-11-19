@@ -52,7 +52,7 @@ export class UploadService {
   // Upload single file with enhanced security validation
   static async uploadFile(
     file: UploadedFile, 
-    onProgress?: (progress: number) => void,
+    onProgress?: (progress: number, uploadSpeed?: number, estimatedTime?: number, uploadedBytes?: number) => void,
     password?: string
   ): Promise<FileUploadResult> {
     try {
@@ -81,18 +81,41 @@ export class UploadService {
       const filename = `${shareToken}.${fileExtension}`;
       const storagePath = `files/${filename}`;
 
-      // Simulate progress for better UX since Supabase doesn't provide real progress
+      // Track upload metrics
+      const startTime = Date.now();
+      const totalSize = file.size;
       let progress = 0;
+      
+      // Simulate progress with realistic metrics
       const progressInterval = setInterval(() => {
         if (progress < 90) {
           progress += Math.random() * 15;
           progress = Math.min(progress, 90);
-          onProgress?.(Math.round(progress));
+          
+          const currentTime = Date.now();
+          const elapsedSeconds = (currentTime - startTime) / 1000;
+          const uploadedBytes = Math.round((progress / 100) * totalSize);
+          const uploadSpeed = elapsedSeconds > 0 ? uploadedBytes / elapsedSeconds : 0;
+          const remainingBytes = totalSize - uploadedBytes;
+          const estimatedTime = uploadSpeed > 0 ? Math.round(remainingBytes / uploadSpeed) : 0;
+          
+          onProgress?.(Math.round(progress), uploadSpeed, estimatedTime, uploadedBytes);
         }
       }, 200);
 
       try {
-        const uploadResult = await this.uploadWithProgress(file.file, storagePath, onProgress);
+        const uploadResult = await this.uploadWithProgress(file.file, storagePath, 
+          (p) => {
+            const currentTime = Date.now();
+            const elapsedSeconds = (currentTime - startTime) / 1000;
+            const uploadedBytes = Math.round((p / 100) * totalSize);
+            const uploadSpeed = elapsedSeconds > 0 ? uploadedBytes / elapsedSeconds : 0;
+            const remainingBytes = totalSize - uploadedBytes;
+            const estimatedTime = uploadSpeed > 0 ? Math.round(remainingBytes / uploadSpeed) : 0;
+            
+            onProgress?.(p, uploadSpeed, estimatedTime, uploadedBytes);
+          }
+        );
         
         clearInterval(progressInterval);
         
@@ -100,7 +123,7 @@ export class UploadService {
           throw new Error(uploadResult.error || 'Upload failed');
         }
 
-        onProgress?.(100);
+        onProgress?.(100, 0, 0, totalSize);
 
         // Generate PIN for the file
         const { data: pinData, error: pinError } = await supabase
