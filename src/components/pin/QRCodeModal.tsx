@@ -19,39 +19,47 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({ open, onOpenChange, pin, file
 
   useEffect(() => {
     if (open && canvasRef.current && pin) {
+      console.log('Generating QR code for PIN:', pin);
       generateQRCode();
     }
   }, [open, pin]);
 
   const generateQRCode = async () => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current) {
+      console.log('Canvas ref not available');
+      return;
+    }
 
     try {
+      console.log('Starting QR code generation...');
       // Generate QR code with PIN and current URL
       const currentUrl = window.location.origin;
-      const qrData = `${currentUrl}/?pin=${pin}`;
+      const qrData = `${currentUrl}/pin?pin=${pin}`;
+      console.log('QR data:', qrData);
 
       await QRCode.toCanvas(canvasRef.current, qrData, {
-        width: 400,
+        width: 300,
         margin: 2,
         color: {
-          dark: '#1e293b',
+          dark: '#000000',
           light: '#ffffff',
         },
         errorCorrectionLevel: 'H',
       });
+      console.log('Canvas QR code generated successfully');
 
       // Also generate data URL for download
       const dataUrl = await QRCode.toDataURL(qrData, {
         width: 800,
         margin: 2,
         color: {
-          dark: '#1e293b',
+          dark: '#000000',
           light: '#ffffff',
         },
         errorCorrectionLevel: 'H',
       });
       setQrDataUrl(dataUrl);
+      console.log('Data URL QR code generated successfully');
     } catch (error) {
       console.error('Error generating QR code:', error);
       toast({
@@ -117,14 +125,12 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({ open, onOpenChange, pin, file
 
         <div className="space-y-6">
           {/* QR Code Display */}
-          <div className="flex justify-center p-6 bg-gradient-to-br from-background to-muted/20 rounded-2xl border-2 border-border/50">
-            <div className="relative">
-              <canvas
-                ref={canvasRef}
-                className="rounded-xl shadow-lg"
-              />
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
-            </div>
+          <div className="flex justify-center p-6 bg-white rounded-2xl border-2 border-border/50">
+            <canvas
+              ref={canvasRef}
+              className="rounded-xl"
+              style={{ display: 'block' }}
+            />
           </div>
 
           {/* PIN Display */}
