@@ -1,5 +1,5 @@
 import { FileUploadManager } from '@/components/upload/FileUploadManager';
-import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -7,9 +7,18 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useAuth } from '@/contexts/AuthContext';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import { useState } from 'react';
 
 const Index = () => {
   const { user, signOut } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const uploadConfig = {
     maxFileSize: 10 * 1024 * 1024 * 1024, // 10GB for large files and folders
@@ -86,8 +95,8 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Navigation Actions */}
-            <nav className="flex items-center gap-1 sm:gap-2">
+            {/* Desktop Navigation Actions */}
+            <nav className="hidden md:flex items-center gap-1 sm:gap-2">
               <Button
                 variant="ghost"
                 size="sm"
@@ -95,7 +104,7 @@ const Index = () => {
                 className="gap-1 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3"
               >
                 <KeyRound className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden md:inline text-xs sm:text-sm">PIN</span>
+                <span className="text-xs sm:text-sm">PIN</span>
               </Button>
               
               <Button
@@ -105,10 +114,10 @@ const Index = () => {
                 className="gap-1 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3"
               >
                 <ScanLine className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden md:inline text-xs sm:text-sm">Scan</span>
+                <span className="text-xs sm:text-sm">Scan</span>
               </Button>
               
-              <div className="h-4 sm:h-6 w-px bg-border/60 hidden sm:block"></div>
+              <div className="h-4 sm:h-6 w-px bg-border/60"></div>
               
               <ThemeToggle />
               
@@ -118,7 +127,7 @@ const Index = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => window.location.href = '/dashboard'}
-                    className="hidden lg:flex items-center gap-2 h-9"
+                    className="flex items-center gap-2 h-9"
                   >
                     <User className="h-4 w-4" />
                     Dashboard
@@ -127,10 +136,10 @@ const Index = () => {
                     variant="outline"
                     size="sm"
                     onClick={signOut}
-                    className="gap-1 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3"
+                    className="gap-2 h-9"
                   >
-                    <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    <span className="hidden sm:inline text-xs sm:text-sm">Sign Out</span>
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
                   </Button>
                 </>
               )}
@@ -139,16 +148,128 @@ const Index = () => {
                 <Button
                   size="sm"
                   onClick={() => window.location.href = '/auth'}
-                  className="gap-1 sm:gap-2 h-8 sm:h-9 px-2 sm:px-4"
+                  className="gap-2 h-9"
                 >
-                  <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline text-xs sm:text-sm">Sign In</span>
+                  <User className="h-4 w-4" />
+                  Sign In
                 </Button>
               )}
             </nav>
+
+            {/* Mobile Navigation - Theme Toggle & Menu Button */}
+            <div className="flex md:hidden items-center gap-2">
+              <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileMenuOpen(true)}
+                className="h-9 w-9 p-0"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
+
+      {/* Mobile Navigation Drawer */}
+      <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+        <DrawerContent className="max-h-[80vh]">
+          <DrawerHeader className="border-b">
+            <div className="flex items-center justify-between">
+              <DrawerTitle className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                  <Upload className="h-4 w-4 text-primary-foreground" />
+                </div>
+                <span className="font-semibold">FileShare Pro</span>
+              </DrawerTitle>
+              <DrawerClose asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <X className="h-5 w-5" />
+                </Button>
+              </DrawerClose>
+            </div>
+          </DrawerHeader>
+          
+          <nav className="flex flex-col p-6 gap-3">
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={() => {
+                window.location.href = '/pin';
+                setMobileMenuOpen(false);
+              }}
+              className="justify-start gap-3 h-12 text-base"
+            >
+              <KeyRound className="h-5 w-5" />
+              PIN Access
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={() => {
+                window.location.href = '/scan';
+                setMobileMenuOpen(false);
+              }}
+              className="justify-start gap-3 h-12 text-base"
+            >
+              <ScanLine className="h-5 w-5" />
+              Scan QR Code
+            </Button>
+
+            {user && (
+              <>
+                <div className="h-px bg-border my-2"></div>
+                
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={() => {
+                    window.location.href = '/dashboard';
+                    setMobileMenuOpen(false);
+                  }}
+                  className="justify-start gap-3 h-12 text-base"
+                >
+                  <User className="h-5 w-5" />
+                  Dashboard
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={() => {
+                    signOut();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="justify-start gap-3 h-12 text-base text-destructive hover:text-destructive"
+                >
+                  <LogOut className="h-5 w-5" />
+                  Sign Out
+                </Button>
+              </>
+            )}
+            
+            {!user && (
+              <>
+                <div className="h-px bg-border my-2"></div>
+                
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    window.location.href = '/auth';
+                    setMobileMenuOpen(false);
+                  }}
+                  className="justify-center gap-3 h-12 text-base"
+                >
+                  <User className="h-5 w-5" />
+                  Sign In
+                </Button>
+              </>
+            )}
+          </nav>
+        </DrawerContent>
+      </Drawer>
       
       {/* Main Content */}
       <main className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 md:py-20">
