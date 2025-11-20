@@ -4,6 +4,7 @@ import { Upload, FileText, Image, Video, Music, Archive, FileCheck } from 'lucid
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { UploadConfig, UploadedFile, FileValidationResult } from '@/types/upload';
+import { toast } from '@/hooks/use-toast';
 interface FileUploadZoneProps {
   config?: UploadConfig;
   onFilesAdded: (files: UploadedFile[]) => void;
@@ -86,18 +87,53 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       }
     };
   }, []);
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
     const validFiles: UploadedFile[] = [];
+    const invalidFiles: { name: string; errors: string[] }[] = [];
+
     acceptedFiles.forEach(file => {
       const validation = validateFile(file);
       if (validation.isValid) {
         validFiles.push(createUploadedFile(file));
+      } else {
+        invalidFiles.push({ name: file.name, errors: validation.errors });
       }
     });
+
+    // Handle rejected files from dropzone
+    rejectedFiles.forEach(({ file, errors }) => {
+      const errorMessages = errors.map((e: any) => {
+        if (e.code === 'file-too-large') {
+          return `File size exceeds ${(mergedConfig.maxFileSize! / 1024 / 1024).toFixed(1)}MB limit`;
+        }
+        if (e.code === 'file-invalid-type') {
+          return 'File type is not supported';
+        }
+        return e.message;
+      });
+      invalidFiles.push({ name: file.name, errors: errorMessages });
+    });
+
+    // Show error toasts for invalid files
+    if (invalidFiles.length > 0) {
+      invalidFiles.forEach(({ name, errors }) => {
+        toast({
+          variant: "destructive",
+          title: "Upload Failed",
+          description: `${name}: ${errors.join(', ')}`,
+        });
+      });
+    }
+
+    // Show success toast and add valid files
     if (validFiles.length > 0) {
       onFilesAdded(validFiles);
+      toast({
+        title: "Files Added",
+        description: `${validFiles.length} file(s) added successfully`,
+      });
     }
-  }, [validateFile, createUploadedFile, onFilesAdded]);
+  }, [validateFile, createUploadedFile, onFilesAdded, mergedConfig.maxFileSize]);
   const {
     getRootProps,
     getInputProps,
