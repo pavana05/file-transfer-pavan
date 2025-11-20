@@ -20,7 +20,4 @@ export default defineConfig(({ mode }) => ({
     },
     dedupe: ['react', 'react-dom'],
   },
-  optimizeDeps: {
-    exclude: ['@radix-ui/react-tooltip'],
-  },
 }));
