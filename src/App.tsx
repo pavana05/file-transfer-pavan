@@ -42,34 +42,28 @@ const App = () => {
           <Toaster />
           <Sonner />
           <OfflineIndicator />
-          <ErrorBoundary>
-            <AuthProvider>
-              <BrowserRouter>
-                <ErrorBoundary>
-                  <Routes>
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/" element={<Index />} />
-                    <Route path="/share/:token" element={<FileShare />} />
-                    <Route path="/collection/:token" element={<CollectionShare />} />
-                    <Route path="/pin" element={<PinAccess />} />
-                    <Route path="/scan" element={<ScanQR />} />
-                    <Route 
-                      path="/dashboard" 
-                      element={
-                        <ErrorBoundary>
-                          <AuthGuard>
-                            <Dashboard />
-                          </AuthGuard>
-                        </ErrorBoundary>
-                      } 
-                    />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </ErrorBoundary>
-              </BrowserRouter>
-            </AuthProvider>
-          </ErrorBoundary>
+          <AuthProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/" element={<Index />} />
+                <Route path="/share/:token" element={<FileShare />} />
+                <Route path="/collection/:token" element={<CollectionShare />} />
+                <Route path="/pin" element={<PinAccess />} />
+                <Route path="/scan" element={<ScanQR />} />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <AuthGuard>
+                      <Dashboard />
+                    </AuthGuard>
+                  } 
+                />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
