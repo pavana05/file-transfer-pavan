@@ -69,46 +69,46 @@ const Index = () => {
       
       {/* Header Navigation */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex h-14 sm:h-16 items-center justify-between gap-2">
             {/* Logo & Branding */}
-            <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.location.href = '/'}>
-              <div className="relative h-10 w-10 rounded-xl bg-primary shadow-sm flex items-center justify-center transition-all duration-200 group-hover:shadow-md group-hover:scale-105">
-                <Upload className="h-5 w-5 text-primary-foreground" />
+            <div className="flex items-center gap-2 sm:gap-3 cursor-pointer group flex-shrink-0" onClick={() => window.location.href = '/'}>
+              <div className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-primary shadow-sm flex items-center justify-center transition-all duration-200 group-hover:shadow-md group-hover:scale-105">
+                <Upload className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
               </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-semibold tracking-tight text-foreground">
+              <div className="hidden xs:block min-w-0">
+                <h1 className="text-sm sm:text-lg font-semibold tracking-tight text-foreground truncate">
                   FileShare Pro
                 </h1>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">
                   Secure File Sharing
                 </p>
               </div>
             </div>
             
             {/* Navigation Actions */}
-            <nav className="flex items-center gap-2">
+            <nav className="flex items-center gap-1 sm:gap-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => window.location.href = '/pin'}
-                className="gap-2"
+                className="gap-1 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3"
               >
-                <KeyRound className="h-4 w-4" />
-                <span className="hidden sm:inline">PIN Access</span>
+                <KeyRound className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="hidden md:inline text-xs sm:text-sm">PIN</span>
               </Button>
               
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => window.location.href = '/scan'}
-                className="gap-2"
+                className="gap-1 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3"
               >
-                <ScanLine className="h-4 w-4" />
-                <span className="hidden sm:inline">Scan QR</span>
+                <ScanLine className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="hidden md:inline text-xs sm:text-sm">Scan</span>
               </Button>
               
-              <div className="h-6 w-px bg-border/60 hidden sm:block"></div>
+              <div className="h-4 sm:h-6 w-px bg-border/60 hidden sm:block"></div>
               
               <ThemeToggle />
               
@@ -118,7 +118,7 @@ const Index = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => window.location.href = '/dashboard'}
-                    className="hidden sm:flex items-center gap-2"
+                    className="hidden lg:flex items-center gap-2 h-9"
                   >
                     <User className="h-4 w-4" />
                     Dashboard
@@ -127,10 +127,10 @@ const Index = () => {
                     variant="outline"
                     size="sm"
                     onClick={signOut}
-                    className="gap-2"
+                    className="gap-1 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3"
                   >
-                    <LogOut className="h-4 w-4" />
-                    <span className="hidden sm:inline">Sign Out</span>
+                    <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline text-xs sm:text-sm">Sign Out</span>
                   </Button>
                 </>
               )}
@@ -139,10 +139,10 @@ const Index = () => {
                 <Button
                   size="sm"
                   onClick={() => window.location.href = '/auth'}
-                  className="gap-2"
+                  className="gap-1 sm:gap-2 h-8 sm:h-9 px-2 sm:px-4"
                 >
-                  <User className="h-4 w-4" />
-                  <span className="hidden sm:inline">Sign In</span>
+                  <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline text-xs sm:text-sm">Sign In</span>
                 </Button>
               )}
             </nav>
@@ -151,45 +151,45 @@ const Index = () => {
       </header>
       
       {/* Main Content */}
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      <main className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 md:py-20">
         {/* Hero Section */}
-        <div className="text-center mb-16 space-y-6 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-medium text-primary">
-            <Sparkles className="h-3.5 w-3.5" />
+        <div className="text-center mb-12 sm:mb-16 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] sm:text-xs font-medium text-primary">
+            <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
             Fast, Secure & Simple
           </div>
           
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight px-2">
             Share Files
             <br />
             <span className="text-primary">Instantly & Securely</span>
           </h2>
           
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
             Upload, share, and manage your files with enterprise-grade security.{' '}
             <span className="font-medium text-foreground">No signup required</span> for quick shares. Up to 10GB per file.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-            <Badge variant="secondary" className="text-xs px-3 py-1">
-              <Shield className="h-3 w-3 mr-1.5" />
+          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 pt-2 px-2">
+            <Badge variant="secondary" className="text-[10px] sm:text-xs px-2 sm:px-3 py-1">
+              <Shield className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1 sm:mr-1.5" />
               Encrypted
             </Badge>
-            <Badge variant="secondary" className="text-xs px-3 py-1">
-              <Zap className="h-3 w-3 mr-1.5" />
+            <Badge variant="secondary" className="text-[10px] sm:text-xs px-2 sm:px-3 py-1">
+              <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1 sm:mr-1.5" />
               Fast
             </Badge>
-            <Badge variant="secondary" className="text-xs px-3 py-1">
-              <Lock className="h-3 w-3 mr-1.5" />
+            <Badge variant="secondary" className="text-[10px] sm:text-xs px-2 sm:px-3 py-1">
+              <Lock className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1 sm:mr-1.5" />
               Protected
             </Badge>
           </div>
         </div>
         
         {/* Upload Section */}
-        <div className="mb-20">
+        <div className="mb-12 sm:mb-16 md:mb-20">
           <Card className="border shadow-lg bg-card">
-            <div className="p-6 sm:p-8 lg:p-10">
+            <div className="p-4 sm:p-6 md:p-8 lg:p-10">
               <FileUploadManager
                 config={uploadConfig}
                 callbacks={uploadCallbacks}
