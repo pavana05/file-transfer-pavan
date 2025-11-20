@@ -405,9 +405,20 @@ const Index = () => {
                 <p className="text-xs text-muted-foreground">Secure File Sharing</p>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              © 2024 FileShare Pro. All rights reserved.
-            </p>
+            <div className="flex items-center gap-6">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => window.location.href = '/loading-demo'}
+                className="text-xs text-muted-foreground hover:text-primary"
+              >
+                <Sparkles className="h-3 w-3 mr-1.5" />
+                View Loading States
+              </Button>
+              <p className="text-sm text-muted-foreground">
+                © 2024 FileShare Pro. All rights reserved.
+              </p>
+            </div>
           </div>
         </div>
       </footer>

@@ -13,6 +13,7 @@ import PinAccess from "./pages/PinAccess";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ScanQR from "./pages/ScanQR";
+import LoadingDemo from "./pages/LoadingDemo";
 import NotFound from "./pages/NotFound";
 import OfflineIndicator from "./components/offline/OfflineIndicator";
 import { registerServiceWorker } from "./lib/service-worker";
@@ -42,6 +43,7 @@ const App = () => {
               <Route path="/collection/:token" element={<CollectionShare />} />
               <Route path="/pin" element={<PinAccess />} />
               <Route path="/scan" element={<ScanQR />} />
+              <Route path="/loading-demo" element={<LoadingDemo />} />
               <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
