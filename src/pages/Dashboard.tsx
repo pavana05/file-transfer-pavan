@@ -23,6 +23,9 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { FileAnalytics } from '@/components/dashboard/FileAnalytics';
 import { FileListSkeleton } from '@/components/dashboard/FileListSkeleton';
+import { DashboardHeaderSkeleton, DashboardStatsSkeleton } from '@/components/skeletons';
+import { LoadingWrapper } from '@/components/LoadingWrapper';
+import { usePageLoading } from '@/hooks/usePageLoading';
 
 interface SharedFile {
   id: string;
