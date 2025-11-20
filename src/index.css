@@ -8,27 +8,27 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 10% 98%;
-    --foreground: 240 10% 15%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 15%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 15%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 217 91% 60%;
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 217 91% 75%;
+    --primary-glow: 221 83% 65%;
 
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 10%;
+    --secondary: 214 32% 95%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted: 214 32% 95%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 217 91% 95%;
-    --accent-foreground: 217 91% 35%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
@@ -39,39 +39,44 @@ All colors MUST be HSL.
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 217 91% 60%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
 
     /* Upload specific tokens */
-    --upload-zone: 217 91% 97%;
-    --upload-zone-hover: 217 91% 94%;
-    --upload-zone-active: 217 91% 90%;
-    --upload-progress: 217 91% 60%;
+    --upload-zone: 210 40% 98%;
+    --upload-zone-hover: 210 40% 96%;
+    --upload-zone-active: 210 40% 94%;
+    --upload-progress: 221 83% 53%;
     --upload-success: 142 76% 36%;
     --upload-error: 0 84% 60%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary-glow)));
-    --gradient-upload: linear-gradient(135deg, hsl(var(--upload-zone)), hsl(var(--accent)));
-    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(142 76% 50%));
-    --gradient-glass: linear-gradient(135deg, hsl(var(--background) / 0.7), hsl(var(--background) / 0.3));
-    --gradient-mesh: radial-gradient(at 40% 20%, hsl(var(--primary) / 0.1) 0px, transparent 50%),
-                     radial-gradient(at 80% 0%, hsl(var(--accent) / 0.15) 0px, transparent 50%),
-                     radial-gradient(at 0% 50%, hsl(var(--primary-glow) / 0.1) 0px, transparent 50%);
-    --gradient-border: linear-gradient(135deg, hsl(var(--border)), hsl(var(--border) / 0.5));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--muted)) 100%);
+    --gradient-upload: linear-gradient(135deg, hsl(var(--upload-zone)) 0%, hsl(var(--accent)) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(142 76% 50%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(var(--background) / 0.95) 0%, hsl(var(--background) / 0.7) 100%);
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(var(--primary) / 0.08) 0px, transparent 50%),
+                     radial-gradient(at 80% 0%, hsl(var(--accent) / 0.1) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsl(var(--primary-glow) / 0.06) 0px, transparent 50%);
+    --gradient-border: linear-gradient(135deg, hsl(var(--border)) 0%, hsl(var(--border) / 0.5) 100%);
 
-    /* Shadows */
-    --shadow-upload: 0 20px 40px -12px hsl(var(--primary) / 0.25);
-    --shadow-card: 0 4px 20px -2px hsl(240 6% 10% / 0.1);
-    --shadow-hover: 0 20px 40px -8px hsl(var(--primary) / 0.3);
-    --shadow-glow: 0 0 60px hsl(var(--primary) / 0.4);
-    --shadow-glass: 0 8px 32px hsl(240 6% 10% / 0.1);
-    --shadow-inner: inset 0 1px 0 hsl(var(--background) / 0.1);
-    --shadow-border: inset 0 0 0 1px hsl(var(--border) / 0.1);
+    /* Professional Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.1), 0 8px 10px -6px hsl(0 0% 0% / 0.1);
+    --shadow-2xl: 0 25px 50px -12px hsl(0 0% 0% / 0.25);
+    --shadow-upload: 0 20px 40px -12px hsl(var(--primary) / 0.15);
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-hover: 0 20px 40px -8px hsl(var(--primary) / 0.2);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
+    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.08);
+    --shadow-inner: inset 0 2px 4px 0 hsl(0 0% 0% / 0.05);
+    --shadow-border: inset 0 0 0 1px hsl(var(--border) / 0.08);
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -91,27 +96,27 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222 47% 7%;
-    --foreground: 213 31% 95%;
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
 
-    --card: 222 47% 9%;
-    --card-foreground: 213 31% 97%;
+    --card: 222 47% 10%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 213 31% 97%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 217 91% 68%;
-    --primary-foreground: 222 47% 10%;
-    --primary-glow: 217 91% 82%;
+    --primary: 221 83% 60%;
+    --primary-foreground: 210 40% 98%;
+    --primary-glow: 221 83% 75%;
 
-    --secondary: 222 47% 15%;
-    --secondary-foreground: 213 31% 95%;
+    --secondary: 217 19% 18%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 222 47% 15%;
-    --muted-foreground: 213 20% 70%;
+    --muted: 217 19% 18%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 217 91% 95%;
-    --accent-foreground: 217 91% 35%;
+    --accent: 217 19% 18%;
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 72% 55%;
     --destructive-foreground: 210 40% 98%;
@@ -122,9 +127,9 @@ All colors MUST be HSL.
     --warning: 38 92% 55%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 222 47% 20%;
-    --input: 222 47% 20%;
-    --ring: 217 91% 72%;
+    --border: 217 19% 22%;
+    --input: 217 19% 22%;
+    --ring: 221 83% 60%;
 
     /* Upload specific tokens for dark mode */
     --upload-zone: 222 47% 12%;
@@ -171,6 +176,27 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "cv02", "cv03", "cv04";
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+  
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+  
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+  
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+  
+  p {
+    @apply leading-7;
   }
 }
