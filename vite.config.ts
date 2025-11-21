@@ -24,6 +24,8 @@ export default defineConfig(({ mode }) => ({
       'react/jsx-runtime',
       '@radix-ui/react-tooltip',
       '@radix-ui/react-slot',
+      'next-themes',
+      'sonner',
     ],
   },
   optimizeDeps: {
@@ -36,12 +38,13 @@ export default defineConfig(({ mode }) => ({
       '@radix-ui/react-dropdown-menu',
       '@radix-ui/react-dialog',
       '@radix-ui/react-popover',
+      'next-themes',
+      'sonner',
     ],
     exclude: [],
     esbuildOptions: {
       target: 'esnext',
     },
-    force: true,
   },
   build: {
     commonjsOptions: {
