@@ -336,34 +336,34 @@ const Index = () => {
         {/* Statistics Section */}
         <div className="mb-20 sm:mb-24 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="p-6 sm:p-8 text-center relative z-10">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-2 animate-pulse-glow">10M+</div>
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform">10M+</div>
                 <div className="text-xs sm:text-sm text-muted-foreground font-medium">Files Shared</div>
               </div>
             </Card>
             
-            <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="absolute inset-0 bg-gradient-to-br from-success/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="p-6 sm:p-8 text-center relative z-10">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-success mb-2">500K+</div>
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-success mb-2 group-hover:scale-110 transition-transform">500K+</div>
                 <div className="text-xs sm:text-sm text-muted-foreground font-medium">Active Users</div>
               </div>
             </Card>
             
-            <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="absolute inset-0 bg-gradient-to-br from-warning/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="p-6 sm:p-8 text-center relative z-10">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-warning mb-2">50TB+</div>
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-warning mb-2 group-hover:scale-110 transition-transform">50TB+</div>
                 <div className="text-xs sm:text-sm text-muted-foreground font-medium">Data Transferred</div>
               </div>
             </Card>
             
-            <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="absolute inset-0 bg-gradient-to-br from-primary-glow/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="p-6 sm:p-8 text-center relative z-10">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-glow mb-2">99.9%</div>
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-glow mb-2 group-hover:scale-110 transition-transform">99.9%</div>
                 <div className="text-xs sm:text-sm text-muted-foreground font-medium">Uptime</div>
               </div>
             </Card>

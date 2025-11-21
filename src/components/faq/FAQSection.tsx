@@ -1,4 +1,4 @@
-import { HelpCircle, ChevronDown } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -38,7 +38,7 @@ const FAQSection = () => {
 
   return (
     <div className="mb-20 sm:mb-24 relative z-10">
-      <div className="text-center mb-16 max-w-3xl mx-auto">
+      <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 text-xs font-semibold text-primary shadow-sm backdrop-blur-sm">
           <HelpCircle className="h-4 w-4" />
           Frequently Asked Questions
@@ -50,31 +50,31 @@ const FAQSection = () => {
           </span>
         </h3>
         
-        <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
+        <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed px-4">
           Find answers to common questions about FileShare Pro
         </p>
       </div>
 
       <Card className="border-2 border-border/50 shadow-xl bg-card/80 backdrop-blur-xl overflow-hidden">
-        <div className="p-6 sm:p-10">
-          <Accordion type="single" collapsible className="space-y-4">
+        <div className="p-4 sm:p-6 md:p-10">
+          <Accordion type="single" collapsible className="space-y-3 sm:space-y-4">
             {faqs.map((faq, index) => (
               <AccordionItem 
                 key={index} 
                 value={`item-${index}`}
-                className="border border-border/50 rounded-lg px-6 py-2 hover:bg-muted/30 transition-colors"
+                className="border border-border/50 rounded-lg px-4 sm:px-6 py-2 hover:bg-muted/30 hover:border-primary/30 transition-all duration-300"
               >
-                <AccordionTrigger className="text-left hover:no-underline py-4">
-                  <div className="flex items-start gap-3 pr-4">
-                    <Badge variant="outline" className="mt-1 shrink-0">
+                <AccordionTrigger className="text-left hover:no-underline py-3 sm:py-4">
+                  <div className="flex items-start gap-2 sm:gap-3 pr-2 sm:pr-4">
+                    <Badge variant="outline" className="mt-0.5 sm:mt-1 shrink-0 h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center p-0 text-xs">
                       {index + 1}
                     </Badge>
-                    <span className="font-semibold text-base sm:text-lg">
+                    <span className="font-semibold text-sm sm:text-base md:text-lg text-foreground">
                       {faq.question}
                     </span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed pt-2 pb-4 pl-12">
+                <AccordionContent className="text-muted-foreground text-sm sm:text-base leading-relaxed pt-2 pb-4 pl-8 sm:pl-12 pr-2 sm:pr-4">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
