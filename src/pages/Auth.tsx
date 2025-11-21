@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,11 +11,62 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useAuth } from '@/contexts/AuthContext';
+import PasswordStrengthMeter from '@/components/upload/PasswordStrengthMeter';
 import { Upload, Shield, Lock, Eye, EyeOff, Mail, ArrowLeft, Sparkles } from 'lucide-react';
 
+// Sign In Schema - basic validation
+const signInSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address')
+    .max(255, 'Email must be less than 255 characters'),
+  password: z
+    .string()
+    .min(1, 'Password is required'),
+});
+
+// Sign Up Schema - comprehensive validation with strong password requirements
+const signUpSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address')
+    .max(255, 'Email must be less than 255 characters')
+    .refine(
+      (email) => {
+        // Additional email format validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      },
+      { message: 'Please enter a valid email format' }
+    ),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(128, 'Password must be less than 128 characters')
+    .refine(
+      (password) => /[a-z]/.test(password),
+      { message: 'Password must contain at least one lowercase letter' }
+    )
+    .refine(
+      (password) => /[A-Z]/.test(password),
+      { message: 'Password must contain at least one uppercase letter' }
+    )
+    .refine(
+      (password) => /[0-9]/.test(password),
+      { message: 'Password must contain at least one number' }
+    )
+    .refine(
+      (password) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+      { message: 'Password must contain at least one special character' }
+    ),
+});
+
+type SignInFormData = z.infer<typeof signInSchema>;
+type SignUpFormData = z.infer<typeof signUpSchema>;
+
 export default function Auth() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -21,6 +75,21 @@ export default function Auth() {
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
 
+  // Sign In Form
+  const signInForm = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema),
+    mode: 'onBlur',
+  });
+
+  // Sign Up Form
+  const signUpForm = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    mode: 'onChange',
+  });
+
+  // Watch password for strength meter
+  const signUpPassword = signUpForm.watch('password');
+
   // Redirect if already authenticated
   useEffect(() => {
     if (user) {
@@ -28,32 +97,52 @@ export default function Auth() {
     }
   }, [user, navigate]);
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Reset forms when switching tabs
+  useEffect(() => {
+    setError('');
+    setMessage('');
+    signInForm.reset();
+    signUpForm.reset();
+    setShowPassword(false);
+  }, [activeTab]);
+
+  const handleSignIn = async (data: SignInFormData) => {
     setLoading(true);
     setError('');
     setMessage('');
 
-    const { error } = await signIn(email, password);
+    const { error } = await signIn(data.email, data.password);
     
     if (error) {
-      setError(error.message);
+      if (error.message.includes('Invalid login credentials')) {
+        setError('Invalid email or password. Please try again.');
+      } else if (error.message.includes('Email not confirmed')) {
+        setError('Please confirm your email address before signing in.');
+      } else {
+        setError(error.message);
+      }
     }
     setLoading(false);
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSignUp = async (data: SignUpFormData) => {
     setLoading(true);
     setError('');
     setMessage('');
 
-    const { error } = await signUp(email, password);
+    const { error } = await signUp(data.email, data.password);
     
     if (error) {
-      setError(error.message);
+      if (error.message.includes('User already registered')) {
+        setError('An account with this email already exists. Please sign in instead.');
+      } else if (error.message.includes('Password should be at least')) {
+        setError('Password does not meet security requirements. Please try a stronger password.');
+      } else {
+        setError(error.message);
+      }
     } else {
-      setMessage('Check your email for the confirmation link!');
+      setMessage('Success! Check your email for the confirmation link to activate your account.');
+      signUpForm.reset();
     }
     setLoading(false);
   };
@@ -152,7 +241,7 @@ export default function Auth() {
                 </TabsList>
                 
                 <TabsContent value="signin" className="space-y-0 mt-2">
-                  <form onSubmit={handleSignIn} className="space-y-6">
+                  <form onSubmit={signInForm.handleSubmit(handleSignIn)} className="space-y-6">
                     <div className="space-y-3">
                       <Label htmlFor="signin-email" className="text-sm font-semibold text-foreground">
                         Email Address
@@ -162,13 +251,16 @@ export default function Auth() {
                         <Input
                           id="signin-email"
                           type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          {...signInForm.register('email')}
                           className="pl-12 h-14 text-base bg-background/80 backdrop-blur-sm border-2 border-border/60 focus:border-primary/50 focus:bg-background rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
                           placeholder="you@example.com"
-                          required
                         />
                       </div>
+                      {signInForm.formState.errors.email && (
+                        <p className="text-sm text-destructive font-medium">
+                          {signInForm.formState.errors.email.message}
+                        </p>
+                      )}
                     </div>
                     
                     <div className="space-y-3">
@@ -180,11 +272,9 @@ export default function Auth() {
                         <Input
                           id="signin-password"
                           type={showPassword ? "text" : "password"}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
+                          {...signInForm.register('password')}
                           className="pl-12 pr-12 h-14 text-base bg-background/80 backdrop-blur-sm border-2 border-border/60 focus:border-primary/50 focus:bg-background rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
                           placeholder="Enter your password"
-                          required
                         />
                         <button
                           type="button"
@@ -194,12 +284,17 @@ export default function Auth() {
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
+                      {signInForm.formState.errors.password && (
+                        <p className="text-sm text-destructive font-medium">
+                          {signInForm.formState.errors.password.message}
+                        </p>
+                      )}
                     </div>
                     
                     <Button 
                       type="submit" 
                       className="group relative w-full h-14 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/95 hover:via-primary hover:to-primary/95 text-white font-bold shadow-2xl shadow-primary/30 hover:shadow-3xl hover:shadow-primary/40 transition-all duration-300 disabled:opacity-40 disabled:hover:scale-100 hover:scale-[1.02] active:scale-[0.98] text-base rounded-xl overflow-hidden mt-8"
-                      disabled={loading}
+                      disabled={loading || !signInForm.formState.isValid}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                       {loading ? (
@@ -218,7 +313,7 @@ export default function Auth() {
                 </TabsContent>
                 
                 <TabsContent value="signup" className="space-y-0 mt-2">
-                  <form onSubmit={handleSignUp} className="space-y-6">
+                  <form onSubmit={signUpForm.handleSubmit(handleSignUp)} className="space-y-6">
                     <div className="space-y-3">
                       <Label htmlFor="signup-email" className="text-sm font-semibold text-foreground">
                         Email Address
@@ -228,13 +323,16 @@ export default function Auth() {
                         <Input
                           id="signup-email"
                           type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          {...signUpForm.register('email')}
                           className="pl-12 h-14 text-base bg-background/80 backdrop-blur-sm border-2 border-border/60 focus:border-primary/50 focus:bg-background rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
                           placeholder="you@example.com"
-                          required
                         />
                       </div>
+                      {signUpForm.formState.errors.email && (
+                        <p className="text-sm text-destructive font-medium">
+                          {signUpForm.formState.errors.email.message}
+                        </p>
+                      )}
                     </div>
                     
                     <div className="space-y-3">
@@ -246,12 +344,9 @@ export default function Auth() {
                         <Input
                           id="signup-password"
                           type={showPassword ? "text" : "password"}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
+                          {...signUpForm.register('password')}
                           className="pl-12 pr-12 h-14 text-base bg-background/80 backdrop-blur-sm border-2 border-border/60 focus:border-primary/50 focus:bg-background rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
                           placeholder="Create a secure password"
-                          required
-                          minLength={6}
                         />
                         <button
                           type="button"
@@ -261,15 +356,32 @@ export default function Auth() {
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
-                      <p className="text-xs text-muted-foreground bg-muted/30 px-3 py-2 rounded-lg border border-border/30">
-                        💡 Must be at least 6 characters long
-                      </p>
+                      {signUpForm.formState.errors.password && (
+                        <p className="text-sm text-destructive font-medium">
+                          {signUpForm.formState.errors.password.message}
+                        </p>
+                      )}
+                      
+                      {/* Password Strength Meter */}
+                      {signUpPassword && <PasswordStrengthMeter password={signUpPassword} />}
+                      
+                      {!signUpPassword && (
+                        <div className="text-xs text-muted-foreground bg-muted/30 px-3 py-2.5 rounded-lg border border-border/30 space-y-1">
+                          <p className="font-semibold">Password Requirements:</p>
+                          <ul className="list-disc list-inside space-y-0.5 ml-1">
+                            <li>At least 8 characters long</li>
+                            <li>Contains uppercase and lowercase letters</li>
+                            <li>Contains at least one number</li>
+                            <li>Contains at least one special character (!@#$%^&*)</li>
+                          </ul>
+                        </div>
+                      )}
                     </div>
                     
                     <Button 
                       type="submit" 
                       className="group relative w-full h-14 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/95 hover:via-primary hover:to-primary/95 text-white font-bold shadow-2xl shadow-primary/30 hover:shadow-3xl hover:shadow-primary/40 transition-all duration-300 disabled:opacity-40 disabled:hover:scale-100 hover:scale-[1.02] active:scale-[0.98] text-base rounded-xl overflow-hidden mt-8"
-                      disabled={loading}
+                      disabled={loading || !signUpForm.formState.isValid}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                       {loading ? (
