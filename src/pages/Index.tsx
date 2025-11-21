@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
 import FAQSection from '@/components/faq/FAQSection';
+import TrustIndicators from '@/components/trust/TrustIndicators';
 import {
   Drawer,
   DrawerClose,
@@ -492,6 +493,9 @@ const Index = () => {
             </Card>
           </div>
         </div>
+
+        {/* Trust Indicators Section */}
+        <TrustIndicators />
 
         {/* P2P Sharing Section */}
         <div className="mb-20 sm:mb-24 relative z-10">
