@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { ScrollToTop } from '@/components/ui/scroll-to-top';
 import { useAuth } from '@/contexts/AuthContext';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
@@ -323,7 +324,7 @@ const Index = () => {
         <TestimonialsSection />
 
         {/* Features Grid */}
-        <div className="mb-20">
+        <div className="mb-12 sm:mb-16">
           <div className="text-center mb-12 max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" />
@@ -438,7 +439,7 @@ const Index = () => {
         </div>
 
         {/* P2P Sharing Section */}
-        <div className="mb-20">
+        <div className="mb-12 sm:mb-16">
           <Card className="border-2 border-primary/20 overflow-hidden">
             <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-8 sm:p-12">
               <div className="flex flex-col md:flex-row items-center justify-between gap-8">
@@ -514,7 +515,7 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/40 bg-background/95 backdrop-blur mt-20">
+      <footer className="border-t border-border/40 bg-background/95 backdrop-blur mt-12 sm:mt-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -543,6 +544,9 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
     </div>
   );
 };
