@@ -2,16 +2,16 @@ import { Moon, Sun, Check, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<"dark" | "light">("dark")
-  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -22,13 +22,12 @@ export function ThemeToggle() {
   const toggleTheme = (newTheme: "dark" | "light") => {
     const root = window.document.documentElement
     
-    // Add smooth transition class
+    // Add smooth transition
     root.style.setProperty('transition', 'background-color 0.3s ease, color 0.3s ease')
     
     root.classList.remove("dark", "light")
     root.classList.add(newTheme)
     setTheme(newTheme)
-    setOpen(false)
     
     // Remove transition after animation completes
     setTimeout(() => {
@@ -37,8 +36,8 @@ export function ThemeToggle() {
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
           size="sm"
@@ -48,9 +47,9 @@ export function ThemeToggle() {
           <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all duration-300 dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
-        <div className="p-4 space-y-4">
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-80 p-4">
+        <div className="space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b">
             <Sparkles className="h-4 w-4 text-primary" />
             <h4 className="font-semibold text-sm">Choose Your Theme</h4>
@@ -138,7 +137,7 @@ export function ThemeToggle() {
             Switch between themes for better visibility
           </p>
         </div>
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
