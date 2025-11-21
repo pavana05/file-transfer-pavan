@@ -17,7 +17,6 @@ import EnhancedFilePreviewModal from '@/components/preview/EnhancedFilePreviewMo
 import SocialShareButtons from '@/components/share/SocialShareButtons';
 import RealtimeCollaboration from '@/components/collaboration/RealtimeCollaboration';
 import { downloadFileWithProgress, addToAccessHistory, DownloadProgress as IDownloadProgress } from '@/lib/download-utils';
-import { cacheFileForOffline } from '@/lib/service-worker';
 
 interface FileInfo {
   id: string;
@@ -136,23 +135,12 @@ const PinAccess = () => {
         }
       );
 
-      // Cache file for offline access
-      try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        await cacheFileForOffline(url, blob);
-        console.log('File cached for offline access');
-      } catch (cacheError) {
-        console.error('Failed to cache file:', cacheError);
-        // Don't fail the download if caching fails
-      }
-
       // Update download count in UI
       setFileInfo(prev => prev ? { ...prev, download_count: prev.download_count + 1 } : null);
 
       toast({
         title: "Download completed",
-        description: "File downloaded and saved for offline access.",
+        description: "File downloaded successfully.",
       });
     } catch (err) {
       toast({

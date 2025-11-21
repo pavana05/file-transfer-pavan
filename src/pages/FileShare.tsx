@@ -10,7 +10,6 @@ import { UploadService } from '@/services/uploadService';
 import { useToast } from '@/hooks/use-toast';
 import FilePreview from '@/components/filePreview/FilePreview';
 import RealtimeCollaboration from '@/components/collaboration/RealtimeCollaboration';
-import { cacheFileForOffline } from '@/lib/service-worker';
 
 interface FileInfo {
   id: string;
@@ -75,15 +74,6 @@ const FileShare = () => {
       }
       
       const blob = await response.blob();
-      
-      // Cache file for offline access
-      try {
-        await cacheFileForOffline(url, blob);
-        console.log('File cached for offline access');
-      } catch (cacheError) {
-        console.error('Failed to cache file:', cacheError);
-      }
-      
       const downloadUrl = window.URL.createObjectURL(blob);
       
       const link = document.createElement('a');
@@ -104,7 +94,7 @@ const FileShare = () => {
 
       toast({
         title: "Download completed",
-        description: "File downloaded and saved for offline access.",
+        description: "File downloaded successfully.",
       });
     } catch (err) {
       toast({
