@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -91,6 +91,8 @@ const TestimonialsSection = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
@@ -143,8 +145,32 @@ const TestimonialsSection = () => {
     };
   }, [emblaApi, onSelect]);
 
+  // Intersection Observer for fade-in animation
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section className="mb-16 sm:mb-24 relative">
+    <section ref={sectionRef} className="mb-16 sm:mb-24 relative">
       {/* Background decoration */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px]"></div>
@@ -198,18 +224,21 @@ const TestimonialsSection = () => {
 
         {/* Carousel */}
         <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-6">
-            {testimonials.map((testimonial) => (
+          <div className="flex gap-4 md:gap-6">
+            {testimonials.map((testimonial, index) => (
               <div
                 key={testimonial.id}
-                className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)]"
+                className={`flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-8px)] lg:flex-[0_0_calc(33.333%-16px)] transition-all duration-700 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
+                style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <Card className="relative overflow-hidden border-border/40 bg-card/80 backdrop-blur-xl h-full">
-                  <div className="relative p-6 sm:p-8 space-y-5 flex flex-col h-full">
+                  <div className="relative p-5 sm:p-6 md:p-7 space-y-4 sm:space-y-5 flex flex-col h-full">
                     {/* Header with rating and company logo */}
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start justify-between gap-2 sm:gap-3">
                       {/* Rating with background */}
-                      <div className="flex items-center gap-1 bg-muted/40 px-3 py-2 rounded-lg">
+                      <div className="flex items-center gap-1 bg-muted/40 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg">
                         {Array.from({ length: testimonial.rating }).map((_, i) => (
                           <Star
                             key={i}
@@ -219,7 +248,7 @@ const TestimonialsSection = () => {
                       </div>
                       
                       {/* Company Logo */}
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-muted/60 to-muted/40 flex items-center justify-center text-xl border border-border/40">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-muted/60 to-muted/40 flex items-center justify-center text-lg sm:text-xl border border-border/40 flex-shrink-0">
                         {testimonial.companyLogo}
                       </div>
                     </div>
@@ -227,7 +256,7 @@ const TestimonialsSection = () => {
                     {/* Quote decoration */}
                     <div className="relative flex-1">
                       <svg 
-                        className="absolute -top-2 -left-2 w-8 h-8 text-primary/20" 
+                        className="absolute -top-1 -left-1 sm:-top-2 sm:-left-2 w-6 h-6 sm:w-8 sm:h-8 text-primary/20" 
                         fill="currentColor" 
                         viewBox="0 0 24 24"
                       >
@@ -235,14 +264,14 @@ const TestimonialsSection = () => {
                       </svg>
                       
                       {/* Content */}
-                      <p className="text-muted-foreground leading-relaxed text-sm sm:text-base pt-6 relative z-10">
+                      <p className="text-muted-foreground leading-relaxed text-sm sm:text-base pt-5 sm:pt-6 relative z-10">
                         {testimonial.content}
                       </p>
                     </div>
 
                     {/* Author section */}
-                    <div className="flex items-center gap-3 sm:gap-4 pt-5 border-t border-border/40">
-                      <Avatar className="h-11 w-11 sm:h-12 sm:w-12 ring-2 ring-primary/20 flex-shrink-0">
+                    <div className="flex items-center gap-3 pt-4 sm:pt-5 border-t border-border/40">
+                      <Avatar className="h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 ring-2 ring-primary/20 flex-shrink-0">
                         <div className="w-full h-full bg-gradient-to-br from-primary via-primary-glow to-primary flex items-center justify-center">
                           <AvatarFallback className="bg-transparent text-primary-foreground font-bold text-sm sm:text-base">
                             {testimonial.initials}
