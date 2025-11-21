@@ -10,6 +10,7 @@ import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
 import FAQSection from '@/components/faq/FAQSection';
 import TrustIndicators from '@/components/trust/TrustIndicators';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 import {
   Drawer,
   DrawerClose,
@@ -282,112 +283,121 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 md:py-20">
         {/* Hero Section */}
-        <div className="text-center mb-16 sm:mb-20 space-y-6 sm:space-y-8 max-w-5xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 shadow-glow text-xs font-medium text-primary animate-fade-in backdrop-blur-sm">
-            <Sparkles className="h-4 w-4 animate-glow" />
-            <span className="font-semibold">Fast, Secure & Simple File Sharing</span>
-          </div>
-          
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight px-2 animate-slide-up">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground to-foreground">
-              Share Files
-            </span>
-            <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary">
-              Instantly & Securely
-            </span>
-          </h2>
-          
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto px-4 leading-relaxed">
-            Upload, share, and manage your files with enterprise-grade security.{' '}
-            <span className="font-semibold text-foreground">No signup required</span> for quick shares. 
-            <span className="block mt-2">Up to <span className="text-primary font-bold">10GB</span> per file with blazing fast speeds.</span>
-          </p>
+        <ScrollReveal direction="fade" duration={0.8}>
+          <div className="text-center mb-16 sm:mb-20 space-y-6 sm:space-y-8 max-w-5xl mx-auto relative z-10">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 shadow-glow text-xs font-medium text-primary backdrop-blur-sm">
+              <Sparkles className="h-4 w-4 animate-glow" />
+              <span className="font-semibold">Fast, Secure & Simple File Sharing</span>
+            </div>
+            
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight px-2">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground to-foreground">
+                Share Files
+              </span>
+              <br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary">
+                Instantly & Securely
+              </span>
+            </h2>
+            
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto px-4 leading-relaxed">
+              Upload, share, and manage your files with enterprise-grade security.{' '}
+              <span className="font-semibold text-foreground">No signup required</span> for quick shares. 
+              <span className="block mt-2">Up to <span className="text-primary font-bold">10GB</span> per file with blazing fast speeds.</span>
+            </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-4 px-2">
-            <Badge variant="secondary" className="text-xs sm:text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
-              <Shield className="h-4 w-4 mr-2 text-primary" />
-              Bank-Grade Encryption
-            </Badge>
-            <Badge variant="secondary" className="text-xs sm:text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
-              <Zap className="h-4 w-4 mr-2 text-success" />
-              Lightning Fast
-            </Badge>
-            <Badge variant="secondary" className="text-xs sm:text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
-              <Lock className="h-4 w-4 mr-2 text-warning" />
-              Password Protected
-            </Badge>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-4 px-2">
+              <Badge variant="secondary" className="text-xs sm:text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
+                <Shield className="h-4 w-4 mr-2 text-primary" />
+                Bank-Grade Encryption
+              </Badge>
+              <Badge variant="secondary" className="text-xs sm:text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
+                <Zap className="h-4 w-4 mr-2 text-success" />
+                Lightning Fast
+              </Badge>
+              <Badge variant="secondary" className="text-xs sm:text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
+                <Lock className="h-4 w-4 mr-2 text-warning" />
+                Password Protected
+              </Badge>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
         
         {/* Upload Section */}
-        <div id="upload-section" className="mb-20 sm:mb-24 scroll-mt-20 relative z-10">
-          <Card className="border-2 border-border/50 shadow-2xl bg-card/80 backdrop-blur-xl overflow-hidden group hover:shadow-hover transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary-glow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="p-6 sm:p-8 md:p-10 lg:p-12 relative z-10">
-              <FileUploadManager
-                config={uploadConfig}
-                callbacks={uploadCallbacks}
-              />
-            </div>
-          </Card>
-        </div>
+        <ScrollReveal direction="up" delay={100}>
+          <div id="upload-section" className="mb-20 sm:mb-24 scroll-mt-20 relative z-10">
+            <Card className="border-2 border-border/50 shadow-2xl bg-card/80 backdrop-blur-xl overflow-hidden group hover:shadow-hover transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary-glow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="p-6 sm:p-8 md:p-10 lg:p-12 relative z-10">
+                <FileUploadManager
+                  config={uploadConfig}
+                  callbacks={uploadCallbacks}
+                />
+              </div>
+            </Card>
+          </div>
+        </ScrollReveal>
 
         {/* Statistics Section */}
-        <div className="mb-20 sm:mb-24 relative z-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="p-6 sm:p-8 text-center relative z-10">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform">10M+</div>
-                <div className="text-xs sm:text-sm text-muted-foreground font-medium">Files Shared</div>
-              </div>
-            </Card>
-            
-            <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-success/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="p-6 sm:p-8 text-center relative z-10">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-success mb-2 group-hover:scale-110 transition-transform">500K+</div>
-                <div className="text-xs sm:text-sm text-muted-foreground font-medium">Active Users</div>
-              </div>
-            </Card>
-            
-            <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-warning/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="p-6 sm:p-8 text-center relative z-10">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-warning mb-2 group-hover:scale-110 transition-transform">50TB+</div>
-                <div className="text-xs sm:text-sm text-muted-foreground font-medium">Data Transferred</div>
-              </div>
-            </Card>
-            
-            <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-glow/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="p-6 sm:p-8 text-center relative z-10">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-glow mb-2 group-hover:scale-110 transition-transform">99.9%</div>
-                <div className="text-xs sm:text-sm text-muted-foreground font-medium">Uptime</div>
-              </div>
-            </Card>
+        <ScrollReveal direction="up" delay={150}>
+          <div className="mb-20 sm:mb-24 relative z-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="p-6 sm:p-8 text-center relative z-10">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform">10M+</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Files Shared</div>
+                </div>
+              </Card>
+              
+              <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-br from-success/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="p-6 sm:p-8 text-center relative z-10">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-success mb-2 group-hover:scale-110 transition-transform">500K+</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Active Users</div>
+                </div>
+              </Card>
+              
+              <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-br from-warning/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="p-6 sm:p-8 text-center relative z-10">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-warning mb-2 group-hover:scale-110 transition-transform">50TB+</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Data Transferred</div>
+                </div>
+              </Card>
+              
+              <Card className="relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-border/50 bg-card/50 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-glow/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="p-6 sm:p-8 text-center relative z-10">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-glow mb-2 group-hover:scale-110 transition-transform">99.9%</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Uptime</div>
+                </div>
+              </Card>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Testimonials Section */}
-        <TestimonialsSection />
+        <ScrollReveal direction="up" delay={100}>
+          <TestimonialsSection />
+        </ScrollReveal>
 
         {/* Features Grid */}
-        <div className="mb-20 sm:mb-24 relative z-10">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 text-xs font-semibold text-primary shadow-sm backdrop-blur-sm">
-              <Sparkles className="h-4 w-4 animate-glow" />
-              Premium Features
+        <ScrollReveal direction="up" delay={100}>
+          <div className="mb-20 sm:mb-24 relative z-10">
+            <div className="text-center mb-16 max-w-3xl mx-auto">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 text-xs font-semibold text-primary shadow-sm backdrop-blur-sm">
+                <Sparkles className="h-4 w-4 animate-glow" />
+                Premium Features
+              </div>
+              
+              <h3 className="text-4xl sm:text-5xl font-bold mb-6">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary">Powerful Features</span>
+              </h3>
+              <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                Everything you need for secure and efficient file sharing, all in one place
+              </p>
             </div>
-            
-            <h3 className="text-4xl sm:text-5xl font-bold mb-6">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary">Powerful Features</span>
-            </h3>
-            <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
-              Everything you need for secure and efficient file sharing, all in one place
-            </p>
-          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             <Card className="group relative overflow-hidden hover:shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:-translate-y-1 border-border/50 bg-card/80 backdrop-blur-sm">
@@ -493,63 +503,71 @@ const Index = () => {
             </Card>
           </div>
         </div>
+        </ScrollReveal>
 
         {/* Trust Indicators Section */}
-        <TrustIndicators />
+        <ScrollReveal direction="up" delay={100}>
+          <TrustIndicators />
+        </ScrollReveal>
 
         {/* P2P Sharing Section */}
-        <div className="mb-20 sm:mb-24 relative z-10">
-          <Card className="border-2 border-primary/30 overflow-hidden shadow-2xl bg-card/80 backdrop-blur-xl group hover:shadow-hover transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary-glow/10 to-transparent"></div>
-            <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-10 sm:p-14 relative z-10">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-10">
-                <div className="flex-1 space-y-6">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-xs font-semibold text-primary shadow-sm backdrop-blur-sm animate-pulse-glow">
-                    <Sparkles className="h-4 w-4 animate-glow" />
-                    New Feature
+        <ScrollReveal direction="up" delay={100}>
+          <div className="mb-20 sm:mb-24 relative z-10">
+            <Card className="border-2 border-primary/30 overflow-hidden shadow-2xl bg-card/80 backdrop-blur-xl group hover:shadow-hover transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary-glow/10 to-transparent"></div>
+              <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-10 sm:p-14 relative z-10">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+                  <div className="flex-1 space-y-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-xs font-semibold text-primary shadow-sm backdrop-blur-sm">
+                      <Sparkles className="h-4 w-4 animate-glow" />
+                      New Feature
+                    </div>
+                    <h3 className="text-4xl sm:text-5xl font-bold leading-tight">
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary">Peer-to-Peer</span>
+                      <br />
+                      <span className="text-foreground">File Transfer</span>
+                    </h3>
+                    <p className="text-muted-foreground text-lg sm:text-xl leading-relaxed">
+                      Connect directly with nearby devices using cutting-edge WebRTC technology. 
+                      Ultra-fast, completely private, and military-grade secure.
+                    </p>
+                    <div className="flex flex-wrap gap-3 pt-4">
+                      <Badge variant="secondary" className="text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
+                        <Zap className="h-4 w-4 mr-2 text-success" />
+                        No Server Needed
+                      </Badge>
+                      <Badge variant="secondary" className="text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
+                        <Shield className="h-4 w-4 mr-2 text-primary" />
+                        End-to-End Encrypted
+                      </Badge>
+                      <Badge variant="secondary" className="text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
+                        <Smartphone className="h-4 w-4 mr-2 text-warning" />
+                        Mobile Friendly
+                      </Badge>
+                    </div>
                   </div>
-                  <h3 className="text-4xl sm:text-5xl font-bold leading-tight">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary">Peer-to-Peer</span>
-                    <br />
-                    <span className="text-foreground">File Transfer</span>
-                  </h3>
-                  <p className="text-muted-foreground text-lg sm:text-xl leading-relaxed">
-                    Connect directly with nearby devices using cutting-edge WebRTC technology. 
-                    Ultra-fast, completely private, and military-grade secure.
-                  </p>
-                  <div className="flex flex-wrap gap-3 pt-4">
-                    <Badge variant="secondary" className="text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
-                      <Zap className="h-4 w-4 mr-2 text-success" />
-                      No Server Needed
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
-                      <Shield className="h-4 w-4 mr-2 text-primary" />
-                      End-to-End Encrypted
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
-                      <Smartphone className="h-4 w-4 mr-2 text-warning" />
-                      Mobile Friendly
-                    </Badge>
-                  </div>
+                  <NearbyShareDialog 
+                    trigger={
+                      <Button size="lg" className="gap-2 shadow-xl hover:shadow-2xl transition-all duration-300 px-8 py-6 text-base font-semibold">
+                        <Smartphone className="h-6 w-6" />
+                        Try P2P Transfer
+                      </Button>
+                    } 
+                  />
                 </div>
-                <NearbyShareDialog 
-                  trigger={
-                    <Button size="lg" className="gap-2 shadow-xl hover:shadow-2xl transition-all duration-300 px-8 py-6 text-base font-semibold">
-                      <Smartphone className="h-6 w-6" />
-                      Try P2P Transfer
-                    </Button>
-                  } 
-                />
               </div>
-            </div>
-          </Card>
-        </div>
+            </Card>
+          </div>
+        </ScrollReveal>
 
         {/* FAQ Section */}
-        <FAQSection />
+        <ScrollReveal direction="up" delay={100}>
+          <FAQSection />
+        </ScrollReveal>
 
         {/* CTA Section */}
-        <div className="text-center max-w-4xl mx-auto relative z-10">
+        <ScrollReveal direction="up" delay={100}>
+          <div className="text-center max-w-4xl mx-auto relative z-10">
           <Card className="bg-gradient-to-br from-primary/15 via-primary/8 to-transparent border-2 border-primary/30 overflow-hidden shadow-2xl backdrop-blur-xl group hover:shadow-hover transition-all duration-500">
             <div className="absolute inset-0 bg-gradient-mesh opacity-50"></div>
             <div className="p-10 sm:p-16 space-y-8 relative z-10">
@@ -589,6 +607,7 @@ const Index = () => {
             </div>
           </Card>
         </div>
+        </ScrollReveal>
       </main>
 
       {/* Footer */}
