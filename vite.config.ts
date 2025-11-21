@@ -18,7 +18,13 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
+    dedupe: [
+      'react', 
+      'react-dom', 
+      'react/jsx-runtime',
+      '@radix-ui/react-tooltip',
+      '@radix-ui/react-slot',
+    ],
   },
   optimizeDeps: {
     include: [
@@ -27,11 +33,15 @@ export default defineConfig(({ mode }) => ({
       'react/jsx-runtime',
       '@radix-ui/react-tooltip',
       '@radix-ui/react-slot',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-popover',
     ],
     exclude: [],
     esbuildOptions: {
       target: 'esnext',
     },
+    force: true,
   },
   build: {
     commonjsOptions: {
