@@ -170,7 +170,7 @@ const TestimonialsSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="mb-16 sm:mb-24 relative">
+    <section ref={sectionRef} className="mb-8 sm:mb-12 relative">
       {/* Background decoration */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px]"></div>
@@ -344,7 +344,7 @@ const TestimonialsSection = () => {
       </div>
 
       {/* Call to Action Section */}
-      <div className="mt-16 sm:mt-20 relative animate-fade-in">
+      <div className="mt-12 sm:mt-16 relative animate-fade-in">
         {/* Background glow effects */}
         <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-primary/10 via-primary/5 to-accent/10 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '4s' }}></div>
