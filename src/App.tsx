@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,8 +15,6 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ScanQR from "./pages/ScanQR";
 import NotFound from "./pages/NotFound";
-import OfflineIndicator from "./components/offline/OfflineIndicator";
-import { registerServiceWorker } from "./lib/service-worker";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,20 +26,12 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  useEffect(() => {
-    // Register service worker for offline support
-    registerServiceWorker().catch((error) => {
-      console.error('Failed to register service worker:', error);
-    });
-  }, []);
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <OfflineIndicator />
           <AuthProvider>
             <BrowserRouter>
               <Routes>
