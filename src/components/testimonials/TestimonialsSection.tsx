@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Star, BadgeCheck, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, BadgeCheck, Building2, ChevronLeft, ChevronRight, Upload, Shield, Users } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 
@@ -321,6 +321,80 @@ const TestimonialsSection = () => {
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
+      </div>
+
+      {/* Call to Action Section */}
+      <div className="mt-16 sm:mt-20 relative animate-fade-in">
+        {/* Background glow effects */}
+        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-primary/10 via-primary/5 to-accent/10 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '4s' }}></div>
+        </div>
+
+        <Card className="relative overflow-hidden border-2 border-primary/20 bg-gradient-to-br from-card via-card to-card/80 backdrop-blur-xl shadow-2xl group hover:border-primary/40 transition-all duration-500">
+          {/* Animated background pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.03)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.03)_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-50"></div>
+          
+          <div className="relative z-10 px-6 py-10 sm:px-10 sm:py-14 md:px-16 md:py-16 text-center space-y-6">
+            {/* Icon */}
+            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-primary via-primary to-primary/90 shadow-2xl shadow-primary/40 mb-2 group-hover:scale-110 transition-transform duration-500">
+              <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+            </div>
+
+            {/* Heading */}
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight">
+              <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent">
+                Ready to Get Started?
+              </span>
+            </h3>
+
+            {/* Description */}
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-medium">
+              Join thousands of satisfied users and experience secure, lightning-fast file sharing today. No credit card required.
+            </p>
+
+            {/* CTA Button */}
+            <div className="pt-4">
+              <Button
+                size="lg"
+                onClick={() => {
+                  const uploadSection = document.getElementById('upload-section');
+                  if (uploadSection) {
+                    uploadSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                }}
+                className="group/btn relative h-14 sm:h-16 px-8 sm:px-12 text-base sm:text-lg font-bold bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/95 hover:via-primary hover:to-primary/95 text-white shadow-2xl shadow-primary/40 hover:shadow-3xl hover:shadow-primary/50 transition-all duration-300 hover:scale-105 active:scale-95 rounded-xl overflow-hidden"
+              >
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000"></div>
+                
+                <span className="relative flex items-center gap-3">
+                  <Upload className="w-5 h-5 sm:w-6 sm:h-6 group-hover/btn:rotate-12 transition-transform duration-300" />
+                  Start Uploading Free
+                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                </span>
+              </Button>
+            </div>
+
+            {/* Trust badges */}
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                <span className="font-medium">End-to-End Encrypted</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Star className="w-4 h-4 text-warning fill-warning" />
+                <span className="font-medium">5-Star Rated</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-primary" />
+                <span className="font-medium">10,000+ Happy Users</span>
+              </div>
+            </div>
+          </div>
+        </Card>
       </div>
     </section>
   );
