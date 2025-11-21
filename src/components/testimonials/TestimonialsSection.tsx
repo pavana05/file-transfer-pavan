@@ -198,18 +198,13 @@ const TestimonialsSection = () => {
 
         {/* Carousel */}
         <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-4 sm:gap-6">
+          <div className="flex gap-6">
             {testimonials.map((testimonial) => (
               <div
                 key={testimonial.id}
                 className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)]"
               >
-                <Card
-                  className="group relative overflow-hidden hover:shadow-hover transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1 border-border/40 bg-card/80 backdrop-blur-xl h-full"
-                >
-                  {/* Gradient overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                  
+                <Card className="relative overflow-hidden border-border/40 bg-card/80 backdrop-blur-xl h-full">
                   <div className="relative p-6 sm:p-8 space-y-5 flex flex-col h-full">
                     {/* Header with rating and company logo */}
                     <div className="flex items-start justify-between gap-3">
@@ -218,14 +213,13 @@ const TestimonialsSection = () => {
                         {Array.from({ length: testimonial.rating }).map((_, i) => (
                           <Star
                             key={i}
-                            className="h-4 w-4 fill-warning text-warning transition-transform duration-300 group-hover:scale-110"
-                            style={{ transitionDelay: `${i * 50}ms` }}
+                            className="h-4 w-4 fill-warning text-warning"
                           />
                         ))}
                       </div>
                       
                       {/* Company Logo */}
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-muted/60 to-muted/40 flex items-center justify-center text-xl border border-border/40 group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-muted/60 to-muted/40 flex items-center justify-center text-xl border border-border/40">
                         {testimonial.companyLogo}
                       </div>
                     </div>
@@ -241,14 +235,14 @@ const TestimonialsSection = () => {
                       </svg>
                       
                       {/* Content */}
-                      <p className="text-muted-foreground leading-relaxed text-sm sm:text-base pt-6 relative z-10 group-hover:text-foreground transition-colors duration-300">
+                      <p className="text-muted-foreground leading-relaxed text-sm sm:text-base pt-6 relative z-10">
                         {testimonial.content}
                       </p>
                     </div>
 
                     {/* Author section */}
                     <div className="flex items-center gap-3 sm:gap-4 pt-5 border-t border-border/40">
-                      <Avatar className="h-11 w-11 sm:h-12 sm:w-12 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300 flex-shrink-0">
+                      <Avatar className="h-11 w-11 sm:h-12 sm:w-12 ring-2 ring-primary/20 flex-shrink-0">
                         <div className="w-full h-full bg-gradient-to-br from-primary via-primary-glow to-primary flex items-center justify-center">
                           <AvatarFallback className="bg-transparent text-primary-foreground font-bold text-sm sm:text-base">
                             {testimonial.initials}
@@ -257,7 +251,7 @@ const TestimonialsSection = () => {
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <p className="font-bold text-foreground text-sm sm:text-base group-hover:text-primary transition-colors duration-300 truncate">
+                          <p className="font-bold text-foreground text-sm sm:text-base truncate">
                             {testimonial.name}
                           </p>
                           {testimonial.verified && (
@@ -271,9 +265,6 @@ const TestimonialsSection = () => {
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Hover border effect */}
-                  <div className="absolute inset-0 rounded-xl border-2 border-primary/0 group-hover:border-primary/20 transition-all duration-500 pointer-events-none"></div>
                 </Card>
               </div>
             ))}
