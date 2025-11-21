@@ -308,7 +308,7 @@ const Index = () => {
         </div>
         
         {/* Upload Section */}
-        <div className="mb-12 sm:mb-16 md:mb-20">
+        <div id="upload-section" className="mb-12 sm:mb-16 md:mb-20 scroll-mt-20">
           <Card className="border shadow-lg bg-card">
             <div className="p-4 sm:p-6 md:p-8 lg:p-10">
               <FileUploadManager
