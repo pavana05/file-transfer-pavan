@@ -34,6 +34,9 @@ const RATE_LIMIT = {
   maxConnectionTime: 30 * 60 * 1000, // 30 minutes
 };
 
+// Message size limit to prevent DoS attacks
+const MAX_MESSAGE_SIZE = 64 * 1024; // 64KB limit for WebRTC signaling messages
+
 const rooms = new Map<string, Set<ConnectedDevice>>();
 const devices = new Map<string, ConnectedDevice>();
 
@@ -182,6 +185,16 @@ serve(async (req) => {
       
       device.lastMessageTime = now;
       
+      // Validate message size before parsing to prevent DoS
+      if (event.data.length > MAX_MESSAGE_SIZE) {
+        console.log(`Message too large from ${deviceId}: ${event.data.length} bytes`);
+        socket.send(JSON.stringify({
+          type: 'error',
+          message: 'Message too large'
+        }));
+        return;
+      }
+
       const message = JSON.parse(event.data);
       console.log(`Message from ${deviceId} (${device.messageCount}):`, message.type);
 
@@ -193,6 +206,11 @@ serve(async (req) => {
       // Sanitize message content
       if (message.type.length > 50) {
         throw new Error('Message type too long');
+      }
+
+      // Validate message.data size if present
+      if (message.data && JSON.stringify(message.data).length > MAX_MESSAGE_SIZE) {
+        throw new Error('Message data payload too large');
       }
 
       // Forward WebRTC signaling messages
