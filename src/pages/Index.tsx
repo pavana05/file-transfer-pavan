@@ -338,10 +338,7 @@ const Index = () => {
         <ScrollReveal direction="up" delay={100}>
           <div id="upload-section" className="mb-28 sm:mb-36 scroll-mt-20 relative z-10">
             
-            <Card className="relative border border-border/40 shadow-premium bg-card/95 backdrop-blur-xl overflow-hidden group hover:shadow-glow hover:border-primary/20 transition-all duration-700 p-10 sm:p-12 md:p-16 lg:p-20">
-              {/* Subtle Animated Background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-primary-glow/3 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-              
+            <Card className="relative border border-border/40 shadow-premium bg-card/95 backdrop-blur-xl overflow-hidden p-10 sm:p-12 md:p-16 lg:p-20">
               <div className="relative z-10">
                 <FileUploadManager
                   config={uploadConfig}
@@ -356,32 +353,28 @@ const Index = () => {
         <ScrollReveal direction="up" delay={150}>
           <div className="mb-28 sm:mb-36 relative z-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-              <Card className="relative overflow-hidden group hover:shadow-hover transition-all duration-500 hover:scale-[1.02] border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
                 <div className="p-6 sm:p-8 text-center relative z-10">
                   <div className="text-4xl sm:text-5xl font-black bg-gradient-primary bg-clip-text text-transparent mb-2">10M+</div>
                   <div className="text-sm text-muted-foreground font-medium">Files Shared</div>
                 </div>
               </Card>
               
-              <Card className="relative overflow-hidden group hover:shadow-hover transition-all duration-500 hover:scale-[1.02] border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-success/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
                 <div className="p-6 sm:p-8 text-center relative z-10">
                   <div className="text-4xl sm:text-5xl font-black bg-gradient-success bg-clip-text text-transparent mb-2">500K+</div>
                   <div className="text-sm text-muted-foreground font-medium">Active Users</div>
                 </div>
               </Card>
               
-              <Card className="relative overflow-hidden group hover:shadow-hover transition-all duration-500 hover:scale-[1.02] border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-warning/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
                 <div className="p-6 sm:p-8 text-center relative z-10">
                   <div className="text-4xl sm:text-5xl font-black text-warning mb-2">50TB+</div>
                   <div className="text-sm text-muted-foreground font-medium">Data Transferred</div>
                 </div>
               </Card>
               
-              <Card className="relative overflow-hidden group hover:shadow-hover transition-all duration-500 hover:scale-[1.02] border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-glow/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
                 <div className="p-6 sm:p-8 text-center relative z-10">
                   <div className="text-4xl sm:text-5xl font-black text-primary-glow mb-2">99.9%</div>
                   <div className="text-sm text-muted-foreground font-medium">Uptime</div>
@@ -414,11 +407,9 @@ const Index = () => {
             </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            <Card className="group relative overflow-hidden hover:shadow-hover transition-all duration-500 hover:scale-[1.01] border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
+            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
               <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 border border-primary/20">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
                   <Shield className="h-7 w-7 text-primary" />
                 </div>
                 <h4 className="text-xl font-bold mb-3">
@@ -430,11 +421,9 @@ const Index = () => {
               </div>
             </Card>
 
-            <Card className="group relative overflow-hidden hover:shadow-hover transition-all duration-500 hover:scale-[1.01] border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-success/3 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
+            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
               <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-success/10 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 border border-success/20">
+                <div className="h-14 w-14 rounded-xl bg-success/10 flex items-center justify-center mb-6 border border-success/20">
                   <Zap className="h-7 w-7 text-success" />
                 </div>
                 <h4 className="text-xl font-bold mb-3">
@@ -446,11 +435,9 @@ const Index = () => {
               </div>
             </Card>
 
-            <Card className="group relative overflow-hidden hover:shadow-hover transition-all duration-500 hover:scale-[1.01] border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-warning/3 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
+            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
               <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-warning/10 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 border border-warning/20">
+                <div className="h-14 w-14 rounded-xl bg-warning/10 flex items-center justify-center mb-6 border border-warning/20">
                   <KeyRound className="h-7 w-7 text-warning" />
                 </div>
                 <h4 className="text-xl font-bold mb-3">
@@ -462,11 +449,9 @@ const Index = () => {
               </div>
             </Card>
 
-            <Card className="group relative overflow-hidden hover:shadow-hover transition-all duration-500 hover:scale-[1.01] border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
+            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
               <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 border border-primary/20">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
                   <Users className="h-7 w-7 text-primary" />
                 </div>
                 <h4 className="text-xl font-bold mb-3">
@@ -478,11 +463,9 @@ const Index = () => {
               </div>
             </Card>
 
-            <Card className="group relative overflow-hidden hover:shadow-hover transition-all duration-500 hover:scale-[1.01] border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-success/3 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
+            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
               <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-success/10 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 border border-success/20">
+                <div className="h-14 w-14 rounded-xl bg-success/10 flex items-center justify-center mb-6 border border-success/20">
                   <Clock className="h-7 w-7 text-success" />
                 </div>
                 <h4 className="text-xl font-bold mb-3">
@@ -494,11 +477,9 @@ const Index = () => {
               </div>
             </Card>
 
-            <Card className="group relative overflow-hidden hover:shadow-hover transition-all duration-500 hover:scale-[1.01] border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-warning/3 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
+            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
               <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-warning/10 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 border border-warning/20">
+                <div className="h-14 w-14 rounded-xl bg-warning/10 flex items-center justify-center mb-6 border border-warning/20">
                   <Smartphone className="h-7 w-7 text-warning" />
                 </div>
                 <h4 className="text-xl font-bold mb-3">
