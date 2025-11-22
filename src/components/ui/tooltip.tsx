@@ -3,10 +3,8 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
 import { cn } from "@/lib/utils"
 
-// No-op provider to avoid React duplication issues
-const TooltipProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>
+const TooltipProvider = TooltipPrimitive.Provider
 
-// Use Root directly without Provider to avoid React duplication issues
 const Tooltip = TooltipPrimitive.Root
 
 const TooltipTrigger = TooltipPrimitive.Trigger
