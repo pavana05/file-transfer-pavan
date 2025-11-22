@@ -11,57 +11,55 @@ import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
 import FAQSection from '@/components/faq/FAQSection';
 import TrustIndicators from '@/components/trust/TrustIndicators';
 import ScrollReveal from '@/components/animations/ScrollReveal';
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { useState } from 'react';
-
 const Index = () => {
-  const { user, signOut } = useAuth();
+  const {
+    user,
+    signOut
+  } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
   const uploadConfig = {
-    maxFileSize: 1 * 1024 * 1024 * 1024, // 1GB file size limit
-    maxFiles: 50, // Allow multiple files
+    maxFileSize: 1 * 1024 * 1024 * 1024,
+    // 1GB file size limit
+    maxFiles: 50,
+    // Allow multiple files
     acceptedTypes: [
-      // Images
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
-      // Documents
-      'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-      'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-      'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
-      'text/plain', // .txt
-      'text/csv', 'application/rtf',
-      // Code files
-      'text/html', 'text/css', 'text/javascript', 'application/javascript', 'application/json', 'text/xml', 'application/xml', 'text/markdown', 'application/x-python-code', 'text/x-python', 'text/x-java-source', 'text/x-c', 'text/x-c++src', 'text/x-csharp', 'text/x-php', 'text/x-ruby', 'text/x-go', 'text/x-rust', 'text/x-swift', 'application/typescript', 'text/typescript', 'application/x-yaml', 'text/yaml',
-      // Media
-      'video/mp4', 'video/webm', 'video/mov', 'video/avi', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/aac',
-      // Archives
-      'application/zip', 'application/x-rar-compressed', 'application/x-tar', 'application/gzip', 'application/x-7z-compressed'
-    ],
+    // Images
+    'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
+    // Documents
+    'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    // .docx
+    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // .xlsx
+    'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    // .pptx
+    'text/plain',
+    // .txt
+    'text/csv', 'application/rtf',
+    // Code files
+    'text/html', 'text/css', 'text/javascript', 'application/javascript', 'application/json', 'text/xml', 'application/xml', 'text/markdown', 'application/x-python-code', 'text/x-python', 'text/x-java-source', 'text/x-c', 'text/x-c++src', 'text/x-csharp', 'text/x-php', 'text/x-ruby', 'text/x-go', 'text/x-rust', 'text/x-swift', 'application/typescript', 'text/typescript', 'application/x-yaml', 'text/yaml',
+    // Media
+    'video/mp4', 'video/webm', 'video/mov', 'video/avi', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/aac',
+    // Archives
+    'application/zip', 'application/x-rar-compressed', 'application/x-tar', 'application/gzip', 'application/x-7z-compressed'],
     allowedExtensions: [
-      // Documents
-      'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf', 'csv',
-      // Code files
-      'html', 'htm', 'css', 'js', 'ts', 'jsx', 'tsx', 'json', 'xml', 'py', 'java', 'c', 'cpp', 'cc', 'cxx', 'h', 'hpp', 'cs', 'php', 'rb', 'go', 'rs', 'swift', 'kt', 'scala', 'sql', 'md', 'yaml', 'yml', 'ini', 'cfg', 'conf', 'sh', 'bat', 'ps1', 'r', 'dart', 'lua', 'perl', 'pl',
-      // Images
-      'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff', 'ico',
-      // Media
-      'mp4', 'webm', 'mov', 'avi', 'mkv', 'mp3', 'wav', 'ogg', 'aac', 'm4a',
-      // Archives
-      'zip', 'rar', 'tar', 'gz', '7z', 'bz2'
-    ],
+    // Documents
+    'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf', 'csv',
+    // Code files
+    'html', 'htm', 'css', 'js', 'ts', 'jsx', 'tsx', 'json', 'xml', 'py', 'java', 'c', 'cpp', 'cc', 'cxx', 'h', 'hpp', 'cs', 'php', 'rb', 'go', 'rs', 'swift', 'kt', 'scala', 'sql', 'md', 'yaml', 'yml', 'ini', 'cfg', 'conf', 'sh', 'bat', 'ps1', 'r', 'dart', 'lua', 'perl', 'pl',
+    // Images
+    'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff', 'ico',
+    // Media
+    'mp4', 'webm', 'mov', 'avi', 'mkv', 'mp3', 'wav', 'ogg', 'aac', 'm4a',
+    // Archives
+    'zip', 'rar', 'tar', 'gz', '7z', 'bz2'],
     enableChunkedUpload: true,
     enableResume: true,
     enablePreview: true,
     autoUpload: false,
-    enableDuplicateDetection: true,
+    enableDuplicateDetection: true
   };
-  
   const uploadCallbacks = {
     onFileAdd: (files: any[]) => {
       console.log('Files added:', files);
@@ -71,11 +69,9 @@ const Index = () => {
     },
     onUploadError: (file: any, error: string) => {
       console.error('Upload error:', file, error);
-    },
+    }
   };
-
-  return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+  return <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Enhanced Premium Background Effects */}
       <div className="absolute inset-0 bg-gradient-mesh opacity-60"></div>
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-radial from-primary/20 via-primary/5 to-transparent blur-3xl"></div>
@@ -83,7 +79,9 @@ const Index = () => {
       
       {/* Animated Gradient Orbs with Refined Blur */}
       <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-primary/15 to-primary-glow/10 rounded-full blur-[100px] animate-float opacity-60"></div>
-      <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-gradient-to-tl from-success/10 to-primary/5 rounded-full blur-[120px] animate-float opacity-50" style={{ animationDelay: '1.5s' }}></div>
+      <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-gradient-to-tl from-success/10 to-primary/5 rounded-full blur-[120px] animate-float opacity-50" style={{
+      animationDelay: '1.5s'
+    }}></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-primary-glow/8 to-transparent rounded-full blur-[100px] animate-pulse-glow"></div>
       
       {/* Header Navigation with Premium Design */}
@@ -107,22 +105,12 @@ const Index = () => {
             
             {/* Desktop Navigation Actions */}
             <nav className="hidden md:flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.location.href = '/pin'}
-                className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all"
-              >
+              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/pin'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
                 <KeyRound className="h-4 w-4" />
                 <span className="text-sm font-medium">PIN Access</span>
               </Button>
               
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.location.href = '/scan'}
-                className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all"
-              >
+              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/scan'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
                 <ScanLine className="h-4 w-4" />
                 <span className="text-sm font-medium">Scan QR</span>
               </Button>
@@ -131,50 +119,27 @@ const Index = () => {
               
               <ThemeToggle />
               
-              {user && (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => window.location.href = '/dashboard'}
-                    className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all"
-                  >
+              {user && <>
+                  <Button variant="ghost" size="sm" onClick={() => window.location.href = '/dashboard'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
                     <User className="h-4 w-4" />
                     <span className="font-medium">Dashboard</span>
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={signOut}
-                    className="gap-2 h-10 px-4"
-                  >
+                  <Button variant="outline" size="sm" onClick={signOut} className="gap-2 h-10 px-4">
                     <LogOut className="h-4 w-4" />
                     <span className="font-medium">Sign Out</span>
                   </Button>
-                </>
-              )}
+                </>}
               
-              {!user && (
-                <Button
-                  size="sm"
-                  onClick={() => window.location.href = '/auth'}
-                  className="gap-2 h-10 px-6 shadow-md hover:shadow-lg"
-                >
+              {!user && <Button size="sm" onClick={() => window.location.href = '/auth'} className="gap-2 h-10 px-6 shadow-md hover:shadow-lg">
                   <User className="h-4 w-4" />
                   <span className="font-medium">Sign In</span>
-                </Button>
-              )}
+                </Button>}
             </nav>
 
             {/* Mobile Navigation - Theme Toggle & Menu Button */}
             <div className="flex md:hidden items-center gap-2">
               <ThemeToggle />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setMobileMenuOpen(true)}
-                className="h-10 w-10 p-0"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(true)} className="h-10 w-10 p-0">
                 <Menu className="h-5 w-5" />
               </Button>
             </div>
@@ -202,81 +167,53 @@ const Index = () => {
           </DrawerHeader>
           
           <nav className="flex flex-col p-6 gap-3">
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={() => {
-                window.location.href = '/pin';
-                setMobileMenuOpen(false);
-              }}
-              className="justify-start gap-3 h-12 text-base"
-            >
+            <Button variant="ghost" size="lg" onClick={() => {
+            window.location.href = '/pin';
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base">
               <KeyRound className="h-5 w-5" />
               PIN Access
             </Button>
             
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={() => {
-                window.location.href = '/scan';
-                setMobileMenuOpen(false);
-              }}
-              className="justify-start gap-3 h-12 text-base"
-            >
+            <Button variant="ghost" size="lg" onClick={() => {
+            window.location.href = '/scan';
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base">
               <ScanLine className="h-5 w-5" />
               Scan QR Code
             </Button>
 
-            {user && (
-              <>
+            {user && <>
                 <div className="h-px bg-border my-2"></div>
                 
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  onClick={() => {
-                    window.location.href = '/dashboard';
-                    setMobileMenuOpen(false);
-                  }}
-                  className="justify-start gap-3 h-12 text-base"
-                >
+                <Button variant="ghost" size="lg" onClick={() => {
+              window.location.href = '/dashboard';
+              setMobileMenuOpen(false);
+            }} className="justify-start gap-3 h-12 text-base">
                   <User className="h-5 w-5" />
                   Dashboard
                 </Button>
                 
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  onClick={() => {
-                    signOut();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="justify-start gap-3 h-12 text-base text-destructive hover:text-destructive"
-                >
+                <Button variant="ghost" size="lg" onClick={() => {
+              signOut();
+              setMobileMenuOpen(false);
+            }} className="justify-start gap-3 h-12 text-base text-destructive hover:text-destructive">
                   <LogOut className="h-5 w-5" />
                   Sign Out
                 </Button>
-              </>
-            )}
+              </>}
             
-            {!user && (
-              <>
+            {!user && <>
                 <div className="h-px bg-border my-2"></div>
                 
-                <Button
-                  size="lg"
-                  onClick={() => {
-                    window.location.href = '/auth';
-                    setMobileMenuOpen(false);
-                  }}
-                  className="justify-center gap-3 h-12 text-base"
-                >
+                <Button size="lg" onClick={() => {
+              window.location.href = '/auth';
+              setMobileMenuOpen(false);
+            }} className="justify-center gap-3 h-12 text-base">
                   <User className="h-5 w-5" />
                   Sign In
                 </Button>
-              </>
-            )}
+              </>}
           </nav>
         </DrawerContent>
       </Drawer>
@@ -303,15 +240,15 @@ const Index = () => {
               <span className="block bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/70">
                 Share Files
               </span>
-              <span className="block mt-3 bg-clip-text text-transparent bg-gradient-hero animate-gradient-x bg-[length:200%_auto]">
+              <span className="block mt-3 bg-clip-text text-transparent bg-gradient-hero animate-gradient-x bg-[length:200%_auto] text-6xl">
                 Securely
               </span>
             </h2>
             
-            <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground max-w-5xl mx-auto px-4 leading-relaxed font-medium">
+            <p className="text-xl sm:text-2xl text-muted-foreground max-w-5xl mx-auto px-4 leading-relaxed font-medium md:text-2xl">
               Enterprise-grade file sharing with{' '}
               <span className="font-extrabold text-foreground">end-to-end encryption</span>.
-              <span className="block mt-3 text-lg sm:text-xl">
+              <span className="block mt-3 text-lg sm:text-base">
                 No signup • Up to <span className="text-primary font-black text-2xl">1GB</span> • Auto-delete
               </span>
             </p>
@@ -336,14 +273,11 @@ const Index = () => {
         
         {/* Premium Upload Section with Glass Design */}
         <ScrollReveal direction="up" delay={100}>
-          <div id="upload-section" className="mb-28 sm:mb-36 scroll-mt-20 relative z-10">
+          <div id="upload-section" className="mb-28 sm:mb-36 scroll-mt-20 relative z-10 opacity-100">
             
             <Card className="relative border border-border/40 shadow-premium bg-card/95 backdrop-blur-xl overflow-hidden p-10 sm:p-12 md:p-16 lg:p-20">
               <div className="relative z-10">
-                <FileUploadManager
-                  config={uploadConfig}
-                  callbacks={uploadCallbacks}
-                />
+                <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
               </div>
             </Card>
           </div>
@@ -540,14 +474,10 @@ const Index = () => {
                       </Badge>
                     </div>
                   </div>
-                  <NearbyShareDialog 
-                    trigger={
-                      <Button size="lg" className="gap-3 shadow-premium hover:shadow-glow transition-all duration-300 px-10 py-7 text-lg font-bold">
+                  <NearbyShareDialog trigger={<Button size="lg" className="gap-3 shadow-premium hover:shadow-glow transition-all duration-300 px-10 py-7 text-lg font-bold">
                         <Smartphone className="h-6 w-6" />
                         Try P2P Transfer
-                      </Button>
-                    }
-                  />
+                      </Button>} />
                 </div>
               </div>
             </Card>
@@ -584,19 +514,18 @@ const Index = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5 justify-center pt-8">
-                {!user && (
-                  <Button size="lg" onClick={() => window.location.href = '/auth'} className="gap-3 px-10 py-7 text-lg font-bold shadow-premium hover:shadow-glow transition-all duration-300 hover:scale-105">
+                {!user && <Button size="lg" onClick={() => window.location.href = '/auth'} className="gap-3 px-10 py-7 text-lg font-bold shadow-premium hover:shadow-glow transition-all duration-300 hover:scale-105">
                     <User className="h-6 w-6" />
                     Create Free Account
-                  </Button>
-                )}
-                {user && (
-                  <Button size="lg" onClick={() => window.location.href = '/dashboard'} className="gap-3 px-10 py-7 text-lg font-bold shadow-premium hover:shadow-glow transition-all duration-300 hover:scale-105">
+                  </Button>}
+                {user && <Button size="lg" onClick={() => window.location.href = '/dashboard'} className="gap-3 px-10 py-7 text-lg font-bold shadow-premium hover:shadow-glow transition-all duration-300 hover:scale-105">
                     <User className="h-6 w-6" />
                     Go to Dashboard
-                  </Button>
-                )}
-                <Button size="lg" variant="outline" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="px-10 py-7 text-lg font-bold border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:scale-105">
+                  </Button>}
+                <Button size="lg" variant="outline" onClick={() => window.scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                })} className="px-10 py-7 text-lg font-bold border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:scale-105">
                   Start Uploading
                 </Button>
               </div>
@@ -620,12 +549,7 @@ const Index = () => {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-6">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => window.location.href = '/loading-demo'}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
+              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/loading-demo'} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 <Sparkles className="h-4 w-4 mr-2" />
                 View Loading States
               </Button>
@@ -639,8 +563,6 @@ const Index = () => {
 
       {/* Scroll to Top Button */}
       <ScrollToTop />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;

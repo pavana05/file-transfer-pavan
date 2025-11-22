@@ -89,19 +89,27 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   }, []);
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
     const validFiles: UploadedFile[] = [];
-    const invalidFiles: { name: string; errors: string[] }[] = [];
-
+    const invalidFiles: {
+      name: string;
+      errors: string[];
+    }[] = [];
     acceptedFiles.forEach(file => {
       const validation = validateFile(file);
       if (validation.isValid) {
         validFiles.push(createUploadedFile(file));
       } else {
-        invalidFiles.push({ name: file.name, errors: validation.errors });
+        invalidFiles.push({
+          name: file.name,
+          errors: validation.errors
+        });
       }
     });
 
     // Handle rejected files from dropzone
-    rejectedFiles.forEach(({ file, errors }) => {
+    rejectedFiles.forEach(({
+      file,
+      errors
+    }) => {
       const errorMessages = errors.map((e: any) => {
         if (e.code === 'file-too-large') {
           return `File size exceeds ${(mergedConfig.maxFileSize! / 1024 / 1024).toFixed(1)}MB limit`;
@@ -111,16 +119,22 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         }
         return e.message;
       });
-      invalidFiles.push({ name: file.name, errors: errorMessages });
+      invalidFiles.push({
+        name: file.name,
+        errors: errorMessages
+      });
     });
 
     // Show error toasts for invalid files
     if (invalidFiles.length > 0) {
-      invalidFiles.forEach(({ name, errors }) => {
+      invalidFiles.forEach(({
+        name,
+        errors
+      }) => {
         toast({
           variant: "destructive",
           title: "Upload Failed",
-          description: `${name}: ${errors.join(', ')}`,
+          description: `${name}: ${errors.join(', ')}`
         });
       });
     }
@@ -130,7 +144,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       onFilesAdded(validFiles);
       toast({
         title: "Files Added",
-        description: `${validFiles.length} file(s) added successfully`,
+        description: `${validFiles.length} file(s) added successfully`
       });
     }
   }, [validateFile, createUploadedFile, onFilesAdded, mergedConfig.maxFileSize]);
@@ -201,7 +215,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         </div>
 
         {/* Shimmer Effect on Hover */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mx-px px-0">
           <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-shimmer"></div>
         </div>
 
@@ -212,7 +226,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         {/* Upload Icon with Premium Effects */}
         <div className={cn("relative w-24 h-24 mx-auto mb-10 rounded-3xl flex items-center justify-center transition-all duration-700", "bg-gradient-primary shadow-glow ring-8 ring-primary/15", "group-hover:ring-primary/30 group-hover:shadow-premium group-hover:-translate-y-4 group-hover:scale-110 group-hover:rotate-3", isDragActive && !isDragReject && "scale-125 ring-primary/50 shadow-glow animate-bounce-slow")}>
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-white/30 via-white/10 to-transparent opacity-80"></div>
-          <div className="absolute inset-0 rounded-3xl bg-gradient-shimmer opacity-0 group-hover:opacity-100 animate-shimmer"></div>
+          
           {isDragActive && !isDragReject ? <FileCheck className="relative w-12 h-12 text-primary-foreground drop-shadow-2xl animate-scale-in" /> : <Upload className="relative w-12 h-12 text-primary-foreground drop-shadow-2xl transition-transform duration-500 group-hover:scale-125 group-hover:-rotate-6" />}
         </div>
 
