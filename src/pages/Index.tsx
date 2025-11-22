@@ -25,7 +25,7 @@ const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const uploadConfig = {
-    maxFileSize: 10 * 1024 * 1024 * 1024, // 10GB for large files and folders
+    maxFileSize: 1 * 1024 * 1024 * 1024, // 1GB file size limit
     maxFiles: 50, // Allow multiple files
     acceptedTypes: [
       // Images
@@ -323,7 +323,7 @@ const Index = () => {
               </span>
               .<br className="hidden sm:block" />
               <span className="block mt-4 text-lg sm:text-xl">
-                No signup required • Upload up to <span className="text-primary font-black text-2xl">10GB</span> • Files auto-delete
+                No signup required • Upload up to <span className="text-primary font-black text-2xl">1GB</span> • Files auto-delete
               </span>
             </p>
 
