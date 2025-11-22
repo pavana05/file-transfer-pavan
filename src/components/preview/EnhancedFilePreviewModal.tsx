@@ -109,9 +109,9 @@ const EnhancedFilePreviewModal: React.FC<EnhancedFilePreviewModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl h-[90vh] p-0 gap-0">
+      <DialogContent className="max-w-7xl h-[90vh] p-0 gap-0 animate-scale-in">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur-sm">
+        <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur-sm animate-slide-in-from-top">
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-lg truncate">{fileName}</h3>
             <p className="text-sm text-muted-foreground">{fileType}</p>
@@ -128,7 +128,7 @@ const EnhancedFilePreviewModal: React.FC<EnhancedFilePreviewModalProps> = ({
         </div>
 
         {/* Toolbar */}
-        <div className="flex items-center justify-between gap-2 p-3 border-b bg-muted/30">
+        <div className="flex items-center justify-between gap-2 p-3 border-b bg-muted/30 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -218,20 +218,23 @@ const EnhancedFilePreviewModal: React.FC<EnhancedFilePreviewModalProps> = ({
         {/* Preview Area */}
         <div
           ref={containerRef}
-          className="flex-1 overflow-hidden bg-muted/20 relative"
+          className="flex-1 overflow-hidden bg-muted/20 relative animate-fade-in"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
           onWheel={handleWheel}
-          style={{ cursor: zoom > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+          style={{ 
+            animationDelay: '0.2s',
+            cursor: zoom > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' 
+          }}
         >
           <div className="absolute inset-0 flex items-center justify-center p-4">
             {isImage ? (
               <img
                 src={fileUrl}
                 alt={fileName}
-                className="max-w-full max-h-full object-contain transition-transform duration-200"
+                className="max-w-full max-h-full object-contain transition-all duration-300 ease-out"
                 style={{
                   transform: `scale(${zoom / 100}) rotate(${rotation}deg) translate(${position.x}px, ${position.y}px)`,
                 }}

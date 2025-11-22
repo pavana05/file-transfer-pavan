@@ -255,7 +255,7 @@ export const FileList: React.FC<FileListProps> = ({
 
               {/* Progress Bar */}
               {showProgress && (file.status === 'uploading' || file.status === 'paused') && (
-                <div className="mt-3 p-4 rounded-xl bg-gradient-to-br from-card via-card to-muted/5 border border-border/40 shadow-sm">
+                <div className="mt-3 p-4 rounded-xl bg-gradient-to-br from-card via-card to-muted/5 border border-border/40 shadow-sm animate-fade-in">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
@@ -263,20 +263,31 @@ export const FileList: React.FC<FileListProps> = ({
                         {file.status === 'uploading' ? 'Uploading' : 'Paused'}
                       </span>
                     </div>
-                    <span className="text-2xl font-bold text-primary tabular-nums">
+                    <span className="text-2xl font-bold text-primary tabular-nums transition-all duration-300">
                       {file.progress}%
                     </span>
                   </div>
                   
-                  <Progress 
-                    value={file.progress} 
-                    className="h-2.5 bg-muted/50 shadow-inner"
-                  />
+                  <div className="relative">
+                    <Progress 
+                      value={file.progress} 
+                      className="h-2.5 bg-muted/50 shadow-inner"
+                    />
+                    {/* Animated shimmer effect during upload */}
+                    {file.status === 'uploading' && (
+                      <div 
+                        className="absolute inset-y-0 left-0 overflow-hidden rounded-full pointer-events-none"
+                        style={{ width: `${file.progress}%` }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                      </div>
+                    )}
+                  </div>
                   
                   <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
                     <div className="flex items-center gap-4">
                       {file.uploadSpeed && file.uploadSpeed > 0 && (
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 animate-fade-in">
                           <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse"></div>
                           <span className="font-medium tabular-nums">
                             {formatFileSize(file.uploadSpeed)}/s
@@ -284,14 +295,14 @@ export const FileList: React.FC<FileListProps> = ({
                         </div>
                       )}
                       {file.uploadedBytes && (
-                        <span className="font-medium tabular-nums">
+                        <span className="font-medium tabular-nums animate-fade-in" style={{ animationDelay: '0.1s' }}>
                           {formatFileSize(file.uploadedBytes)} / {formatFileSize(file.size)}
                         </span>
                       )}
                     </div>
                     
                     {file.estimatedTimeRemaining !== undefined && file.estimatedTimeRemaining > 0 && (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 border border-primary/20">
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 border border-primary/20 animate-fade-in" style={{ animationDelay: '0.2s' }}>
                         <Clock className="h-3 w-3 text-primary" />
                         <span className="font-semibold text-primary tabular-nums">
                           {formatDuration(file.estimatedTimeRemaining)}
