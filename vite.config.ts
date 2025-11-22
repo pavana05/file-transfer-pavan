@@ -19,6 +19,8 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
       'react': path.resolve(__dirname, './node_modules/react'),
       'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+      'react/jsx-runtime': path.resolve(__dirname, './node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': path.resolve(__dirname, './node_modules/react/jsx-dev-runtime'),
     },
     dedupe: [
       'react', 
@@ -26,7 +28,11 @@ export default defineConfig(({ mode }) => ({
       'react/jsx-runtime',
       'react/jsx-dev-runtime',
       '@radix-ui/react-tooltip',
+      '@radix-ui/react-toast',
       '@radix-ui/react-slot',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-dropdown-menu',
       'next-themes',
       'sonner',
     ],
@@ -39,6 +45,7 @@ export default defineConfig(({ mode }) => ({
       'react/jsx-runtime',
       'react/jsx-dev-runtime',
       '@radix-ui/react-tooltip',
+      '@radix-ui/react-toast',
       '@radix-ui/react-slot',
       '@radix-ui/react-dropdown-menu',
       '@radix-ui/react-dialog',
@@ -49,11 +56,17 @@ export default defineConfig(({ mode }) => ({
     exclude: [],
     esbuildOptions: {
       target: 'esnext',
+      resolveExtensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json'],
     },
   },
   build: {
     commonjsOptions: {
       include: [/node_modules/],
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
     },
   },
 }));
