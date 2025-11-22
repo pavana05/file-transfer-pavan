@@ -554,7 +554,7 @@ const Index = () => {
                 View Loading States
               </Button>
               <p className="text-sm text-muted-foreground">
-                © 2024 FileShare Pro. All rights reserved.
+                © 2025 FileShare Pro. All rights reserved.
               </p>
             </div>
           </div>
