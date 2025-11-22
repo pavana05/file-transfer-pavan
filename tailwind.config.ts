@@ -30,7 +30,8 @@ export default {
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
-					glow: 'hsl(var(--primary-glow))'
+					glow: 'hsl(var(--primary-glow))',
+					dark: 'hsl(var(--primary-dark))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -128,6 +129,32 @@ export default {
 				'glow': {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.5' }
+				},
+				'gradient-x': {
+					'0%, 100%': { 
+						'background-position': '0% 50%'
+					},
+					'50%': { 
+						'background-position': '100% 50%'
+					}
+				},
+				'bounce-slow': {
+					'0%, 100%': { 
+						transform: 'translateY(-5%)',
+						'animation-timing-function': 'cubic-bezier(0.8, 0, 1, 1)'
+					},
+					'50%': { 
+						transform: 'translateY(0)',
+						'animation-timing-function': 'cubic-bezier(0, 0, 0.2, 1)'
+					}
+				},
+				'border-beam': {
+					'0%': { 
+						'offset-distance': '0%'
+					},
+					'100%': { 
+						'offset-distance': '100%'
+					}
 				}
 			},
 			animation: {
@@ -140,22 +167,28 @@ export default {
 				'pulse-glow': 'pulse-glow 2s infinite',
 				'float': 'float 3s ease-in-out infinite',
 				'shimmer': 'shimmer 2s infinite',
-				'glow': 'glow 2s ease-in-out infinite alternate'
+				'glow': 'glow 2s ease-in-out infinite alternate',
+				'gradient-x': 'gradient-x 3s ease infinite',
+				'bounce-slow': 'bounce-slow 3s ease-in-out infinite',
+				'border-beam': 'border-beam 2s linear infinite'
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-secondary': 'var(--gradient-secondary)',
 				'gradient-upload': 'var(--gradient-upload)',
 				'gradient-success': 'var(--gradient-success)',
 				'gradient-glass': 'var(--gradient-glass)',
 				'gradient-mesh': 'var(--gradient-mesh)',
-				'gradient-border': 'var(--gradient-border)'
+				'gradient-border': 'var(--gradient-border)',
+				'gradient-shimmer': 'var(--gradient-shimmer)'
 			},
 			boxShadow: {
 				'upload': 'var(--shadow-upload)',
 				'card': 'var(--shadow-card)',
 				'hover': 'var(--shadow-hover)',
 				'glow': 'var(--shadow-glow)',
+				'premium': 'var(--shadow-premium)',
 				'glass': 'var(--shadow-glass)',
 				'inner': 'var(--shadow-inner)',
 				'border': 'var(--shadow-border)'
