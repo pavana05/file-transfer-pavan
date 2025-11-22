@@ -22,6 +22,7 @@ import { SecurityUtils } from '@/lib/security-utils';
 import { SecurityAlerts, useSecurityAlerts } from '@/components/SecurityAlerts';
 import { useAuth } from '@/contexts/AuthContext';
 import confetti from 'canvas-confetti';
+import { haptics } from '@/lib/haptic-feedback';
 
 interface FileFolder {
   id: string;
@@ -257,7 +258,6 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
         callbacks.onUploadComplete?.(completedFile);
 
         // Trigger haptic success feedback
-        const { haptics } = await import('@/lib/haptic-feedback');
         haptics.success();
 
         // Trigger confetti celebration animation
