@@ -1,23 +1,55 @@
 {
-  "name": "FileShare Pro",
-  "short_name": "FileShare",
-  "description": "Secure file sharing with encryption and PIN protection",
+  "name": "FileShare Pro - Secure File Sharing",
+  "short_name": "FileShare Pro",
+  "description": "Share files instantly and securely with PIN protection, encryption, and offline support",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "background_color": "#0f0f23",
+  "theme_color": "#6366f1",
   "icons": [
     {
-      "src": "/placeholder.svg",
+      "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/placeholder.svg",
+      "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Upload Files",
+      "short_name": "Upload",
+      "description": "Upload files to share",
+      "url": "/#upload-section",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "PIN Access",
+      "short_name": "PIN",
+      "description": "Access files with PIN",
+      "url": "/pin",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
