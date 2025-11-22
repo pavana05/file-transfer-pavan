@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 240 18% 8%;
 
-    --primary: 262 83% 58%;
+    --primary: 221 83.1933% 53.3333%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 262 90% 68%;
     --primary-dark: 262 75% 48%;
@@ -42,7 +42,7 @@ All colors MUST be HSL.
 
     --border: 240 15% 92%;
     --input: 240 15% 95%;
-    --ring: 262 83% 58%;
+    --ring: 224 76.3265% 48.0392%;
 
     /* Upload specific tokens */
     --upload-zone: 262 100% 99%;
@@ -248,5 +248,17 @@ All colors MUST be HSL.
   
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--primary) / 0.6);
+  }
+}
+
+/* ---break---
+*/
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
