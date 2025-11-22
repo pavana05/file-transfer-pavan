@@ -15,6 +15,7 @@ import PinAccess from "./pages/PinAccess";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ScanQR from "./pages/ScanQR";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -36,13 +37,14 @@ const App = () => {
                 <BrowserRouter>
                   <Toaster />
                   <Sonner />
-                  <Routes>
+                   <Routes>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/" element={<Index />} />
                 <Route path="/share/:token" element={<FileShare />} />
                 <Route path="/collection/:token" element={<CollectionShare />} />
                 <Route path="/pin" element={<PinAccess />} />
                 <Route path="/scan" element={<ScanQR />} />
+                <Route path="/install" element={<Install />} />
                 <Route 
                   path="/dashboard" 
                   element={

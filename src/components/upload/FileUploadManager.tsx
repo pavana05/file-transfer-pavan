@@ -256,6 +256,10 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
         const completedFile = { ...file, url: result.shareUrl };
         callbacks.onUploadComplete?.(completedFile);
 
+        // Trigger haptic success feedback
+        const { haptics } = await import('@/lib/haptic-feedback');
+        haptics.success();
+
         // Trigger confetti celebration animation
         const duration = 3000;
         const animationEnd = Date.now() + duration;
