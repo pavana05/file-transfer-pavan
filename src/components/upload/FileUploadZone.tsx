@@ -192,13 +192,8 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
     return 'All file types including ZIP archives';
   };
   return <div className={cn("w-full", className)}>
-      <div {...getRootProps()} className={cn("relative border-2 border-dashed rounded-3xl p-12 sm:p-16 text-center transition-all duration-500 ease-out", "bg-gradient-to-br from-card/95 via-card/90 to-card/95 backdrop-blur-xl", "border-border/40 hover:border-primary/50 shadow-card hover:shadow-hover", "before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-mesh before:opacity-20", "after:absolute after:inset-0 after:rounded-3xl after:bg-gradient-to-br after:from-primary/5 after:via-transparent after:to-accent/5", "group overflow-hidden", !disabled && "cursor-pointer hover:scale-[1.01] active:scale-[0.99]", isDragActive && !isDragReject && "border-primary/70 bg-primary/5 scale-[1.02] shadow-glow", isDragReject && "border-destructive/60 bg-destructive/5", disabled && "opacity-50 cursor-not-allowed")}>
+      <div {...getRootProps()} className={cn("relative border-2 border-dashed rounded-3xl p-12 sm:p-16 text-center transition-all duration-500 ease-out", "bg-card/95 backdrop-blur-xl", "border-border/40 hover:border-primary/50 shadow-card hover:shadow-hover", "group overflow-hidden", !disabled && "cursor-pointer hover:scale-[1.01] active:scale-[0.99]", isDragActive && !isDragReject && "border-primary/70 bg-primary/5 scale-[1.02] shadow-glow", isDragReject && "border-destructive/60 bg-destructive/5", disabled && "opacity-50 cursor-not-allowed")}>
         <input {...getInputProps()} ref={fileInputRef} />
-        
-        {/* Floating Background Element */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary rounded-full blur-[120px] animate-pulse"></div>
-        </div>
         
         {/* Upload Icon */}
         <div className={cn("relative w-20 h-20 mx-auto mb-8 rounded-2xl flex items-center justify-center transition-all duration-500", "bg-gradient-primary shadow-glow ring-4 ring-primary/10", "group-hover:ring-primary/25 group-hover:shadow-hover group-hover:-translate-y-2 group-hover:scale-105", isDragActive && !isDragReject && "scale-110 ring-primary/40 shadow-glow animate-pulse")}>
