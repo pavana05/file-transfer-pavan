@@ -326,14 +326,12 @@ const Index = () => {
         {/* Upload Section */}
         <ScrollReveal direction="up" delay={100}>
           <div id="upload-section" className="mb-20 sm:mb-24 scroll-mt-20 relative z-10">
-            <Card className="border-2 border-border/50 shadow-2xl bg-card/80 backdrop-blur-xl overflow-hidden group hover:shadow-hover transition-all duration-500">
+            <Card className="border-2 border-border/50 shadow-2xl bg-card/80 backdrop-blur-xl overflow-hidden group hover:shadow-hover transition-all duration-500 p-6 sm:p-8 md:p-10 lg:p-12">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary-glow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="p-6 sm:p-8 md:p-10 lg:p-12 relative z-10">
-                <FileUploadManager
-                  config={uploadConfig}
-                  callbacks={uploadCallbacks}
-                />
-              </div>
+              <FileUploadManager
+                config={uploadConfig}
+                callbacks={uploadCallbacks}
+              />
             </Card>
           </div>
         </ScrollReveal>
