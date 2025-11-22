@@ -17,10 +17,10 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 240 18% 8%;
 
-    --primary: 221 83.1933% 53.3333%;
+    --primary: 217 91% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 262 90% 68%;
-    --primary-dark: 262 75% 48%;
+    --primary-glow: 217 85% 60%;
+    --primary-dark: 217 80% 35%;
 
     --secondary: 240 25% 97%;
     --secondary-foreground: 240 18% 8%;
@@ -28,8 +28,8 @@ All colors MUST be HSL.
     --muted: 240 20% 97%;
     --muted-foreground: 240 10% 45%;
 
-    --accent: 262 100% 98%;
-    --accent-foreground: 262 83% 28%;
+    --accent: 217 100% 98%;
+    --accent-foreground: 217 80% 25%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -45,23 +45,23 @@ All colors MUST be HSL.
     --ring: 224 76.3265% 48.0392%;
 
     /* Upload specific tokens */
-    --upload-zone: 262 100% 99%;
-    --upload-zone-hover: 262 100% 97%;
-    --upload-zone-active: 262 95% 95%;
-    --upload-progress: 262 83% 58%;
+    --upload-zone: 217 100% 99%;
+    --upload-zone-hover: 217 100% 97%;
+    --upload-zone-active: 217 95% 95%;
+    --upload-progress: 217 91% 45%;
     --upload-success: 152 76% 48%;
     --upload-error: 0 84% 60%;
 
     /* Premium Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(262 90% 68%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(280 80% 65%) 40%, hsl(295 75% 70%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 45%) 0%, hsl(217 85% 60%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 45%) 0%, hsl(210 85% 50%) 40%, hsl(220 80% 55%) 100%);
     --gradient-secondary: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--secondary)) 100%);
-    --gradient-upload: linear-gradient(135deg, hsl(var(--upload-zone)) 0%, hsl(262 100% 97%) 100%);
+    --gradient-upload: linear-gradient(135deg, hsl(var(--upload-zone)) 0%, hsl(217 100% 97%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(152 76% 48%) 0%, hsl(160 82% 55%) 100%);
     --gradient-glass: linear-gradient(135deg, hsl(var(--background) / 0.98) 0%, hsl(var(--background) / 0.92) 100%);
-    --gradient-mesh: radial-gradient(at 30% 15%, hsl(262 83% 58% / 0.08) 0px, transparent 50%),
-                     radial-gradient(at 75% 5%, hsl(280 80% 65% / 0.06) 0px, transparent 50%),
-                     radial-gradient(at 10% 60%, hsl(295 75% 70% / 0.05) 0px, transparent 50%),
+    --gradient-mesh: radial-gradient(at 30% 15%, hsl(217 91% 45% / 0.08) 0px, transparent 50%),
+                     radial-gradient(at 75% 5%, hsl(210 85% 50% / 0.06) 0px, transparent 50%),
+                     radial-gradient(at 10% 60%, hsl(220 80% 55% / 0.05) 0px, transparent 50%),
                      radial-gradient(at 65% 85%, hsl(152 76% 48% / 0.04) 0px, transparent 50%);
     --gradient-border: linear-gradient(135deg, hsl(var(--border)) 0%, hsl(var(--border) / 0.2) 100%);
     --gradient-shimmer: linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.15) 50%, transparent 100%);
@@ -72,11 +72,11 @@ All colors MUST be HSL.
     --shadow-lg: 0 12px 20px -4px hsl(240 22% 15% / 0.08), 0 4px 8px -4px hsl(240 22% 15% / 0.05);
     --shadow-xl: 0 20px 32px -6px hsl(240 22% 15% / 0.10), 0 8px 16px -6px hsl(240 22% 15% / 0.06);
     --shadow-2xl: 0 28px 56px -12px hsl(240 22% 15% / 0.16);
-    --shadow-upload: 0 24px 48px -12px hsl(262 83% 58% / 0.20), 0 0 0 1px hsl(262 83% 58% / 0.05);
+    --shadow-upload: 0 24px 48px -12px hsl(217 91% 45% / 0.20), 0 0 0 1px hsl(217 91% 45% / 0.05);
     --shadow-card: 0 2px 12px -2px hsl(240 22% 15% / 0.05), 0 1px 4px -1px hsl(240 22% 15% / 0.03);
-    --shadow-hover: 0 28px 56px -10px hsl(262 83% 58% / 0.25), 0 0 0 1px hsl(262 83% 58% / 0.08);
-    --shadow-glow: 0 0 80px hsl(262 83% 58% / 0.35), 0 0 40px hsl(262 83% 58% / 0.20);
-    --shadow-premium: 0 40px 80px -16px hsl(240 22% 15% / 0.15), 0 0 100px hsl(262 83% 58% / 0.10);
+    --shadow-hover: 0 28px 56px -10px hsl(217 91% 45% / 0.25), 0 0 0 1px hsl(217 91% 45% / 0.08);
+    --shadow-glow: 0 0 80px hsl(217 91% 45% / 0.35), 0 0 40px hsl(217 91% 45% / 0.20);
+    --shadow-premium: 0 40px 80px -16px hsl(240 22% 15% / 0.15), 0 0 100px hsl(217 91% 45% / 0.10);
     --shadow-glass: 0 16px 48px hsl(240 22% 15% / 0.08), 0 0 1px hsl(240 22% 15% / 0.08);
     --shadow-inner: inset 0 2px 8px 0 hsl(240 22% 15% / 0.04);
     --shadow-border: inset 0 0 0 1px hsl(var(--border) / 0.12);
@@ -110,10 +110,10 @@ All colors MUST be HSL.
     --popover: 240 20% 6%;
     --popover-foreground: 240 12% 98%;
 
-    --primary: 262 85% 65%;
+    --primary: 217 85% 60%;
     --primary-foreground: 240 24% 4%;
-    --primary-glow: 262 90% 72%;
-    --primary-dark: 262 78% 52%;
+    --primary-glow: 217 90% 70%;
+    --primary-dark: 217 75% 45%;
 
     --secondary: 240 15% 12%;
     --secondary-foreground: 240 12% 98%;
@@ -122,7 +122,7 @@ All colors MUST be HSL.
     --muted-foreground: 240 10% 65%;
 
     --accent: 240 15% 10%;
-    --accent-foreground: 262 85% 65%;
+    --accent-foreground: 217 85% 60%;
 
     --destructive: 0 84% 65%;
     --destructive-foreground: 240 12% 98%;
@@ -135,36 +135,36 @@ All colors MUST be HSL.
 
     --border: 240 15% 14%;
     --input: 240 15% 12%;
-    --ring: 262 85% 65%;
+    --ring: 217 85% 60%;
 
     /* Upload specific tokens for dark mode */
     --upload-zone: 240 20% 8%;
     --upload-zone-hover: 240 20% 12%;
     --upload-zone-active: 240 20% 16%;
-    --upload-progress: 262 85% 65%;
+    --upload-progress: 217 85% 60%;
     --upload-success: 152 76% 52%;
     --upload-error: 0 84% 65%;
 
     /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262 85% 65%) 0%, hsl(262 90% 72%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(262 85% 65%) 0%, hsl(280 78% 68%) 40%, hsl(295 72% 72%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(217 85% 60%) 0%, hsl(217 90% 70%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(217 85% 60%) 0%, hsl(210 80% 65%) 40%, hsl(220 75% 68%) 100%);
     --gradient-secondary: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--primary-glow)) 100%);
     --gradient-upload: linear-gradient(135deg, hsl(var(--upload-zone)) 0%, hsl(240 20% 10%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(152 76% 52%) 0%, hsl(160 82% 58%) 100%);
     --gradient-glass: linear-gradient(135deg, hsl(var(--background) / 0.98) 0%, hsl(var(--background) / 0.85) 100%);
-    --gradient-mesh: radial-gradient(at 30% 15%, hsl(262 85% 65% / 0.12) 0px, transparent 50%),
-                     radial-gradient(at 75% 5%, hsl(280 78% 68% / 0.10) 0px, transparent 50%),
-                     radial-gradient(at 10% 60%, hsl(295 72% 72% / 0.08) 0px, transparent 50%),
+    --gradient-mesh: radial-gradient(at 30% 15%, hsl(217 85% 60% / 0.12) 0px, transparent 50%),
+                     radial-gradient(at 75% 5%, hsl(210 80% 65% / 0.10) 0px, transparent 50%),
+                     radial-gradient(at 10% 60%, hsl(220 75% 68% / 0.08) 0px, transparent 50%),
                      radial-gradient(at 65% 85%, hsl(152 76% 52% / 0.06) 0px, transparent 50%);
     --gradient-border: linear-gradient(135deg, hsl(var(--border)) 0%, hsl(var(--border) / 0.25) 100%);
     --gradient-shimmer: linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.18) 50%, transparent 100%);
 
     /* Dark mode shadows */
-    --shadow-upload: 0 32px 64px -14px hsl(262 85% 65% / 0.50), 0 0 0 1px hsl(262 85% 65% / 0.08);
+    --shadow-upload: 0 32px 64px -14px hsl(217 85% 60% / 0.50), 0 0 0 1px hsl(217 85% 60% / 0.08);
     --shadow-card: 0 8px 32px -4px hsl(0 0% 0% / 0.40), 0 0 0 1px hsl(240 15% 14% / 0.60);
-    --shadow-hover: 0 36px 72px -12px hsl(262 85% 65% / 0.60), 0 0 0 1px hsl(262 85% 65% / 0.12);
-    --shadow-glow: 0 0 120px hsl(262 85% 65% / 0.70), 0 0 60px hsl(262 85% 65% / 0.35);
-    --shadow-premium: 0 48px 96px -16px hsl(0 0% 0% / 0.50), 0 0 120px hsl(262 85% 65% / 0.15);
+    --shadow-hover: 0 36px 72px -12px hsl(217 85% 60% / 0.60), 0 0 0 1px hsl(217 85% 60% / 0.12);
+    --shadow-glow: 0 0 120px hsl(217 85% 60% / 0.70), 0 0 60px hsl(217 85% 60% / 0.35);
+    --shadow-premium: 0 48px 96px -16px hsl(0 0% 0% / 0.50), 0 0 120px hsl(217 85% 60% / 0.15);
     --shadow-glass: 0 20px 56px hsl(0 0% 0% / 0.35), 0 0 1px hsl(240 15% 14% / 0.70);
     --shadow-inner: inset 0 2px 8px 0 hsl(0 0% 100% / 0.04);
     --shadow-border: inset 0 0 0 1px hsl(var(--border) / 0.20);
