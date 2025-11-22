@@ -6,7 +6,12 @@ import { cn } from "@/lib/utils"
 // No-op provider to avoid React duplication issues
 const TooltipProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>
 
-const Tooltip = TooltipPrimitive.Root
+// Wrap Root in its own Provider to avoid needing a parent provider
+const Tooltip = ({ children, ...props }: React.ComponentProps<typeof TooltipPrimitive.Root>) => (
+  <TooltipPrimitive.Provider>
+    <TooltipPrimitive.Root {...props}>{children}</TooltipPrimitive.Root>
+  </TooltipPrimitive.Provider>
+)
 
 const TooltipTrigger = TooltipPrimitive.Trigger
 
