@@ -283,58 +283,83 @@ const Index = () => {
       
       {/* Main Content */}
       <main className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 md:py-20">
-        {/* Premium Hero Section */}
+        {/* Premium Hero Section with Enhanced Design */}
         <ScrollReveal direction="fade" duration={0.8}>
-          <div className="text-center mb-20 sm:mb-28 space-y-8 sm:space-y-10 max-w-6xl mx-auto relative z-10">
-            {/* Premium Badge */}
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary/15 via-primary/10 to-primary/15 border border-primary/30 shadow-premium text-sm font-semibold text-primary backdrop-blur-sm hover:shadow-glow transition-all duration-300 hover:scale-105">
-              <Sparkles className="h-4 w-4 animate-pulse" />
-              <span>Fast, Secure & Professional File Sharing</span>
+          <div className="text-center mb-20 sm:mb-32 space-y-10 sm:space-y-14 max-w-7xl mx-auto relative z-10">
+            {/* Floating Animated Orbs */}
+            <div className="absolute -top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-float pointer-events-none"></div>
+            <div className="absolute -bottom-20 right-10 w-80 h-80 bg-primary-glow/20 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '1s' }}></div>
+
+            {/* Premium Trust Badge with Animation */}
+            <div className="inline-flex items-center gap-4 px-8 py-4 rounded-2xl bg-gradient-to-r from-card/98 via-card/95 to-card/98 backdrop-blur-2xl border-2 border-border/30 shadow-premium hover:shadow-glow transition-all duration-500 hover:scale-105">
+              <span className="relative flex h-4 w-4">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-success shadow-glow"></span>
+              </span>
+              <span className="text-base font-extrabold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
+                🔒 Bank-Level Security • ⚡ Lightning Fast • 🌐 Anonymous
+              </span>
             </div>
             
-            {/* Premium Headline with Gradient */}
-            <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight px-2">
-              <span className="bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
+            {/* Premium Headline with Animated Gradient */}
+            <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight px-2 leading-[1.1]">
+              <span className="inline-block bg-gradient-to-r from-foreground via-primary via-primary-glow to-foreground bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-x drop-shadow-2xl">
                 Share Files
               </span>
               <br />
-              <span className="bg-clip-text text-transparent bg-gradient-hero animate-gradient-x bg-[length:200%_auto]">
-                Instantly & Securely
+              <span className="relative inline-block mt-4">
+                <span className="bg-gradient-hero bg-clip-text text-transparent drop-shadow-2xl animate-gradient-x bg-[length:200%_auto]">
+                  Instantly & Securely
+                </span>
+                <div className="absolute -bottom-3 left-0 right-0 h-1.5 bg-gradient-primary rounded-full blur-md"></div>
               </span>
             </h2>
             
-            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto px-4 leading-relaxed font-medium">
-              Experience enterprise-grade file sharing with blazing-fast uploads.{' '}
-              <span className="font-bold text-foreground">No signup required</span> for instant sharing.
-              <span className="block mt-3 text-base sm:text-lg">
-                Upload up to <span className="text-primary font-extrabold text-xl">10GB</span> per file with military-grade encryption
+            <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground max-w-5xl mx-auto px-4 leading-relaxed font-semibold">
+              Experience enterprise-grade file sharing with{' '}
+              <span className="relative inline-block">
+                <span className="text-primary font-extrabold bg-gradient-primary bg-clip-text text-transparent">end-to-end encryption</span>
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-primary"></span>
+              </span>
+              .<br className="hidden sm:block" />
+              <span className="block mt-4 text-lg sm:text-xl">
+                No signup required • Upload up to <span className="text-primary font-black text-2xl">10GB</span> • Files auto-delete
               </span>
             </p>
 
-            {/* Premium Feature Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-6 px-2">
-              <Badge variant="secondary" className="text-sm sm:text-base px-5 py-2.5 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-border/50">
-                <Shield className="h-5 w-5 mr-2 text-primary" />
-                Military-Grade Encryption
+            {/* Premium Feature Badges with Enhanced Design */}
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 pt-8 px-2">
+              <Badge variant="secondary" className="text-base sm:text-lg px-6 py-3.5 shadow-premium hover:shadow-glow transition-all duration-500 hover:scale-110 hover:-translate-y-1 border-2 border-border/50 backdrop-blur-sm bg-card/80">
+                <Shield className="h-6 w-6 mr-3 text-primary" />
+                Military-Grade Security
               </Badge>
-              <Badge variant="secondary" className="text-sm sm:text-base px-5 py-2.5 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-border/50">
-                <Zap className="h-5 w-5 mr-2 text-success" />
+              <Badge variant="secondary" className="text-base sm:text-lg px-6 py-3.5 shadow-premium hover:shadow-glow transition-all duration-500 hover:scale-110 hover:-translate-y-1 border-2 border-border/50 backdrop-blur-sm bg-card/80">
+                <Zap className="h-6 w-6 mr-3 text-success animate-pulse" />
                 Instant Transfer
               </Badge>
-              <Badge variant="secondary" className="text-sm sm:text-base px-5 py-2.5 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-border/50">
-                <Lock className="h-5 w-5 mr-2 text-warning" />
-                Password Protection
+              <Badge variant="secondary" className="text-base sm:text-lg px-6 py-3.5 shadow-premium hover:shadow-glow transition-all duration-500 hover:scale-110 hover:-translate-y-1 border-2 border-border/50 backdrop-blur-sm bg-card/80">
+                <Lock className="h-6 w-6 mr-3 text-warning" />
+                Password Protected
               </Badge>
             </div>
           </div>
         </ScrollReveal>
         
-        {/* Premium Upload Section */}
+        {/* Premium Upload Section with Enhanced Effects */}
         <ScrollReveal direction="up" delay={100}>
-          <div id="upload-section" className="mb-24 sm:mb-32 scroll-mt-20 relative z-10">
-            <Card className="border border-border/60 shadow-premium bg-card/90 backdrop-blur-2xl overflow-hidden group hover:shadow-hover hover:border-primary/30 transition-all duration-500 p-8 sm:p-10 md:p-12 lg:p-16 relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary-glow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div id="upload-section" className="mb-28 sm:mb-36 scroll-mt-20 relative z-10">
+            {/* Background Gradient Effects */}
+            <div className="absolute -inset-20 bg-gradient-to-b from-primary/10 via-transparent to-primary-glow/10 blur-3xl opacity-50 pointer-events-none"></div>
+            
+            <Card className="relative border-2 border-border/50 shadow-premium bg-gradient-to-br from-card/98 via-card/95 to-card/98 backdrop-blur-2xl overflow-hidden group hover:shadow-glow hover:border-primary/40 transition-all duration-700 p-10 sm:p-12 md:p-16 lg:p-20">
+              {/* Animated Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary-glow/8 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
               <div className="absolute inset-0 bg-gradient-shimmer opacity-0 group-hover:opacity-100 group-hover:animate-shimmer"></div>
+              
+              {/* Floating Orbs Inside Card */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000 pointer-events-none"></div>
+              <div className="absolute bottom-0 left-0 w-72 h-72 bg-primary-glow/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000 delay-100 pointer-events-none"></div>
+              
               <div className="relative z-10">
                 <FileUploadManager
                   config={uploadConfig}
