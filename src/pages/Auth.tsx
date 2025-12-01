@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -35,7 +35,6 @@ const signUpSchema = z.object({
     .max(255, 'Email must be less than 255 characters')
     .refine(
       (email) => {
-        // Additional email format validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
       },
@@ -75,29 +74,24 @@ export default function Auth() {
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
 
-  // Sign In Form
   const signInForm = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     mode: 'onBlur',
   });
 
-  // Sign Up Form
   const signUpForm = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
     mode: 'onChange',
   });
 
-  // Watch password for strength meter
   const signUpPassword = signUpForm.watch('password');
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (user) {
       navigate('/');
     }
   }, [user, navigate]);
 
-  // Reset forms when switching tabs
   useEffect(() => {
     setError('');
     setMessage('');
@@ -149,282 +143,365 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Enhanced Professional Background System */}
+      {/* Professional Dual-Panel Background System */}
       <div className="absolute inset-0">
-        {/* Base gradient layers */}
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.08),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(var(--accent)/0.06),transparent_50%)]" />
-        
-        {/* Animated gradient orbs */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-primary/8 via-primary/4 to-transparent rounded-full blur-3xl animate-pulse opacity-40" style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-accent/6 via-accent/3 to-transparent rounded-full blur-3xl animate-pulse opacity-30" style={{ animationDuration: '10s', animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-r from-primary/4 to-accent/4 rounded-full blur-3xl animate-pulse opacity-20" style={{ animationDuration: '12s', animationDelay: '4s' }} />
-        
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border)/0.05)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.05)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/5" />
+        <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent hidden lg:block" />
+        <div className="absolute top-20 right-10 w-[500px] h-[500px] bg-gradient-to-br from-primary/15 via-primary/8 to-transparent rounded-full blur-3xl animate-pulse opacity-50" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-20 left-10 w-[400px] h-[400px] bg-gradient-to-tr from-accent/12 via-accent/6 to-transparent rounded-full blur-3xl animate-pulse opacity-40" style={{ animationDuration: '10s', animationDelay: '2s' }} />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border)/0.08)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.08)_1px,transparent_1px)] bg-[size:3rem_3rem]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,hsl(var(--background))_100%)]" />
       </div>
       
-      {/* Enhanced Navigation Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background/70 backdrop-blur-2xl border-b border-border/40 shadow-lg shadow-black/5">
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+      {/* Premium Navigation Bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-card/40 backdrop-blur-xl border-b border-border/30">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <Link 
               to="/" 
-              className="group flex items-center gap-2 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-lg px-3 py-2 hover:bg-muted/50"
+              className="group flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all duration-300 rounded-xl px-4 py-2.5 hover:bg-primary/5"
             >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
-              <span className="text-sm font-medium">Back to Home</span>
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
+              <span className="text-sm font-semibold">Back to Home</span>
             </Link>
             <ThemeToggle />
           </div>
         </div>
       </div>
 
-      {/* Professional Main Content */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-4 pt-24 pb-12">
-        <div className="w-full max-w-md">
-          {/* Enhanced Header with Premium Icon */}
-          <div className="text-center mb-10 animate-fade-in">
-            <div className="flex justify-center mb-8">
+      {/* Split-Screen Professional Layout */}
+      <div className="relative z-10 flex min-h-screen pt-20">
+        {/* Left Panel - Visual Content (Hidden on mobile) */}
+        <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center p-12">
+          <div className="relative z-10 max-w-lg">
+            {/* Animated Hero Icon */}
+            <div className="flex justify-center mb-12 animate-fade-in">
               <div className="relative">
-                {/* Premium multi-layer icon design */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/70 rounded-3xl shadow-2xl shadow-primary/30 animate-pulse" style={{ animationDuration: '3s' }} />
-                <div className="absolute inset-0 bg-gradient-to-br from-primary to-transparent opacity-50 rounded-3xl blur-xl" />
-                <div className="absolute inset-1 bg-gradient-to-tl from-white/30 via-white/10 to-transparent rounded-3xl" />
-                <div className="relative w-20 h-20 rounded-3xl backdrop-blur-sm flex items-center justify-center">
-                  <Upload className="w-10 h-10 text-white drop-shadow-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-primary/80 rounded-[2rem] shadow-2xl shadow-primary/40 animate-pulse" style={{ animationDuration: '4s' }} />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/50 to-transparent opacity-60 rounded-[2rem] blur-2xl animate-pulse" style={{ animationDuration: '3s', animationDelay: '1s' }} />
+                <div className="absolute inset-2 bg-gradient-to-tl from-white/40 via-white/20 to-transparent rounded-[1.75rem]" />
+                <div className="relative w-28 h-28 rounded-[2rem] backdrop-blur-sm flex items-center justify-center">
+                  <Upload className="w-14 h-14 text-white drop-shadow-2xl" />
                 </div>
-                {/* Premium badge */}
-                <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-gradient-to-br from-accent via-accent to-accent/80 border-2 border-background shadow-xl flex items-center justify-center animate-pulse" style={{ animationDuration: '2s' }}>
-                  <Shield className="w-4 h-4 text-white drop-shadow" />
+                <div className="absolute -top-3 -right-3 w-12 h-12 rounded-2xl bg-gradient-to-br from-accent via-accent-foreground to-accent/90 border-4 border-background shadow-2xl flex items-center justify-center animate-pulse" style={{ animationDuration: '2.5s' }}>
+                  <Shield className="w-6 h-6 text-white drop-shadow-lg" />
                 </div>
               </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
-              <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent drop-shadow-sm">
-                Welcome Back
+
+            {/* Hero Text */}
+            <h1 className="text-5xl font-black tracking-tight mb-6 text-center">
+              <span className="bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
+                Secure File Sharing
               </span>
             </h1>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-sm mx-auto leading-relaxed font-medium">
-              Sign in to access your secure file transfers and manage your shares
+            <p className="text-xl text-muted-foreground text-center leading-relaxed font-medium mb-12">
+              Enterprise-grade encryption protecting your files with military-level security
             </p>
+
+            {/* Trust Indicators */}
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl p-5 hover:shadow-xl hover:scale-105 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg">
+                    <Shield className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-2xl font-bold text-foreground">256-bit</span>
+                </div>
+                <p className="text-sm text-muted-foreground font-medium">Encryption</p>
+              </div>
+              <div className="bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl p-5 hover:shadow-xl hover:scale-105 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center shadow-lg">
+                    <Lock className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-2xl font-bold text-foreground">100%</span>
+                </div>
+                <p className="text-sm text-muted-foreground font-medium">Secure</p>
+              </div>
+            </div>
+
+            {/* Features List */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 p-4 bg-card/40 backdrop-blur-xl border border-border/30 rounded-xl hover:bg-card/60 transition-all duration-300">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">End-to-End Encryption</p>
+                  <p className="text-sm text-muted-foreground">Military-grade protection</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-4 bg-card/40 backdrop-blur-xl border border-border/30 rounded-xl hover:bg-card/60 transition-all duration-300">
+                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-accent" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">Password Protection</p>
+                  <p className="text-sm text-muted-foreground">Extra security layer</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-4 bg-card/40 backdrop-blur-xl border border-border/30 rounded-xl hover:bg-card/60 transition-all duration-300">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">Instant Sharing</p>
+                  <p className="text-sm text-muted-foreground">Share files in seconds</p>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
 
-          {/* Enhanced Professional Auth Card */}
-          <Card className="relative bg-card/30 backdrop-blur-2xl border border-border/40 shadow-2xl shadow-black/10 overflow-hidden group animate-scale-in">
-            {/* Enhanced Card Background Effects */}
-            <div className="absolute inset-0 bg-gradient-to-br from-card/80 via-card/60 to-card/80" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,hsl(var(--accent)/0.06),transparent_60%)]" />
-            <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
-            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-gradient-to-tr from-accent/8 to-transparent rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
-            
-            <CardContent className="relative z-10 p-6 sm:p-10">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-8 bg-muted/30 backdrop-blur-sm p-1.5 rounded-xl border border-border/30">
-                  <TabsTrigger 
-                    value="signin" 
-                    className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-lg h-11 font-semibold"
-                  >
-                    <Lock className="w-4 h-4 mr-2" />
-                    Sign In
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="signup"
-                    className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-lg h-11 font-semibold"
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Sign Up
-                  </TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="signin" className="space-y-0 mt-2">
-                  <form onSubmit={signInForm.handleSubmit(handleSignIn)} className="space-y-6">
-                    <div className="space-y-3">
-                      <Label htmlFor="signin-email" className="text-sm font-semibold text-foreground">
-                        Email Address
-                      </Label>
-                      <div className="relative group">
-                        <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-all duration-200" />
-                        <Input
-                          id="signin-email"
-                          type="email"
-                          {...signInForm.register('email')}
-                          className="pl-12 h-14 text-base bg-background/80 backdrop-blur-sm border-2 border-border/60 focus:border-primary/50 focus:bg-background rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
-                          placeholder="you@example.com"
-                        />
-                      </div>
-                      {signInForm.formState.errors.email && (
-                        <p className="text-sm text-destructive font-medium">
-                          {signInForm.formState.errors.email.message}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <Label htmlFor="signin-password" className="text-sm font-semibold text-foreground">
-                        Password
-                      </Label>
-                      <div className="relative group">
-                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-all duration-200" />
-                        <Input
-                          id="signin-password"
-                          type={showPassword ? "text" : "password"}
-                          {...signInForm.register('password')}
-                          className="pl-12 pr-12 h-14 text-base bg-background/80 backdrop-blur-sm border-2 border-border/60 focus:border-primary/50 focus:bg-background rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
-                          placeholder="Enter your password"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-all duration-200 p-1 rounded-lg hover:bg-muted/50"
-                        >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
-                      </div>
-                      {signInForm.formState.errors.password && (
-                        <p className="text-sm text-destructive font-medium">
-                          {signInForm.formState.errors.password.message}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <Button 
-                      type="submit" 
-                      className="group relative w-full h-14 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/95 hover:via-primary hover:to-primary/95 text-white font-bold shadow-2xl shadow-primary/30 hover:shadow-3xl hover:shadow-primary/40 transition-all duration-300 disabled:opacity-40 disabled:hover:scale-100 hover:scale-[1.02] active:scale-[0.98] text-base rounded-xl overflow-hidden mt-8"
-                      disabled={loading || !signInForm.formState.isValid}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                      {loading ? (
-                        <div className="relative flex items-center gap-3">
-                          <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span className="font-bold">Signing In...</span>
-                        </div>
-                      ) : (
-                        <div className="relative flex items-center gap-3">
-                          <Lock className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
-                          <span className="font-bold">Sign In to Account</span>
-                        </div>
-                      )}
-                    </Button>
-                  </form>
-                </TabsContent>
-                
-                <TabsContent value="signup" className="space-y-0 mt-2">
-                  <form onSubmit={signUpForm.handleSubmit(handleSignUp)} className="space-y-6">
-                    <div className="space-y-3">
-                      <Label htmlFor="signup-email" className="text-sm font-semibold text-foreground">
-                        Email Address
-                      </Label>
-                      <div className="relative group">
-                        <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-all duration-200" />
-                        <Input
-                          id="signup-email"
-                          type="email"
-                          {...signUpForm.register('email')}
-                          className="pl-12 h-14 text-base bg-background/80 backdrop-blur-sm border-2 border-border/60 focus:border-primary/50 focus:bg-background rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
-                          placeholder="you@example.com"
-                        />
-                      </div>
-                      {signUpForm.formState.errors.email && (
-                        <p className="text-sm text-destructive font-medium">
-                          {signUpForm.formState.errors.email.message}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <Label htmlFor="signup-password" className="text-sm font-semibold text-foreground">
-                        Password
-                      </Label>
-                      <div className="relative group">
-                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-all duration-200" />
-                        <Input
-                          id="signup-password"
-                          type={showPassword ? "text" : "password"}
-                          {...signUpForm.register('password')}
-                          className="pl-12 pr-12 h-14 text-base bg-background/80 backdrop-blur-sm border-2 border-border/60 focus:border-primary/50 focus:bg-background rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
-                          placeholder="Create a secure password"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-all duration-200 p-1 rounded-lg hover:bg-muted/50"
-                        >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
-                      </div>
-                      {signUpForm.formState.errors.password && (
-                        <p className="text-sm text-destructive font-medium">
-                          {signUpForm.formState.errors.password.message}
-                        </p>
-                      )}
-                      
-                      {/* Password Strength Meter */}
-                      {signUpPassword && <PasswordStrengthMeter password={signUpPassword} />}
-                      
-                      {!signUpPassword && (
-                        <div className="text-xs text-muted-foreground bg-muted/30 px-3 py-2.5 rounded-lg border border-border/30 space-y-1">
-                          <p className="font-semibold">Password Requirements:</p>
-                          <ul className="list-disc list-inside space-y-0.5 ml-1">
-                            <li>At least 8 characters long</li>
-                            <li>Contains uppercase and lowercase letters</li>
-                            <li>Contains at least one number</li>
-                            <li>Contains at least one special character (!@#$%^&*)</li>
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <Button 
-                      type="submit" 
-                      className="group relative w-full h-14 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/95 hover:via-primary hover:to-primary/95 text-white font-bold shadow-2xl shadow-primary/30 hover:shadow-3xl hover:shadow-primary/40 transition-all duration-300 disabled:opacity-40 disabled:hover:scale-100 hover:scale-[1.02] active:scale-[0.98] text-base rounded-xl overflow-hidden mt-8"
-                      disabled={loading || !signUpForm.formState.isValid}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                      {loading ? (
-                        <div className="relative flex items-center gap-3">
-                          <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span className="font-bold">Creating Account...</span>
-                        </div>
-                      ) : (
-                        <div className="relative flex items-center gap-3">
-                          <Sparkles className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                          <span className="font-bold">Create Account</span>
-                        </div>
-                      )}
-                    </Button>
-                  </form>
-                </TabsContent>
-              </Tabs>
-
-              {/* Enhanced Alerts */}
-              {error && (
-                <Alert className="mt-8 border-2 border-destructive/30 bg-destructive/10 backdrop-blur-sm animate-fade-in rounded-xl" variant="destructive">
-                  <Shield className="h-5 w-5" />
-                  <AlertDescription className="text-sm font-medium ml-2">{error}</AlertDescription>
-                </Alert>
-              )}
-
-              {message && (
-                <Alert className="mt-8 border-2 border-primary/30 bg-primary/10 backdrop-blur-sm animate-fade-in rounded-xl">
-                  <Mail className="h-5 w-5 text-primary" />
-                  <AlertDescription className="text-sm font-medium text-primary ml-2">{message}</AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Enhanced Security Note */}
-          <div className="text-center mt-8 animate-fade-in" style={{animationDelay: '0.2s'}}>
-            <div className="inline-flex items-center gap-3 bg-card/40 backdrop-blur-md border border-border/40 px-6 py-3 rounded-full shadow-sm">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <Shield className="w-4 h-4 text-muted-foreground" />
-              <p className="text-xs text-muted-foreground font-medium">
-                Enterprise-grade security with end-to-end encryption
+        {/* Right Panel - Auth Forms */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
+          <div className="w-full max-w-md">
+            {/* Mobile Header */}
+            <div className="text-center mb-10 lg:hidden animate-fade-in">
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/70 rounded-3xl shadow-2xl shadow-primary/30 animate-pulse" style={{ animationDuration: '3s' }} />
+                  <div className="relative w-20 h-20 rounded-3xl backdrop-blur-sm flex items-center justify-center border-4 border-background">
+                    <Upload className="w-10 h-10 text-white drop-shadow-2xl" />
+                  </div>
+                </div>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight mb-3">
+                <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+                  Welcome Back
+                </span>
+              </h1>
+              <p className="text-base text-muted-foreground font-medium">
+                Sign in to your secure account
               </p>
+            </div>
+
+            {/* Premium Auth Card */}
+            <Card className="relative bg-card/50 backdrop-blur-2xl border-2 border-border/50 shadow-2xl overflow-hidden group animate-scale-in">
+              <div className="absolute inset-0 bg-gradient-to-br from-card via-card/95 to-card" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.1),transparent_50%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(var(--accent)/0.08),transparent_50%)]" />
+              
+              <CardContent className="relative z-10 p-8 sm:p-12">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-10 bg-muted/40 backdrop-blur-sm p-2 rounded-2xl border-2 border-border/40 shadow-inner">
+                    <TabsTrigger 
+                      value="signin" 
+                      className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:via-primary data-[state=active]:to-primary-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 transition-all duration-300 rounded-xl h-12 font-bold text-sm"
+                    >
+                      <Lock className="w-4 h-4 mr-2" />
+                      Sign In
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="signup"
+                      className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:via-primary data-[state=active]:to-primary-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 transition-all duration-300 rounded-xl h-12 font-bold text-sm"
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Sign Up
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="signin" className="space-y-0 mt-2">
+                    <form onSubmit={signInForm.handleSubmit(handleSignIn)} className="space-y-7">
+                      <div className="space-y-3">
+                        <Label htmlFor="signin-email" className="text-sm font-bold text-foreground flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-primary" />
+                          Email Address
+                        </Label>
+                        <div className="relative group">
+                          <Input
+                            id="signin-email"
+                            type="email"
+                            {...signInForm.register('email')}
+                            className="h-14 text-base bg-background/90 backdrop-blur-sm border-2 border-border/60 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:bg-background rounded-xl transition-all duration-300 shadow-sm hover:shadow-lg hover:border-primary/50 font-medium pl-4"
+                            placeholder="you@example.com"
+                          />
+                        </div>
+                        {signInForm.formState.errors.email && (
+                          <p className="text-sm text-destructive font-semibold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-destructive"></span>
+                            {signInForm.formState.errors.email.message}
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <Label htmlFor="signin-password" className="text-sm font-bold text-foreground flex items-center gap-2">
+                          <Lock className="w-4 h-4 text-primary" />
+                          Password
+                        </Label>
+                        <div className="relative group">
+                          <Input
+                            id="signin-password"
+                            type={showPassword ? "text" : "password"}
+                            {...signInForm.register('password')}
+                            className="pr-14 h-14 text-base bg-background/90 backdrop-blur-sm border-2 border-border/60 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:bg-background rounded-xl transition-all duration-300 shadow-sm hover:shadow-lg hover:border-primary/50 font-medium pl-4"
+                            placeholder="Enter your password"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-primary transition-all duration-300 p-2 rounded-lg hover:bg-primary/10"
+                          >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
+                        </div>
+                        {signInForm.formState.errors.password && (
+                          <p className="text-sm text-destructive font-semibold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-destructive"></span>
+                            {signInForm.formState.errors.password.message}
+                          </p>
+                        )}
+                      </div>
+                      
+                      <Button 
+                        type="submit" 
+                        className="group relative w-full h-16 bg-gradient-to-r from-primary via-primary-dark to-primary hover:from-primary hover:via-primary-dark hover:to-primary-dark text-white font-bold shadow-2xl shadow-primary/40 hover:shadow-[0_20px_40px_-10px_hsl(var(--primary)/0.5)] transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed text-base rounded-xl overflow-hidden mt-10"
+                        disabled={loading || !signInForm.formState.isValid}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                        {loading ? (
+                          <div className="relative flex items-center justify-center gap-3">
+                            <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                            <span className="font-bold text-lg">Signing In...</span>
+                          </div>
+                        ) : (
+                          <div className="relative flex items-center justify-center gap-3">
+                            <Lock className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+                            <span className="font-bold text-lg">Sign In to Account</span>
+                          </div>
+                        )}
+                      </Button>
+                    </form>
+                  </TabsContent>
+                  
+                  <TabsContent value="signup" className="space-y-0 mt-2">
+                    <form onSubmit={signUpForm.handleSubmit(handleSignUp)} className="space-y-7">
+                      <div className="space-y-3">
+                        <Label htmlFor="signup-email" className="text-sm font-bold text-foreground flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-primary" />
+                          Email Address
+                        </Label>
+                        <div className="relative group">
+                          <Input
+                            id="signup-email"
+                            type="email"
+                            {...signUpForm.register('email')}
+                            className="h-14 text-base bg-background/90 backdrop-blur-sm border-2 border-border/60 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:bg-background rounded-xl transition-all duration-300 shadow-sm hover:shadow-lg hover:border-primary/50 font-medium pl-4"
+                            placeholder="you@example.com"
+                          />
+                        </div>
+                        {signUpForm.formState.errors.email && (
+                          <p className="text-sm text-destructive font-semibold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-destructive"></span>
+                            {signUpForm.formState.errors.email.message}
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <Label htmlFor="signup-password" className="text-sm font-bold text-foreground flex items-center gap-2">
+                          <Lock className="w-4 h-4 text-primary" />
+                          Password
+                        </Label>
+                        <div className="relative group">
+                          <Input
+                            id="signup-password"
+                            type={showPassword ? "text" : "password"}
+                            {...signUpForm.register('password')}
+                            className="pr-14 h-14 text-base bg-background/90 backdrop-blur-sm border-2 border-border/60 focus:border-primary focus:ring-4 focus:ring-primary/20 focus:bg-background rounded-xl transition-all duration-300 shadow-sm hover:shadow-lg hover:border-primary/50 font-medium pl-4"
+                            placeholder="Create a secure password"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-primary transition-all duration-300 p-2 rounded-lg hover:bg-primary/10"
+                          >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
+                        </div>
+                        {signUpForm.formState.errors.password && (
+                          <p className="text-sm text-destructive font-semibold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-destructive"></span>
+                            {signUpForm.formState.errors.password.message}
+                          </p>
+                        )}
+                        
+                        {signUpPassword && <PasswordStrengthMeter password={signUpPassword} />}
+                        
+                        {!signUpPassword && (
+                          <div className="text-xs text-muted-foreground bg-muted/40 px-4 py-3 rounded-xl border-2 border-border/30 space-y-1.5">
+                            <p className="font-bold text-foreground">Password Requirements:</p>
+                            <ul className="list-none space-y-1 ml-1">
+                              <li className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                At least 8 characters long
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Contains uppercase and lowercase letters
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Contains at least one number
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Contains at least one special character (!@#$%^&*)
+                              </li>
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <Button 
+                        type="submit" 
+                        className="group relative w-full h-16 bg-gradient-to-r from-primary via-primary-dark to-primary hover:from-primary hover:via-primary-dark hover:to-primary-dark text-white font-bold shadow-2xl shadow-primary/40 hover:shadow-[0_20px_40px_-10px_hsl(var(--primary)/0.5)] transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed text-base rounded-xl overflow-hidden mt-10"
+                        disabled={loading || !signUpForm.formState.isValid}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                        {loading ? (
+                          <div className="relative flex items-center justify-center gap-3">
+                            <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                            <span className="font-bold text-lg">Creating Account...</span>
+                          </div>
+                        ) : (
+                          <div className="relative flex items-center justify-center gap-3">
+                            <Sparkles className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                            <span className="font-bold text-lg">Create Account</span>
+                          </div>
+                        )}
+                      </Button>
+                    </form>
+                  </TabsContent>
+                </Tabs>
+
+                {error && (
+                  <Alert className="mt-8 border-2 border-destructive/30 bg-destructive/10 backdrop-blur-sm animate-fade-in rounded-xl" variant="destructive">
+                    <Shield className="h-5 w-5" />
+                    <AlertDescription className="text-sm font-semibold ml-2">{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                {message && (
+                  <Alert className="mt-8 border-2 border-primary/30 bg-primary/10 backdrop-blur-sm animate-fade-in rounded-xl">
+                    <Mail className="h-5 w-5 text-primary" />
+                    <AlertDescription className="text-sm font-semibold text-primary ml-2">{message}</AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Security Badge */}
+            <div className="text-center mt-8 animate-fade-in" style={{animationDelay: '0.2s'}}>
+              <div className="inline-flex items-center gap-3 bg-card/60 backdrop-blur-xl border-2 border-border/30 px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50" />
+                <Shield className="w-5 h-5 text-primary" />
+                <p className="text-sm text-foreground font-bold">
+                  256-bit Encryption Secured
+                </p>
+              </div>
             </div>
           </div>
         </div>
