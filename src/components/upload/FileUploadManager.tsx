@@ -11,9 +11,11 @@ import { cn } from '@/lib/utils';
 import { FileUploadZone } from './FileUploadZone';
 import { FileList } from './FileList';
 import { UploadStats } from './UploadStats';
+import { UploadHistory } from './UploadHistory';
 import { UploadedFile, UploadConfig, UploadCallbacks } from '@/types/upload';
 import { calculateUploadStats, generateFilePreview, detectDuplicateFiles } from '@/lib/file-utils';
 import { useToast } from '@/hooks/use-toast';
+import { useUploadHistory } from '@/hooks/useUploadHistory';
 import { UploadService } from '@/services/uploadService';
 import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
 import UploadSuccessDialog from './UploadSuccessDialog';
@@ -78,6 +80,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     fileName: ''
   });
   const { toast } = useToast();
+  const { history, addToHistory, removeFromHistory, clearHistory } = useUploadHistory();
 
   // Calculate upload statistics
   const stats = calculateUploadStats(files);
@@ -291,6 +294,16 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
           });
         }, 250);
 
+        // Add to upload history for anonymous users
+        addToHistory({
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+          shareUrl: result.shareUrl || '',
+          sharePin: result.sharePin,
+          hasPassword: !!password,
+        });
+
         // Show success dialog with PIN
         setUploadSuccess({
           isOpen: true,
@@ -429,6 +442,15 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
             : f
         ));
 
+        // Add collection to upload history
+        const totalSize = pendingFiles.reduce((sum, f) => sum + f.size, 0);
+        addToHistory({
+          fileName: `${collectionName} (${pendingFiles.length} files)`,
+          fileSize: totalSize,
+          fileType: 'collection',
+          shareUrl: result.shareUrl || '',
+        });
+
         toast({
           title: "Collection uploaded successfully!",
           description: `${pendingFiles.length} files uploaded as a collection.`,
@@ -554,6 +576,15 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
       {alerts.length > 0 && (
         <SecurityAlerts alerts={alerts} className="mb-4" />
       )}
+
+      {/* Quick Actions - Always visible */}
+      <div className="flex justify-end">
+        <UploadHistory 
+          history={history}
+          onRemove={removeFromHistory}
+          onClear={clearHistory}
+        />
+      </div>
 
       {/* Upload Zone */}
       <FileUploadZone
