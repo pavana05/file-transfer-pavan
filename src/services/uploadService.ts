@@ -213,12 +213,8 @@ export class UploadService {
     onProgress?: (fileIndex: number, progress: number) => void
   ): Promise<CollectionUploadResult> {
     try {
-      // Get current user (required for uploads now)
+      // Get current user (optional - allow anonymous uploads)
       const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error('Authentication required for file uploads');
-      }
 
       // Validate all files before starting upload
       for (const file of files) {
@@ -227,7 +223,7 @@ export class UploadService {
             p_filename: file.name,
             p_file_size: file.size,
             p_file_type: file.type,
-            p_user_id: user.id
+            p_user_id: user?.id || null
           });
 
         if (validationError) {
@@ -245,7 +241,7 @@ export class UploadService {
         .insert({
           collection_name: collectionName,
           description,
-          user_id: user.id
+          user_id: user?.id || null
         })
         .select()
         .single();
@@ -300,7 +296,7 @@ export class UploadService {
                 share_token: shareToken,
                 share_pin: sharePin,
                 collection_id: collectionId,
-                user_id: user.id
+                user_id: user?.id || null
               });
 
           if (dbError) {
