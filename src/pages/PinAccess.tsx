@@ -36,6 +36,7 @@ const PinAccess = () => {
   const [pin, setPin] = useState('');
   const [password, setPassword] = useState('');
   const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
+  const [collectionInfo, setCollectionInfo] = useState<any | null>(null);
   const [fileUrl, setFileUrl] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -58,26 +59,47 @@ const PinAccess = () => {
     setError(null);
 
     try {
-      const info = await UploadService.getFileInfoByPin(pin);
+      // Try to find a file first
+      const fileResult = await UploadService.getFileInfoByPin(pin);
       
-      // Check if file requires password
-      if (info.has_password) {
-        setShowPasswordInput(true);
-        setFileInfo(info);
-        setLoading(false);
-        return;
+      if (fileResult) {
+        // Check if file requires password
+        if (fileResult.has_password) {
+          setShowPasswordInput(true);
+          setFileInfo(fileResult);
+          setLoading(false);
+          return;
+        }
+        
+        setFileInfo(fileResult);
+        setCollectionInfo(null);
+        
+        // Load file URL for preview
+        if (fileResult.storage_path) {
+          const url = await UploadService.getFileUrl(fileResult.storage_path);
+          setFileUrl(url);
+        }
+        
+        // Add to access history
+        addToAccessHistory(pin, fileResult.original_name, fileResult.file_size, fileResult.file_type);
+      } else {
+        // Try to find a collection
+        const collectionResult = await UploadService.getCollectionInfoByPin(pin);
+        
+        if (collectionResult) {
+          setCollectionInfo(collectionResult);
+          setFileInfo(null);
+          
+          // Add to access history
+          addToAccessHistory(pin, collectionResult.collection_name, collectionResult.collection_size, 'collection');
+          
+          // Navigate to collection page
+          navigate(`/collection/${collectionResult.share_token}`);
+          return;
+        }
+        
+        setError('Invalid PIN or file not found');
       }
-      
-      setFileInfo(info);
-      
-      // Load file URL for preview
-      if (info.storage_path) {
-        const url = await UploadService.getFileUrl(info.storage_path);
-        setFileUrl(url);
-      }
-      
-      // Add to access history
-      addToAccessHistory(pin, info.original_name, info.file_size, info.file_type);
     } catch (err) {
       setError('Invalid PIN or file not found');
     } finally {

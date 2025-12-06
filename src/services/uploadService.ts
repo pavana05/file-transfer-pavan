@@ -12,6 +12,7 @@ export interface FileUploadResult {
 export interface CollectionUploadResult {
   success: boolean;
   shareUrl?: string;
+  sharePin?: string;
   error?: string;
   collectionId?: string;
 }
@@ -235,13 +236,22 @@ export class UploadService {
         }
       }
 
-      // Create file collection first
+      // Generate PIN for the collection
+      const { data: collectionPin, error: pinError } = await supabase
+        .rpc('generate_share_pin');
+      
+      if (pinError) {
+        throw new Error(`PIN generation error: ${pinError.message}`);
+      }
+
+      // Create file collection with PIN
       const { data: collectionData, error: collectionError } = await supabase
         .from('file_collections')
         .insert({
           collection_name: collectionName,
           description,
-          user_id: user?.id || null
+          user_id: user?.id || null,
+          share_pin: collectionPin
         })
         .select()
         .single();
@@ -333,6 +343,7 @@ export class UploadService {
       return {
         success: true,
         shareUrl,
+        sharePin: collectionPin,
         collectionId
       };
 
@@ -374,10 +385,32 @@ export class UploadService {
       .rpc('get_file_by_pin', { p_share_pin: pin });
 
     if (error || !data || data.length === 0) {
-      throw new Error('File not found');
+      return null; // Return null instead of throwing, so we can try collection lookup
     }
 
     return data[0];
+  }
+
+  static async getCollectionInfoByPin(pin: string) {
+    // Use secure RPC function to get collection by PIN
+    const { data, error } = await supabase
+      .rpc('get_collection_by_pin', { p_share_pin: pin });
+
+    if (error || !data || data.length === 0) {
+      return null;
+    }
+
+    const collection = data[0];
+    
+    // Get files in the collection
+    const { data: filesData } = await supabase
+      .rpc('get_files_by_collection_token', { p_collection_token: collection.share_token });
+    
+    return { 
+      ...collection, 
+      file_count: filesData?.length || 0,
+      files: filesData || []
+    };
   }
 
   static async validateFilePassword(pin: string, password: string): Promise<boolean> {

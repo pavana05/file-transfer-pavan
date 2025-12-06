@@ -449,11 +449,12 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
           fileSize: totalSize,
           fileType: 'collection',
           shareUrl: result.shareUrl || '',
+          sharePin: result.sharePin,
         });
 
         toast({
           title: "Collection uploaded successfully!",
-          description: `${pendingFiles.length} files uploaded as a collection.`,
+          description: `${pendingFiles.length} files uploaded. PIN: ${result.sharePin}`,
         });
 
         // Copy share link to clipboard
@@ -461,7 +462,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
           navigator.clipboard.writeText(result.shareUrl);
           toast({
             title: "Collection link copied!",
-            description: "Share link copied to clipboard.",
+            description: `Share link copied. Use PIN ${result.sharePin} for quick access.`,
           });
         }
       } else {
