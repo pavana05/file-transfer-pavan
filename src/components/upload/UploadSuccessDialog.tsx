@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Check, Copy, Share2, KeyRound, ExternalLink, Lock } from 'lucide-react';
+import { Check, Copy, Share2, KeyRound, ExternalLink, Lock, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -33,6 +33,9 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
   const { toast } = useToast();
   const pinButtonRef = useRef<HTMLButtonElement>(null);
   const linkButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Detect if this is a collection upload
+  const isCollection = fileName.includes('files)');
 
   const triggerConfetti = (buttonRef: React.RefObject<HTMLButtonElement>) => {
     if (buttonRef.current) {
@@ -201,15 +204,26 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-4 sm:pt-6">
-              <Button
-                variant="outline"
-                onClick={() => window.open(shareUrl, '_blank')}
-                className="h-12 sm:h-14 bg-card/60 backdrop-blur-md border-2 border-border/60 hover:bg-primary/10 hover:border-primary/40 transition-all duration-200 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold"
-              >
-                <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Preview File
-              </Button>
+            <div className={`grid grid-cols-1 ${isCollection ? 'sm:grid-cols-4' : 'sm:grid-cols-3'} gap-3 sm:gap-4 pt-4 sm:pt-6`}>
+              {isCollection ? (
+                <Button
+                  variant="outline"
+                  onClick={() => window.open(shareUrl, '_blank')}
+                  className="h-12 sm:h-14 bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-md border-2 border-primary/40 hover:bg-primary/20 hover:border-primary/60 transition-all duration-200 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold"
+                >
+                  <FolderOpen className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  View Collection
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={() => window.open(shareUrl, '_blank')}
+                  className="h-12 sm:h-14 bg-card/60 backdrop-blur-md border-2 border-border/60 hover:bg-primary/10 hover:border-primary/40 transition-all duration-200 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold"
+                >
+                  <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  Preview File
+                </Button>
+              )}
               <Button
                 variant="outline"
                 onClick={() => window.open('/pin', '_blank')}
