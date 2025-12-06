@@ -424,6 +424,25 @@ export type Database = {
         Args: { p_share_token: string }
         Returns: boolean
       }
+      insert_collection: {
+        Args: {
+          p_collection_name: string
+          p_description?: string
+          p_share_pin?: string
+          p_user_id?: string
+        }
+        Returns: {
+          collection_name: string
+          collection_size: number
+          created_date: string
+          description: string
+          download_count: number
+          id: string
+          share_pin: string
+          share_token: string
+          user_id: string
+        }[]
+      }
       insert_file_with_password: {
         Args: {
           p_file_size: number

@@ -244,21 +244,20 @@ export class UploadService {
         throw new Error(`PIN generation error: ${pinError.message}`);
       }
 
-      // Create file collection with PIN
-      const { data: collectionData, error: collectionError } = await supabase
-        .from('file_collections')
-        .insert({
-          collection_name: collectionName,
-          description,
-          user_id: user?.id || null,
-          share_pin: collectionPin
-        })
-        .select()
-        .single();
+      // Create file collection with PIN using secure RPC function
+      const { data: collectionDataArr, error: collectionError } = await supabase
+        .rpc('insert_collection', {
+          p_collection_name: collectionName,
+          p_description: description || null,
+          p_user_id: user?.id || null,
+          p_share_pin: collectionPin
+        });
 
-      if (collectionError || !collectionData) {
+      if (collectionError || !collectionDataArr || collectionDataArr.length === 0) {
         throw new Error(`Failed to create collection: ${collectionError?.message}`);
       }
+
+      const collectionData = collectionDataArr[0];
 
       const collectionId = collectionData.id;
       const uploadedFiles: string[] = [];
