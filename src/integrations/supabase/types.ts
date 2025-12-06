@@ -64,6 +64,7 @@ export type Database = {
           is_public: boolean | null
           last_accessed_at: string | null
           max_downloads: number | null
+          share_pin: string | null
           share_token: string
           user_id: string | null
         }
@@ -78,6 +79,7 @@ export type Database = {
           is_public?: boolean | null
           last_accessed_at?: string | null
           max_downloads?: number | null
+          share_pin?: string | null
           share_token?: string
           user_id?: string | null
         }
@@ -92,6 +94,7 @@ export type Database = {
           is_public?: boolean | null
           last_accessed_at?: string | null
           max_downloads?: number | null
+          share_pin?: string | null
           share_token?: string
           user_id?: string | null
         }
@@ -263,6 +266,20 @@ export type Database = {
       check_upload_rate_limit: { Args: { p_user_id: string }; Returns: boolean }
       generate_share_pin: { Args: never; Returns: string }
       generate_share_token: { Args: never; Returns: string }
+      get_collection_by_pin: {
+        Args: { p_share_pin: string }
+        Returns: {
+          collection_name: string
+          collection_size: number
+          created_date: string
+          description: string
+          download_count: number
+          id: string
+          share_pin: string
+          share_token: string
+          user_id: string
+        }[]
+      }
       get_collection_by_token: {
         Args: { p_share_token: string }
         Returns: {
@@ -352,6 +369,7 @@ export type Database = {
           is_public: boolean | null
           last_accessed_at: string | null
           max_downloads: number | null
+          share_pin: string | null
           share_token: string
           user_id: string | null
         }[]
