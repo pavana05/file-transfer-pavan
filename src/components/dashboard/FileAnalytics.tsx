@@ -52,17 +52,12 @@ export const FileAnalytics = () => {
       const startDate = startOfDay(subDays(new Date(), days));
       const endDate = endOfDay(new Date());
 
-      // Get analytics data grouped by date
+      // Get analytics data using secure function that excludes IP/user agent data
       const { data: analyticsRaw, error } = await supabase
-        .from('file_analytics')
-        .select(`
-          event_type,
-          accessed_at,
-          file_id,
-          uploaded_files!inner(user_id)
-        `)
-        .gte('accessed_at', startDate.toISOString())
-        .lte('accessed_at', endDate.toISOString());
+        .rpc('get_user_file_analytics', {
+          p_start_date: startDate.toISOString(),
+          p_end_date: endDate.toISOString()
+        });
 
       if (error) throw error;
 
