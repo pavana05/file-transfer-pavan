@@ -380,6 +380,14 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      get_user_file_analytics: {
+        Args: { p_end_date: string; p_start_date: string }
+        Returns: {
+          accessed_at: string
+          event_type: string
+          file_id: string
+        }[]
+      }
       get_user_files: {
         Args: never
         Returns: {
