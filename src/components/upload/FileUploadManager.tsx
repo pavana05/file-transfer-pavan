@@ -452,18 +452,18 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
           sharePin: result.sharePin,
         });
 
-        toast({
-          title: "Collection uploaded successfully!",
-          description: `${pendingFiles.length} files uploaded. PIN: ${result.sharePin}`,
+        // Show success dialog with PIN prominently displayed
+        setUploadSuccess({
+          isOpen: true,
+          shareUrl: result.shareUrl || '',
+          sharePin: result.sharePin || '',
+          fileName: `${collectionName} (${pendingFiles.length} files)`,
+          hasPassword: false
         });
 
         // Copy share link to clipboard
         if (result.shareUrl) {
           navigator.clipboard.writeText(result.shareUrl);
-          toast({
-            title: "Collection link copied!",
-            description: `Share link copied. Use PIN ${result.sharePin} for quick access.`,
-          });
         }
       } else {
         throw new Error(result.error || 'Collection upload failed');
