@@ -1,5 +1,5 @@
 import { FileUploadManager } from '@/components/upload/FileUploadManager';
-import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -105,6 +105,11 @@ const Index = () => {
             
             {/* Desktop Navigation Actions */}
             <nav className="hidden md:flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/pricing'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
+                <Crown className="h-4 w-4" />
+                <span className="text-sm font-medium">Pricing</span>
+              </Button>
+              
               <Button variant="ghost" size="sm" onClick={() => window.location.href = '/pin'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
                 <KeyRound className="h-4 w-4" />
                 <span className="text-sm font-medium">PIN Access</span>
@@ -167,6 +172,14 @@ const Index = () => {
           </DrawerHeader>
           
           <nav className="flex flex-col p-6 gap-3">
+            <Button variant="ghost" size="lg" onClick={() => {
+            window.location.href = '/pricing';
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base">
+              <Crown className="h-5 w-5" />
+              Pricing
+            </Button>
+            
             <Button variant="ghost" size="lg" onClick={() => {
             window.location.href = '/pin';
             setMobileMenuOpen(false);

@@ -127,6 +127,89 @@ export type Database = {
         }
         Relationships: []
       }
+      premium_plans: {
+        Row: {
+          created_at: string
+          expiration_days: number | null
+          features: Json
+          file_size_limit: number
+          id: string
+          is_active: boolean
+          name: string
+          price_inr: number
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          expiration_days?: number | null
+          features?: Json
+          file_size_limit: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price_inr: number
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          expiration_days?: number | null
+          features?: Json
+          file_size_limit?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_inr?: number
+          slug?: string
+        }
+        Relationships: []
+      }
+      premium_purchases: {
+        Row: {
+          amount_inr: number
+          created_at: string
+          id: string
+          plan_id: string
+          purchased_at: string | null
+          razorpay_order_id: string
+          razorpay_payment_id: string | null
+          razorpay_signature: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount_inr: number
+          created_at?: string
+          id?: string
+          plan_id: string
+          purchased_at?: string | null
+          razorpay_order_id: string
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount_inr?: number
+          created_at?: string
+          id?: string
+          plan_id?: string
+          purchased_at?: string | null
+          razorpay_order_id?: string
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "premium_purchases_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "premium_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -415,6 +498,15 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      get_user_premium_plan: {
+        Args: { p_user_id: string }
+        Returns: {
+          expiration_days: number
+          features: Json
+          file_size_limit: number
+          plan_name: string
+        }[]
       }
       increment_collection_download_count: {
         Args: { p_share_token: string }
