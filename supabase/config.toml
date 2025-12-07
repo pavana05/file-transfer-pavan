@@ -61,3 +61,6 @@ verify_jwt = true
 
 [functions.security-monitor]
 verify_jwt = true
+
+[functions.razorpay]
+verify_jwt = true

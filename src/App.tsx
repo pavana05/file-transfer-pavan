@@ -16,6 +16,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ScanQR from "./pages/ScanQR";
 import Install from "./pages/Install";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -45,6 +46,7 @@ const App = () => {
                 <Route path="/pin" element={<PinAccess />} />
                 <Route path="/scan" element={<ScanQR />} />
                 <Route path="/install" element={<Install />} />
+                <Route path="/pricing" element={<Pricing />} />
                 <Route 
                   path="/dashboard" 
                   element={

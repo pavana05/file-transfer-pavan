@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Download, ArrowLeft, Share2, Folder, Archive, FileIcon, Clock, Eye, Shield, Sparkles } from 'lucide-react';
+import { Download, ArrowLeft, Share2, Folder, Archive, FileIcon, Clock, Eye, Shield, Sparkles, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +10,11 @@ import { formatFileSize } from '@/lib/file-utils';
 import { UploadService } from '@/services/uploadService';
 import { FileCollection, DatabaseFile } from '@/types/upload';
 import { useToast } from '@/hooks/use-toast';
+
+interface FileWithAvailability extends DatabaseFile {
+  isAvailable?: boolean;
+  checkingAvailability?: boolean;
+}
 
 const CollectionShare = () => {
   const { token } = useParams<{ token: string }>();
@@ -34,7 +38,22 @@ const CollectionShare = () => {
   const loadCollectionInfo = async () => {
     try {
       const collectionData = await UploadService.getCollectionFiles(token!);
-      setCollection(collectionData);
+      
+      // Check availability of each file
+      const filesWithAvailability = await Promise.all(
+        collectionData.files.map(async (file) => {
+          try {
+            const url = await UploadService.getFileUrl(file.storage_path);
+            // Try to fetch headers to check if file exists
+            const response = await fetch(url, { method: 'HEAD' });
+            return { ...file, isAvailable: response.ok, checkingAvailability: false };
+          } catch {
+            return { ...file, isAvailable: false, checkingAvailability: false };
+          }
+        })
+      );
+      
+      setCollection({ ...collectionData, files: filesWithAvailability });
     } catch (err) {
       setError('Collection not found or link has expired');
     } finally {
@@ -42,7 +61,17 @@ const CollectionShare = () => {
     }
   };
 
-  const handleDownloadFile = async (file: DatabaseFile) => {
+  const handleDownloadFile = async (file: FileWithAvailability) => {
+    // Check if file is available
+    if (file.isAvailable === false) {
+      toast({
+        title: "File unavailable",
+        description: "This file is no longer available for download.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
       const url = await UploadService.getFileUrl(file.storage_path);
       await UploadService.incrementDownloadCount(file.share_token);
@@ -85,9 +114,22 @@ const CollectionShare = () => {
     try {
       await UploadService.incrementCollectionDownloadCount(collection.share_token);
       
-      const downloadPromises = collection.files.map(async (file, index) => {
+      // Only download available files
+      const availableFiles = collection.files.filter((f: FileWithAvailability) => f.isAvailable !== false);
+      
+      if (availableFiles.length === 0) {
+        toast({
+          title: "No files available",
+          description: "None of the files in this collection are available for download.",
+          variant: "destructive"
+        });
+        setDownloading(false);
+        return;
+      }
+      
+      const downloadPromises = availableFiles.map(async (file: FileWithAvailability, index: number) => {
         await handleDownloadFile(file);
-        setDownloadProgress(((index + 1) / collection.files.length) * 100);
+        setDownloadProgress(((index + 1) / availableFiles.length) * 100);
       });
 
       for (let i = 0; i < downloadPromises.length; i += 3) {
@@ -124,14 +166,14 @@ const CollectionShare = () => {
     });
   };
 
-  // Component for file preview with image thumbnails
-  const FilePreview: React.FC<{ file: DatabaseFile }> = ({ file }) => {
+  // Component for file preview with image thumbnails and availability
+  const FilePreview: React.FC<{ file: FileWithAvailability }> = ({ file }) => {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [imageError, setImageError] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-      if (file.file_type.startsWith('image/')) {
+      if (file.file_type.startsWith('image/') && file.isAvailable !== false) {
         setLoading(true);
         UploadService.getFileUrl(file.storage_path)
           .then(url => {
@@ -144,6 +186,15 @@ const CollectionShare = () => {
           });
       }
     }, [file]);
+
+    // Show unavailable state
+    if (file.isAvailable === false) {
+      return (
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0 ring-2 ring-destructive/20 shadow-md">
+          <AlertTriangle className="w-6 h-6 text-destructive/60" />
+        </div>
+      );
+    }
 
     // Show loading state
     if (loading) {
@@ -346,39 +397,63 @@ const CollectionShare = () => {
           </div>
 
           <div className="space-y-3">
-            {collection?.files.map((file, index) => (
+            {collection?.files.map((file: FileWithAvailability, index: number) => (
               <Card 
                 key={file.id} 
-                className="p-4 sm:p-5 hover:shadow-lg hover:border-primary/20 transition-all duration-300 group bg-card/80 backdrop-blur-sm"
+                className={`p-4 sm:p-5 transition-all duration-300 group bg-card/80 backdrop-blur-sm ${
+                  file.isAvailable === false 
+                    ? 'opacity-60 border-destructive/20' 
+                    : 'hover:shadow-lg hover:border-primary/20'
+                }`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-center gap-4">
                   <FilePreview file={file} />
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-foreground truncate text-sm sm:text-base group-hover:text-primary transition-colors">
+                    <h4 className={`font-semibold truncate text-sm sm:text-base transition-colors ${
+                      file.isAvailable === false 
+                        ? 'text-muted-foreground line-through' 
+                        : 'text-foreground group-hover:text-primary'
+                    }`}>
                       {file.original_name}
                     </h4>
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
-                      <Badge variant="secondary" className="text-xs font-medium">
-                        {formatFileSize(file.file_size)}
-                      </Badge>
-                      <Badge variant="outline" className="text-xs hidden sm:inline-flex">
-                        {file.file_type.split('/')[1]?.toUpperCase() || file.file_type}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
-                        {file.download_count} downloads
-                      </span>
+                      {file.isAvailable === false ? (
+                        <Badge variant="destructive" className="text-xs font-medium">
+                          <AlertTriangle className="w-3 h-3 mr-1" />
+                          Unavailable
+                        </Badge>
+                      ) : (
+                        <>
+                          <Badge variant="secondary" className="text-xs font-medium">
+                            {formatFileSize(file.file_size)}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs hidden sm:inline-flex">
+                            {file.file_type.split('/')[1]?.toUpperCase() || file.file_type}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Eye className="w-3 h-3" />
+                            {file.download_count} downloads
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleDownloadFile(file)}
-                    className="flex-shrink-0 gap-2 border-2 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
+                    disabled={file.isAvailable === false}
+                    className={`flex-shrink-0 gap-2 border-2 transition-all ${
+                      file.isAvailable === false 
+                        ? 'opacity-50 cursor-not-allowed' 
+                        : 'hover:bg-primary hover:text-primary-foreground hover:border-primary'
+                    }`}
                   >
                     <Download className="w-4 h-4" />
-                    <span className="hidden sm:inline">Download</span>
+                    <span className="hidden sm:inline">
+                      {file.isAvailable === false ? 'Unavailable' : 'Download'}
+                    </span>
                   </Button>
                 </div>
               </Card>
