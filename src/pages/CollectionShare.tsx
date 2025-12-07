@@ -128,14 +128,31 @@ const CollectionShare = () => {
   const FilePreview: React.FC<{ file: DatabaseFile }> = ({ file }) => {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [imageError, setImageError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
       if (file.file_type.startsWith('image/')) {
+        setLoading(true);
         UploadService.getFileUrl(file.storage_path)
-          .then(url => setImageUrl(url))
-          .catch(() => setImageError(true));
+          .then(url => {
+            setImageUrl(url);
+            setLoading(false);
+          })
+          .catch(() => {
+            setImageError(true);
+            setLoading(false);
+          });
       }
     }, [file]);
+
+    // Show loading state
+    if (loading) {
+      return (
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 ring-2 ring-primary/10 shadow-md animate-pulse">
+          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+        </div>
+      );
+    }
 
     if (file.file_type.startsWith('image/') && imageUrl && !imageError) {
       return (
@@ -150,6 +167,7 @@ const CollectionShare = () => {
       );
     }
 
+    // Fallback icon for non-images or failed loads
     return (
       <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 ring-2 ring-primary/10 shadow-md">
         <span className="text-xl sm:text-2xl">
