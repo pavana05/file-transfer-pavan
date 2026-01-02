@@ -155,6 +155,16 @@ serve(async (req: Request) => {
 
       console.log('Signature verified successfully');
 
+      // Get purchase details for email
+      const { data: purchaseData } = await supabase
+        .from('premium_purchases')
+        .select(`
+          amount_inr,
+          premium_plans (name)
+        `)
+        .eq('razorpay_order_id', body.razorpay_order_id)
+        .single();
+
       // Update purchase record
       const { error: updateError } = await supabase
         .from('premium_purchases')
@@ -176,6 +186,48 @@ serve(async (req: Request) => {
       }
 
       console.log('Payment verified and recorded for user:', user.id);
+
+      // Send confirmation email
+      try {
+        const planName = (purchaseData as any)?.premium_plans?.name || 'Premium';
+        const amount = new Intl.NumberFormat('en-IN', {
+          style: 'currency',
+          currency: 'INR',
+          minimumFractionDigits: 0
+        }).format(((purchaseData as any)?.amount_inr || 0) / 100);
+
+        const emailResponse = await fetch(
+          `${supabaseUrl}/functions/v1/send-purchase-email`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseServiceKey}`
+            },
+            body: JSON.stringify({
+              email: user.email,
+              name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+              planName,
+              amount,
+              purchaseDate: new Date().toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              }),
+              orderId: body.razorpay_order_id
+            })
+          }
+        );
+
+        if (!emailResponse.ok) {
+          console.error('Failed to send confirmation email:', await emailResponse.text());
+        } else {
+          console.log('Confirmation email sent successfully');
+        }
+      } catch (emailError) {
+        console.error('Error sending confirmation email:', emailError);
+        // Don't fail the payment verification if email fails
+      }
 
       return new Response(
         JSON.stringify({ success: true, message: 'Payment verified successfully' }),
