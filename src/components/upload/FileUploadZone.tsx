@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { UploadConfig, UploadedFile, FileValidationResult } from '@/types/upload';
 import { toast } from '@/hooks/use-toast';
+import { usePremiumPlan } from '@/hooks/usePremiumPlan';
+
 interface FileUploadZoneProps {
   config?: UploadConfig;
   onFilesAdded: (files: UploadedFile[]) => void;
@@ -12,15 +14,6 @@ interface FileUploadZoneProps {
   className?: string;
 }
 
-// Default configuration that includes ZIP formats
-const defaultConfig: UploadConfig = {
-  maxFileSize: 100 * 1024 * 1024,
-  // 100MB
-  acceptedTypes: ['image/*', 'video/*', 'audio/*', 'text/*', 'application/pdf', 'application/zip', 'application/x-zip-compressed', 'application/x-rar-compressed', 'application/x-7z-compressed', 'application/x-tar', 'application/gzip'],
-  allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mp3', 'wav', 'flac', 'aac', 'ogg', 'txt', 'doc', 'docx', 'pdf', 'rtf', 'zip', 'rar', '7z', 'tar', 'gz', 'bz2'],
-  enablePreview: true,
-  autoUpload: false
-};
 export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   config = {},
   onFilesAdded,
@@ -30,6 +23,16 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   const [isDragActive, setIsDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
+  const { maxFileSize, maxFileSizeGB, isPremium } = usePremiumPlan();
+
+  // Default configuration that uses premium file size limit
+  const defaultConfig: UploadConfig = {
+    maxFileSize: maxFileSize,
+    acceptedTypes: ['image/*', 'video/*', 'audio/*', 'text/*', 'application/pdf', 'application/zip', 'application/x-zip-compressed', 'application/x-rar-compressed', 'application/x-7z-compressed', 'application/x-tar', 'application/gzip'],
+    allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mp3', 'wav', 'flac', 'aac', 'ogg', 'txt', 'doc', 'docx', 'pdf', 'rtf', 'zip', 'rar', '7z', 'tar', 'gz', 'bz2'],
+    enablePreview: true,
+    autoUpload: false
+  };
 
   // Merge with default config
   const mergedConfig = {
@@ -245,8 +248,13 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 
           {/* Feature Pills */}
           <div className="flex flex-wrap gap-3 justify-center items-center pt-2">
-            <span className="px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-sm font-semibold text-primary backdrop-blur-sm">
-              Up to 100MB
+            <span className={cn(
+              "px-4 py-2 border rounded-full text-sm font-semibold backdrop-blur-sm",
+              isPremium 
+                ? "bg-primary/10 border-primary/20 text-primary" 
+                : "bg-muted/50 border-border/50 text-muted-foreground"
+            )}>
+              Up to {maxFileSizeGB}GB {isPremium && '✨'}
             </span>
             <span className="px-4 py-2 bg-success/10 border border-success/20 rounded-full text-sm font-semibold text-success backdrop-blur-sm">
               All Formats

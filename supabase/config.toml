@@ -64,3 +64,6 @@ verify_jwt = true
 
 [functions.razorpay]
 verify_jwt = true
+
+[functions.send-purchase-email]
+verify_jwt = false

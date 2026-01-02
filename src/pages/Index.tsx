@@ -125,9 +125,9 @@ const Index = () => {
               <ThemeToggle />
               
               {user && <>
-                  <Button variant="ghost" size="sm" onClick={() => window.location.href = '/dashboard'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
+                  <Button variant="ghost" size="sm" onClick={() => window.location.href = '/profile'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
                     <User className="h-4 w-4" />
-                    <span className="font-medium">Dashboard</span>
+                    <span className="font-medium">Profile</span>
                   </Button>
                   <Button variant="outline" size="sm" onClick={signOut} className="gap-2 h-10 px-4">
                     <LogOut className="h-4 w-4" />
@@ -200,11 +200,11 @@ const Index = () => {
                 <div className="h-px bg-border my-2"></div>
                 
                 <Button variant="ghost" size="lg" onClick={() => {
-              window.location.href = '/dashboard';
+              window.location.href = '/profile';
               setMobileMenuOpen(false);
             }} className="justify-start gap-3 h-12 text-base">
                   <User className="h-5 w-5" />
-                  Dashboard
+                  Profile
                 </Button>
                 
                 <Button variant="ghost" size="lg" onClick={() => {

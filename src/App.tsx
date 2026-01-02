@@ -17,6 +17,7 @@ import Dashboard from "./pages/Dashboard";
 import ScanQR from "./pages/ScanQR";
 import Install from "./pages/Install";
 import Pricing from "./pages/Pricing";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -52,6 +53,14 @@ const App = () => {
                   element={
                     <AuthGuard>
                       <Dashboard />
+                    </AuthGuard>
+                  } 
+                />
+                <Route 
+                  path="/profile" 
+                  element={
+                    <AuthGuard>
+                      <Profile />
                     </AuthGuard>
                   } 
                 />
