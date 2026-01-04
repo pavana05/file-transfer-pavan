@@ -23,6 +23,7 @@ import PasswordProtectionDialog from './PasswordProtectionDialog';
 import { SecurityUtils } from '@/lib/security-utils';
 import { SecurityAlerts, useSecurityAlerts } from '@/components/SecurityAlerts';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePremiumPlan } from '@/hooks/usePremiumPlan';
 import confetti from 'canvas-confetti';
 import { haptics } from '@/lib/haptic-feedback';
 
@@ -46,6 +47,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
   className
 }) => {
   const { user } = useAuth();
+  const { isPremium } = usePremiumPlan();
   const { addAlert, alerts } = useSecurityAlerts();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [folders, setFolders] = useState<FileFolder[]>([]);
@@ -334,11 +336,14 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
     }
   }, [files, callbacks, toast]);
 
-  // Handle password confirmation and start upload
-  const handlePasswordConfirm = useCallback((fileId: string, password?: string) => {
+  // Handle password confirmation and start upload (for all pending files)
+  const handlePasswordConfirm = useCallback((password?: string) => {
+    const pendingFiles = files.filter(f => f.status === 'pending');
     setPasswordDialog({ isOpen: false, fileId: '', fileName: '' });
-    realUpload(fileId, password);
-  }, [realUpload]);
+    pendingFiles.forEach(file => {
+      realUpload(file.id, password);
+    });
+  }, [files, realUpload]);
 
   // Handle file removal
   const handleRemoveFile = useCallback((fileId: string) => {
@@ -730,7 +735,20 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                   
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button
-                      onClick={handleUploadAll}
+                      onClick={() => {
+                        const pendingFiles = files.filter(f => f.status === 'pending');
+                        if (pendingFiles.length > 0 && isPremium) {
+                          // Premium users get password protection option
+                          setPasswordDialog({
+                            isOpen: true,
+                            fileId: pendingFiles[0].id,
+                            fileName: pendingFiles.length > 1 ? `${pendingFiles.length} files` : pendingFiles[0].name
+                          });
+                        } else {
+                          // Free users upload directly without password option
+                          handleUploadAll();
+                        }
+                      }}
                       size="default"
                       variant="outline"
                       className={cn(
@@ -988,8 +1006,9 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
       <PasswordProtectionDialog
         isOpen={passwordDialog.isOpen}
         onClose={() => setPasswordDialog({ isOpen: false, fileId: '', fileName: '' })}
-        onConfirm={(password) => handlePasswordConfirm(passwordDialog.fileId, password)}
+        onConfirm={(password) => handlePasswordConfirm(password)}
         fileName={passwordDialog.fileName}
+        isPremium={isPremium}
       />
 
       {/* Upload Success Dialog */}
