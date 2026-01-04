@@ -67,3 +67,6 @@ verify_jwt = true
 
 [functions.send-purchase-email]
 verify_jwt = false
+
+[functions.send-expiration-reminder]
+verify_jwt = false
