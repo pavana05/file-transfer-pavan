@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, RefreshCw, Copy, Check } from 'lucide-react';
+import { Lock, RefreshCw, Copy, Check, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,20 +14,24 @@ import {
 import PasswordStrengthMeter from './PasswordStrengthMeter';
 import { generateSecurePassword } from '@/lib/password-generator';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface PasswordProtectionDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (password?: string) => void;
   fileName: string;
+  isPremium?: boolean;
 }
 
 const PasswordProtectionDialog: React.FC<PasswordProtectionDialogProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  fileName
+  fileName,
+  isPremium = false
 }) => {
+  const navigate = useNavigate();
   const [usePassword, setUsePassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -114,23 +118,51 @@ const PasswordProtectionDialog: React.FC<PasswordProtectionDialogProps> = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/40">
-            <div className="flex-1">
-              <Label htmlFor="password-toggle" className="text-sm font-medium">
-                Enable Password Protection
-              </Label>
-              <p className="text-xs text-muted-foreground mt-1">
-                Recipients will need both PIN and password
-              </p>
+          {isPremium ? (
+            <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/40">
+              <div className="flex-1">
+                <Label htmlFor="password-toggle" className="text-sm font-medium">
+                  Enable Password Protection
+                </Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Recipients will need both PIN and password
+                </p>
+              </div>
+              <Switch
+                id="password-toggle"
+                checked={usePassword}
+                onCheckedChange={setUsePassword}
+              />
             </div>
-            <Switch
-              id="password-toggle"
-              checked={usePassword}
-              onCheckedChange={setUsePassword}
-            />
-          </div>
+          ) : (
+            <div className="p-4 bg-gradient-to-r from-primary/10 via-primary/5 to-accent/10 rounded-lg border border-primary/30">
+              <div className="flex items-start gap-3">
+                <Crown className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-foreground">
+                    Password protection is a premium feature
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1 mb-3">
+                    Upgrade to Pro or Business plan to add password protection to your files.
+                  </p>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => {
+                      onClose();
+                      navigate('/pricing');
+                    }}
+                    className="bg-gradient-to-r from-primary to-primary/80"
+                  >
+                    <Crown className="w-4 h-4 mr-2" />
+                    Upgrade Now
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
 
-          {usePassword && (
+          {isPremium && usePassword && (
             <div className="space-y-4 animate-fade-in">
               <div className="flex gap-2">
                 <Button
