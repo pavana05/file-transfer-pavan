@@ -21,6 +21,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import PlanExpirationCountdown from '@/components/PlanExpirationCountdown';
 
 interface UserPremiumPlan {
   plan_name: string;
@@ -38,9 +39,16 @@ interface PurchaseHistory {
   razorpay_order_id: string;
 }
 
+interface LatestPurchase {
+  purchased_at: string;
+  expiration_days: number | null;
+  plan_name: string;
+}
+
 const Profile = () => {
   const [premiumPlan, setPremiumPlan] = useState<UserPremiumPlan | null>(null);
   const [purchases, setPurchases] = useState<PurchaseHistory[]>([]);
+  const [latestPurchase, setLatestPurchase] = useState<LatestPurchase | null>(null);
   const [loading, setLoading] = useState(true);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -79,7 +87,7 @@ const Profile = () => {
           purchased_at,
           status,
           razorpay_order_id,
-          premium_plans (name)
+          premium_plans (name, expiration_days)
         `)
         .eq('user_id', user.id)
         .order('purchased_at', { ascending: false });
@@ -94,6 +102,16 @@ const Profile = () => {
           razorpay_order_id: p.razorpay_order_id
         }));
         setPurchases(formattedPurchases);
+
+        // Get the latest completed purchase for countdown
+        const latestCompleted = purchaseData.find((p: any) => p.status === 'completed');
+        if (latestCompleted && latestCompleted.premium_plans?.expiration_days) {
+          setLatestPurchase({
+            purchased_at: latestCompleted.purchased_at,
+            expiration_days: latestCompleted.premium_plans.expiration_days,
+            plan_name: latestCompleted.premium_plans.name
+          });
+        }
       }
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -180,6 +198,14 @@ const Profile = () => {
         </div>
 
         <div className="grid gap-6">
+          {/* Plan Expiration Countdown - Only show for plans with expiration */}
+          {latestPurchase && premiumPlan && (
+            <PlanExpirationCountdown
+              purchaseDate={latestPurchase.purchased_at}
+              expirationDays={latestPurchase.expiration_days}
+              planName={latestPurchase.plan_name}
+            />
+          )}
           {/* Current Plan Card */}
           <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
             <CardHeader>
