@@ -17,7 +17,7 @@ interface PremiumPlan {
 
 interface RazorpayCheckoutProps {
   plan: PremiumPlan;
-  onSuccess: () => void;
+  onSuccess: (orderId?: string, paymentId?: string) => void;
   onError: (error: string) => void;
   onClose: () => void;
 }
@@ -133,7 +133,7 @@ export const RazorpayCheckout = ({ plan, onSuccess, onError, onClose }: Razorpay
               throw new Error(errorData.error || 'Payment verification failed');
             }
 
-            onSuccess();
+            onSuccess(response.razorpay_order_id, response.razorpay_payment_id);
           } catch (err: any) {
             onError(err.message || 'Payment verification failed');
           }

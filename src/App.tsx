@@ -18,6 +18,7 @@ import ScanQR from "./pages/ScanQR";
 import Install from "./pages/Install";
 import Pricing from "./pages/Pricing";
 import Profile from "./pages/Profile";
+import PaymentHistory from "./pages/PaymentHistory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -61,6 +62,14 @@ const App = () => {
                   element={
                     <AuthGuard>
                       <Profile />
+                    </AuthGuard>
+                  } 
+                />
+                <Route 
+                  path="/payment-history" 
+                  element={
+                    <AuthGuard>
+                      <PaymentHistory />
                     </AuthGuard>
                   } 
                 />
