@@ -30,6 +30,7 @@ const Pricing = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [purchasedPlan, setPurchasedPlan] = useState<PremiumPlan | null>(null);
+  const [paymentDetails, setPaymentDetails] = useState<{ orderId?: string; paymentId?: string }>({});
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -109,9 +110,10 @@ const Pricing = () => {
     setSelectedPlan(null);
   };
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (orderId?: string, paymentId?: string) => {
     setShowCheckout(false);
     setPurchasedPlan(selectedPlan);
+    setPaymentDetails({ orderId, paymentId });
     setSelectedPlan(null);
     checkUserPlan();
   };
@@ -128,6 +130,7 @@ const Pricing = () => {
 
   const handleSuccessDialogClose = () => {
     setPurchasedPlan(null);
+    setPaymentDetails({});
   };
 
   const formatPrice = (priceInPaise: number) => {
@@ -326,6 +329,8 @@ const Pricing = () => {
           plan={purchasedPlan}
           open={!!purchasedPlan}
           onClose={handleSuccessDialogClose}
+          orderId={paymentDetails.orderId}
+          paymentId={paymentDetails.paymentId}
         />
       )}
     </div>

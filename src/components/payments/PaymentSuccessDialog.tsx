@@ -6,8 +6,11 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Sparkles, ArrowRight, Crown, Zap, Shield, PartyPopper } from 'lucide-react';
+import { CheckCircle2, Sparkles, ArrowRight, Crown, Zap, Shield, PartyPopper, Download, Receipt } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { useAuth } from '@/contexts/AuthContext';
+import { downloadInvoice } from '@/lib/invoice-generator';
+import { format } from 'date-fns';
 
 interface PremiumPlan {
   id: string;
@@ -23,14 +26,19 @@ interface PaymentSuccessDialogProps {
   plan: PremiumPlan;
   open: boolean;
   onClose: () => void;
+  orderId?: string;
+  paymentId?: string;
 }
 
 export const PaymentSuccessDialog = ({
   plan,
   open,
   onClose,
+  orderId,
+  paymentId,
 }: PaymentSuccessDialogProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
@@ -100,6 +108,28 @@ export const PaymentSuccessDialog = ({
   const handleStartSharing = () => {
     onClose();
     navigate('/');
+  };
+
+  const handleDownloadInvoice = () => {
+    if (!user) return;
+    
+    const invoiceNumber = (orderId || `INV${Date.now()}`).replace('order_', '').slice(0, 8).toUpperCase();
+    
+    downloadInvoice({
+      invoiceNumber,
+      purchaseDate: format(new Date(), 'MMMM dd, yyyy'),
+      planName: plan.name,
+      amount: plan.price_inr,
+      userName: user.user_metadata?.full_name || user.user_metadata?.name || 'Customer',
+      userEmail: user.email || '',
+      paymentId: paymentId || 'N/A',
+      orderId: orderId || 'N/A',
+    });
+  };
+
+  const handleViewPaymentHistory = () => {
+    onClose();
+    navigate('/payment-history');
   };
 
   return (
@@ -183,20 +213,33 @@ export const PaymentSuccessDialog = ({
           </div>
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div className="space-y-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 gap-2"
+                onClick={handleDownloadInvoice}
+              >
+                <Download className="w-4 h-4" />
+                Download Invoice
+              </Button>
+              <Button
+                className="flex-1 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary gap-2"
+                onClick={handleStartSharing}
+              >
+                Start Sharing
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+            
             <Button
-              variant="outline"
-              className="flex-1"
-              onClick={handleGoToDashboard}
+              variant="ghost"
+              size="sm"
+              className="w-full text-muted-foreground gap-2"
+              onClick={handleViewPaymentHistory}
             >
-              Go to Dashboard
-            </Button>
-            <Button
-              className="flex-1 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary gap-2"
-              onClick={handleStartSharing}
-            >
-              Start Sharing
-              <ArrowRight className="w-4 h-4" />
+              <Receipt className="w-4 h-4" />
+              View Payment History
             </Button>
           </div>
 

@@ -18,7 +18,8 @@ import {
   CheckCircle2,
   Clock,
   HardDrive,
-  LogOut
+  LogOut,
+  Receipt
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import PlanExpirationCountdown from '@/components/PlanExpirationCountdown';
@@ -350,7 +351,7 @@ const Profile = () => {
           </Card>
 
           {/* Quick Actions */}
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-3 gap-4">
             <Link to="/dashboard">
               <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
                 <CardContent className="p-6 flex items-center gap-4">
@@ -360,6 +361,19 @@ const Profile = () => {
                   <div>
                     <h3 className="font-medium">My Files</h3>
                     <p className="text-sm text-muted-foreground">View your uploaded files</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/payment-history">
+              <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-primary/10 text-primary">
+                    <Receipt className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Payment History</h3>
+                    <p className="text-sm text-muted-foreground">View transactions & invoices</p>
                   </div>
                 </CardContent>
               </Card>
