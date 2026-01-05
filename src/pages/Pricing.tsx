@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Check, ArrowLeft, Crown, Zap, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { RazorpayCheckout } from '@/components/payments/RazorpayCheckout';
+import { PurchaseConfirmationDialog } from '@/components/payments/PurchaseConfirmationDialog';
+import { PaymentSuccessDialog } from '@/components/payments/PaymentSuccessDialog';
 
 interface PremiumPlan {
   id: string;
@@ -25,6 +27,9 @@ const Pricing = () => {
   const [loading, setLoading] = useState(true);
   const [userPlan, setUserPlan] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<PremiumPlan | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [purchasedPlan, setPurchasedPlan] = useState<PremiumPlan | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -91,23 +96,38 @@ const Pricing = () => {
       return;
     }
     setSelectedPlan(plan);
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmPurchase = () => {
+    setShowConfirmation(false);
+    setShowCheckout(true);
+  };
+
+  const handleCancelPurchase = () => {
+    setShowConfirmation(false);
+    setSelectedPlan(null);
   };
 
   const handlePaymentSuccess = () => {
+    setShowCheckout(false);
+    setPurchasedPlan(selectedPlan);
     setSelectedPlan(null);
     checkUserPlan();
-    toast({
-      title: "Payment Successful!",
-      description: "Your premium plan is now active",
-    });
   };
 
   const handlePaymentError = (error: string) => {
+    setShowCheckout(false);
+    setSelectedPlan(null);
     toast({
       title: "Payment Failed",
       description: error,
       variant: "destructive"
     });
+  };
+
+  const handleSuccessDialogClose = () => {
+    setPurchasedPlan(null);
   };
 
   const formatPrice = (priceInPaise: number) => {
@@ -277,13 +297,35 @@ const Pricing = () => {
         </div>
       </main>
 
-      {/* Razorpay Checkout Modal */}
+      {/* Purchase Confirmation Dialog */}
       {selectedPlan && (
+        <PurchaseConfirmationDialog
+          plan={selectedPlan}
+          open={showConfirmation}
+          onConfirm={handleConfirmPurchase}
+          onCancel={handleCancelPurchase}
+        />
+      )}
+
+      {/* Razorpay Checkout Modal */}
+      {selectedPlan && showCheckout && (
         <RazorpayCheckout
           plan={selectedPlan}
           onSuccess={handlePaymentSuccess}
           onError={handlePaymentError}
-          onClose={() => setSelectedPlan(null)}
+          onClose={() => {
+            setShowCheckout(false);
+            setSelectedPlan(null);
+          }}
+        />
+      )}
+
+      {/* Payment Success Dialog */}
+      {purchasedPlan && (
+        <PaymentSuccessDialog
+          plan={purchasedPlan}
+          open={!!purchasedPlan}
+          onClose={handleSuccessDialogClose}
         />
       )}
     </div>
