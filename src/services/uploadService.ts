@@ -466,16 +466,26 @@ export class UploadService {
   }
 
   static async getFileUrl(storagePath: string): Promise<string> {
-    // Use signed URLs for secure access (1 hour expiry)
+    // Try signed URL first for secure access (1 hour expiry)
     const { data, error } = await supabase.storage
       .from('uploads')
       .createSignedUrl(storagePath, 3600);
 
-    if (error) {
-      throw new Error(`Failed to generate secure URL: ${error.message}`);
+    if (!error && data?.signedUrl) {
+      return data.signedUrl;
     }
 
-    return data.signedUrl;
+    // Fallback to public URL if signed URL fails
+    console.warn('Signed URL failed, trying public URL:', error?.message);
+    const { data: publicData } = supabase.storage
+      .from('uploads')
+      .getPublicUrl(storagePath);
+
+    if (publicData?.publicUrl) {
+      return publicData.publicUrl;
+    }
+
+    throw new Error(`Failed to generate URL: ${error?.message || 'Unknown error'}`);
   }
 
   static async incrementDownloadCount(shareToken: string) {
