@@ -609,75 +609,75 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
         <Card className="overflow-hidden relative bg-gradient-to-br from-card via-card/95 to-card/80 shadow-2xl shadow-primary/5 border-border/40 backdrop-blur-xl" data-file-management>
           {/* Decorative background elements */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none"></div>
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-primary/10 via-transparent to-transparent blur-3xl pointer-events-none"></div>
+          <div className="hidden sm:block absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-primary/10 via-transparent to-transparent blur-3xl pointer-events-none"></div>
           
           {/* Header with enhanced gradient background */}
-          <div className="relative bg-gradient-to-r from-primary/10 via-primary/5 to-accent/10 border-b border-border/40 p-8">
-            <div className="flex items-center gap-4">
-              <div className="relative p-3 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 shadow-lg shadow-primary/20">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-2xl blur-md"></div>
-                <Folder className="relative w-6 h-6 text-primary" />
+          <div className="relative bg-gradient-to-r from-primary/10 via-primary/5 to-accent/10 border-b border-border/40 p-4 sm:p-6 md:p-8">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="relative p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 shadow-lg shadow-primary/20 flex-shrink-0">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-xl sm:rounded-2xl blur-md"></div>
+                <Folder className="relative w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground tracking-tight">File Management</h2>
-                <p className="text-sm text-muted-foreground font-medium mt-1">Organize and manage your uploaded files with ease</p>
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground tracking-tight truncate">File Management</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-0.5 sm:mt-1 line-clamp-2">Organize and manage your uploaded files with ease</p>
               </div>
             </div>
           </div>
 
-          <div className="relative p-8 space-y-8">
+          <div className="relative p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 md:space-y-8">
             {/* Enhanced Controls Bar */}
-            <div className="space-y-6">
+            <div className="space-y-3 sm:space-y-4 md:space-y-6">
               {/* Search with modern styling */}
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/30 rounded-2xl opacity-0 group-focus-within:opacity-100 blur-xl transition-all duration-500"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/30 rounded-xl sm:rounded-2xl opacity-0 group-focus-within:opacity-100 blur-xl transition-all duration-500"></div>
                 <div className="relative">
-                  <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-all duration-200" />
+                  <Search className="absolute left-3 sm:left-4 md:left-5 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-focus-within:text-primary transition-all duration-200" />
                   <Input
-                    placeholder="Search files by name..."
+                    placeholder="Search files..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-14 pr-6 h-14 bg-background/60 border-2 border-border/50 focus:border-primary/60 focus:ring-4 focus:ring-primary/10 text-base font-medium placeholder:text-muted-foreground/60 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200"
+                    className="pl-10 sm:pl-12 md:pl-14 pr-4 sm:pr-6 h-11 sm:h-12 md:h-14 bg-background/60 border-2 border-border/50 focus:border-primary/60 focus:ring-2 sm:focus:ring-4 focus:ring-primary/10 text-sm sm:text-base font-medium placeholder:text-muted-foreground/60 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-all duration-200"
                   />
                 </div>
               </div>
 
               {/* Filter and View Mode - Enhanced styling */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <div className="flex-1 min-w-0">
                   <Select value={filterType} onValueChange={setFilterType}>
-                    <SelectTrigger className="h-14 bg-background/60 border-2 border-border/50 hover:border-primary/40 focus:border-primary/60 focus:ring-4 focus:ring-primary/10 text-base font-semibold rounded-2xl shadow-sm hover:shadow-md transition-all duration-200">
+                    <SelectTrigger className="h-11 sm:h-12 md:h-14 bg-background/60 border-2 border-border/50 hover:border-primary/40 focus:border-primary/60 focus:ring-2 sm:focus:ring-4 focus:ring-primary/10 text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-all duration-200">
                       <div className="flex items-center">
-                        <Filter className="w-5 h-5 mr-3 text-primary" />
+                        <Filter className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-primary flex-shrink-0" />
                         <SelectValue placeholder="Filter files" />
                       </div>
                     </SelectTrigger>
-                    <SelectContent className="bg-popover/98 backdrop-blur-xl border-2 border-border/50 rounded-2xl shadow-xl">
-                      <SelectItem value="all" className="font-semibold text-base h-11">All Files</SelectItem>
-                      <SelectItem value="images" className="text-base h-11">📷 Images</SelectItem>
-                      <SelectItem value="documents" className="text-base h-11">📄 Documents</SelectItem>
-                      <SelectItem value="videos" className="text-base h-11">🎬 Videos</SelectItem>
-                      <SelectItem value="completed" className="text-success text-base h-11">✓ Completed</SelectItem>
-                      <SelectItem value="pending" className="text-warning text-base h-11">⏳ Pending</SelectItem>
-                      <SelectItem value="error" className="text-destructive text-base h-11">✗ Failed</SelectItem>
+                    <SelectContent className="bg-popover/98 backdrop-blur-xl border-2 border-border/50 rounded-xl sm:rounded-2xl shadow-xl">
+                      <SelectItem value="all" className="font-semibold text-sm sm:text-base h-10 sm:h-11">All Files</SelectItem>
+                      <SelectItem value="images" className="text-sm sm:text-base h-10 sm:h-11">📷 Images</SelectItem>
+                      <SelectItem value="documents" className="text-sm sm:text-base h-10 sm:h-11">📄 Documents</SelectItem>
+                      <SelectItem value="videos" className="text-sm sm:text-base h-10 sm:h-11">🎬 Videos</SelectItem>
+                      <SelectItem value="completed" className="text-success text-sm sm:text-base h-10 sm:h-11">✓ Completed</SelectItem>
+                      <SelectItem value="pending" className="text-warning text-sm sm:text-base h-10 sm:h-11">⏳ Pending</SelectItem>
+                      <SelectItem value="error" className="text-destructive text-sm sm:text-base h-10 sm:h-11">✗ Failed</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Enhanced View Mode Buttons */}
-                <div className="flex gap-2 p-1.5 bg-muted/60 rounded-2xl border-2 border-border/40 shadow-sm">
+                <div className="flex gap-1.5 sm:gap-2 p-1 sm:p-1.5 bg-muted/60 rounded-xl sm:rounded-2xl border-2 border-border/40 shadow-sm self-start sm:self-auto">
                   <Button
                     variant={viewMode === 'list' ? 'default' : 'ghost'}
                     size="default"
                     onClick={() => setViewMode('list')}
                     className={cn(
-                      "h-11 px-6 font-semibold rounded-xl transition-all duration-200",
+                      "h-9 sm:h-10 md:h-11 px-3 sm:px-4 md:px-6 font-semibold rounded-lg sm:rounded-xl transition-all duration-200 text-sm sm:text-base",
                       viewMode === 'list' 
                         ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
                         : "hover:bg-background/80 text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    <List className="w-5 h-5 mr-2" />
+                    <List className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" />
                     <span className="hidden sm:inline">List</span>
                   </Button>
                   <Button
@@ -685,13 +685,13 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                     size="default"
                     onClick={() => setViewMode('grid')}
                     className={cn(
-                      "h-11 px-6 font-semibold rounded-xl transition-all duration-200",
+                      "h-9 sm:h-10 md:h-11 px-3 sm:px-4 md:px-6 font-semibold rounded-lg sm:rounded-xl transition-all duration-200 text-sm sm:text-base",
                       viewMode === 'grid' 
                         ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
                         : "hover:bg-background/80 text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    <Grid className="w-5 h-5 mr-2" />
+                    <Grid className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" />
                     <span className="hidden sm:inline">Grid</span>
                   </Button>
                 </div>
@@ -704,7 +704,7 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                     variant="outline"
                     size="default"
                     onClick={handleSelectAll}
-                    className="h-12 px-8 font-semibold border-2 border-border/50 hover:border-primary/50 hover:bg-primary/10 hover:shadow-md transition-all duration-200 rounded-2xl"
+                    className="h-10 sm:h-11 md:h-12 px-4 sm:px-6 md:px-8 text-sm sm:text-base font-semibold border-2 border-border/50 hover:border-primary/50 hover:bg-primary/10 hover:shadow-md transition-all duration-200 rounded-xl sm:rounded-2xl"
                   >
                     Select All ({filteredFiles.length})
                   </Button>
@@ -716,69 +716,69 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
             {!config.autoUpload && pendingCount > 0 && (
               <div className="relative group">
                 {/* Animated gradient background */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/30 rounded-3xl opacity-75 blur-2xl group-hover:opacity-100 transition-all duration-500"></div>
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 rounded-3xl"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/30 rounded-2xl sm:rounded-3xl opacity-75 blur-xl sm:blur-2xl group-hover:opacity-100 transition-all duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 rounded-2xl sm:rounded-3xl"></div>
                 
-                <div className="relative p-8 bg-background/60 border-2 border-primary/30 rounded-3xl backdrop-blur-xl shadow-xl">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="relative p-3 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 border-2 border-primary/40 shadow-lg">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent rounded-2xl blur-md animate-pulse"></div>
-                      <Upload className="relative w-6 h-6 text-primary" />
+                <div className="relative p-4 sm:p-6 md:p-8 bg-background/60 border-2 border-primary/30 rounded-2xl sm:rounded-3xl backdrop-blur-xl shadow-xl">
+                  <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                    <div className="relative p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 border-2 border-primary/40 shadow-lg flex-shrink-0">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent rounded-xl sm:rounded-2xl blur-md animate-pulse"></div>
+                      <Upload className="relative w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                     </div>
-                    <div>
-                      <span className="text-xl font-bold text-foreground tracking-tight">
+                    <div className="min-w-0">
+                      <span className="text-base sm:text-lg md:text-xl font-bold text-foreground tracking-tight block">
                         {pendingCount} file{pendingCount !== 1 ? 's' : ''} ready to upload
                       </span>
-                      <p className="text-sm text-muted-foreground font-medium mt-1">Choose your preferred upload method</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-0.5 sm:mt-1">Choose your preferred upload method</p>
                     </div>
                   </div>
                   
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button
-                      onClick={() => {
-                        const pendingFiles = files.filter(f => f.status === 'pending');
-                        if (pendingFiles.length > 0 && isPremium) {
-                          // Premium users get password protection option
-                          setPasswordDialog({
-                            isOpen: true,
-                            fileId: pendingFiles[0].id,
-                            fileName: pendingFiles.length > 1 ? `${pendingFiles.length} files` : pendingFiles[0].name
-                          });
-                        } else {
-                          // Free users upload directly without password option
-                          handleUploadAll();
-                        }
-                      }}
-                      size="default"
-                      variant="outline"
-                      className={cn(
-                        "h-14 flex-1 font-semibold text-base border-2 border-primary/40 hover:border-primary/60 hover:bg-primary/10 hover:scale-105 active:scale-95 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300",
-                        showUploadGlow && "ring-4 ring-primary/40 ring-offset-2 bg-primary/15 shadow-2xl animate-pulse border-primary/60"
-                      )}
-                    >
-                      <Upload className="w-5 h-5 mr-2" />
-                      Upload Individual Files
-                    </Button>
-                    
-                    {pendingCount > 1 && (
+                  <div className="flex flex-col gap-3 sm:gap-4">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                       <Button
-                        onClick={handleUploadAsCollection}
+                        onClick={() => {
+                          const pendingFiles = files.filter(f => f.status === 'pending');
+                          if (pendingFiles.length > 0 && isPremium) {
+                            setPasswordDialog({
+                              isOpen: true,
+                              fileId: pendingFiles[0].id,
+                              fileName: pendingFiles.length > 1 ? `${pendingFiles.length} files` : pendingFiles[0].name
+                            });
+                          } else {
+                            handleUploadAll();
+                          }
+                        }}
                         size="default"
-                        className="h-14 flex-1 font-semibold text-base bg-gradient-to-r from-primary via-primary/90 to-primary/80 hover:from-primary/90 hover:via-primary/80 hover:to-primary/70 hover:scale-105 active:scale-95 rounded-2xl shadow-xl hover:shadow-2xl shadow-primary/20 hover:shadow-primary/30 transition-all duration-300"
+                        variant="outline"
+                        className={cn(
+                          "h-11 sm:h-12 md:h-14 flex-1 font-semibold text-sm sm:text-base border-2 border-primary/40 hover:border-primary/60 hover:bg-primary/10 active:scale-95 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300",
+                          showUploadGlow && "ring-2 sm:ring-4 ring-primary/40 ring-offset-2 bg-primary/15 shadow-2xl animate-pulse border-primary/60"
+                        )}
                       >
-                        <Package className="w-5 h-5 mr-2" />
-                        Upload as Collection
+                        <Upload className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                        <span className="truncate">Upload Individual Files</span>
                       </Button>
-                    )}
+                      
+                      {pendingCount > 1 && (
+                        <Button
+                          onClick={handleUploadAsCollection}
+                          size="default"
+                          className="h-11 sm:h-12 md:h-14 flex-1 font-semibold text-sm sm:text-base bg-gradient-to-r from-primary via-primary/90 to-primary/80 hover:from-primary/90 hover:via-primary/80 hover:to-primary/70 active:scale-95 rounded-xl sm:rounded-2xl shadow-xl hover:shadow-2xl shadow-primary/20 hover:shadow-primary/30 transition-all duration-300"
+                        >
+                          <Package className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                          <span className="truncate">Upload as Collection</span>
+                        </Button>
+                      )}
+                    </div>
                     
                     <NearbyShareDialog
                       trigger={
                         <Button 
                           size="default" 
                           variant="outline" 
-                          className="h-14 flex-1 sm:flex-none font-semibold text-base border-2 border-border/60 hover:border-primary/40 hover:bg-primary/10 hover:scale-105 active:scale-95 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+                          className="h-11 sm:h-12 md:h-14 w-full font-semibold text-sm sm:text-base border-2 border-border/60 hover:border-primary/40 hover:bg-primary/10 active:scale-95 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
                         >
-                          <Smartphone className="w-5 h-5 mr-2" />
+                          <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
                           Nearby Share
                         </Button>
                       }
@@ -792,12 +792,12 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
             {/* Enhanced Bulk Actions */}
             {selectedFiles.length > 0 && (
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-accent/30 via-accent/20 to-accent/30 rounded-2xl blur-xl"></div>
-                <div className="relative p-6 bg-gradient-to-r from-accent/20 via-accent/15 to-accent/20 border-2 border-accent/50 rounded-2xl backdrop-blur-sm shadow-lg">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-primary animate-pulse shadow-lg shadow-primary/50"></div>
-                      <span className="text-lg font-bold text-foreground">
+                <div className="absolute -inset-1 bg-gradient-to-r from-accent/30 via-accent/20 to-accent/30 rounded-xl sm:rounded-2xl blur-xl"></div>
+                <div className="relative p-4 sm:p-6 bg-gradient-to-r from-accent/20 via-accent/15 to-accent/20 border-2 border-accent/50 rounded-xl sm:rounded-2xl backdrop-blur-sm shadow-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-primary animate-pulse shadow-lg shadow-primary/50 flex-shrink-0"></div>
+                      <span className="text-sm sm:text-base md:text-lg font-bold text-foreground">
                         {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected
                       </span>
                     </div>
@@ -805,9 +805,9 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
                       variant="outline"
                       size="default"
                       onClick={handleDeleteSelected}
-                      className="w-full sm:w-auto sm:ml-auto h-12 px-6 font-semibold text-base border-2 border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive/60 hover:scale-105 active:scale-95 rounded-2xl shadow-md hover:shadow-lg transition-all duration-200"
+                      className="w-full sm:w-auto sm:ml-auto h-10 sm:h-11 md:h-12 px-4 sm:px-6 font-semibold text-sm sm:text-base border-2 border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive/60 active:scale-95 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all duration-200"
                     >
-                      <Trash2 className="w-5 h-5 mr-2" />
+                      <Trash2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
                       Delete Selected
                     </Button>
                   </div>
@@ -817,23 +817,23 @@ export const FileUploadManager: React.FC<FileUploadManagerProps> = ({
 
             {/* Enhanced File List Tabs */}
             <Tabs value="files" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 h-14 p-1.5 bg-muted/60 border-2 border-border/40 rounded-2xl shadow-sm">
+              <TabsList className="grid w-full grid-cols-2 h-11 sm:h-12 md:h-14 p-1 sm:p-1.5 bg-muted/60 border-2 border-border/40 rounded-xl sm:rounded-2xl shadow-sm">
                 <TabsTrigger 
                   value="files" 
-                  className="h-11 font-semibold text-base data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:shadow-primary/10 data-[state=active]:border-2 data-[state=active]:border-primary/30 rounded-xl transition-all duration-300"
+                  className="h-9 sm:h-10 md:h-11 font-semibold text-xs sm:text-sm md:text-base data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:shadow-primary/10 data-[state=active]:border-2 data-[state=active]:border-primary/30 rounded-lg sm:rounded-xl transition-all duration-300"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-2.5 h-2.5 rounded-full bg-primary shadow-md shadow-primary/50"></div>
-                    Files ({filteredFiles.length})
+                  <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                    <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-primary shadow-md shadow-primary/50 flex-shrink-0"></div>
+                    <span className="truncate">Files ({filteredFiles.length})</span>
                   </div>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="folders" 
-                  className="h-11 font-semibold text-base data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:shadow-primary/10 data-[state=active]:border-2 data-[state=active]:border-primary/30 rounded-xl transition-all duration-300"
+                  className="h-9 sm:h-10 md:h-11 font-semibold text-xs sm:text-sm md:text-base data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:shadow-primary/10 data-[state=active]:border-2 data-[state=active]:border-primary/30 rounded-lg sm:rounded-xl transition-all duration-300"
                 >
-                  <div className="flex items-center gap-3">
-                    <Folder className="w-5 h-5" />
-                    Folders
+                  <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                    <Folder className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                    <span>Folders</span>
                   </div>
                 </TabsTrigger>
               </TabsList>
