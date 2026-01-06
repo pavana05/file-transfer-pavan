@@ -243,18 +243,21 @@ export default {
     		},
     		fontFamily: {
     			sans: [
-    				'Inter',
-    				'Manrope',
     				'ui-sans-serif',
     				'system-ui',
-    				'sans-serif'
+    				'sans-serif',
+    				'Apple Color Emoji',
+    				'Segoe UI Emoji',
+    				'Segoe UI Symbol',
+    				'Noto Color Emoji'
     			],
-    			display: [
-    				'Manrope',
-    				'Inter',
-    				'ui-sans-serif',
-    				'system-ui',
-    				'sans-serif'
+    			serif: [
+    				'ui-serif',
+    				'Georgia',
+    				'Cambria',
+    				'Times New Roman',
+    				'Times',
+    				'serif'
     			],
     			mono: [
     				'ui-monospace',
@@ -262,6 +265,8 @@ export default {
     				'Menlo',
     				'Monaco',
     				'Consolas',
+    				'Liberation Mono',
+    				'Courier New',
     				'monospace'
     			]
     		}
