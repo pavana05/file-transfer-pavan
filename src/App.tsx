@@ -3,11 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthGuard } from "@/components/AuthGuard";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { AnimatePresence } from "framer-motion";
+import { PageTransition } from "@/components/animations/PageTransition";
 import Index from "./pages/Index";
 import FileShare from "./pages/FileShare";
 import CollectionShare from "./pages/CollectionShare";
@@ -30,6 +32,51 @@ const queryClient = new QueryClient({
   },
 });
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/share/:token" element={<PageTransition><FileShare /></PageTransition>} />
+        <Route path="/collection/:token" element={<PageTransition><CollectionShare /></PageTransition>} />
+        <Route path="/pin" element={<PageTransition><PinAccess /></PageTransition>} />
+        <Route path="/scan" element={<PageTransition><ScanQR /></PageTransition>} />
+        <Route path="/install" element={<PageTransition><Install /></PageTransition>} />
+        <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
+        <Route 
+          path="/dashboard" 
+          element={
+            <AuthGuard>
+              <PageTransition><Dashboard /></PageTransition>
+            </AuthGuard>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <AuthGuard>
+              <PageTransition><Profile /></PageTransition>
+            </AuthGuard>
+          } 
+        />
+        <Route 
+          path="/payment-history" 
+          element={
+            <AuthGuard>
+              <PageTransition><PaymentHistory /></PageTransition>
+            </AuthGuard>
+          } 
+        />
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => {
   return (
     <ErrorBoundary>
@@ -37,49 +84,14 @@ const App = () => {
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <TooltipProvider delayDuration={0}>
             <AuthProvider>
-                <BrowserRouter>
-                  <Toaster />
-                  <Sonner />
-                   <Routes>
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/" element={<Index />} />
-                <Route path="/share/:token" element={<FileShare />} />
-                <Route path="/collection/:token" element={<CollectionShare />} />
-                <Route path="/pin" element={<PinAccess />} />
-                <Route path="/scan" element={<ScanQR />} />
-                <Route path="/install" element={<Install />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route 
-                  path="/dashboard" 
-                  element={
-                    <AuthGuard>
-                      <Dashboard />
-                    </AuthGuard>
-                  } 
-                />
-                <Route 
-                  path="/profile" 
-                  element={
-                    <AuthGuard>
-                      <Profile />
-                    </AuthGuard>
-                  } 
-                />
-                <Route 
-                  path="/payment-history" 
-                  element={
-                    <AuthGuard>
-                      <PaymentHistory />
-                    </AuthGuard>
-                  } 
-                />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </AuthProvider>
-        </TooltipProvider>
-      </ThemeProvider>
+              <BrowserRouter>
+                <Toaster />
+                <Sonner />
+                <AnimatedRoutes />
+              </BrowserRouter>
+            </AuthProvider>
+          </TooltipProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
