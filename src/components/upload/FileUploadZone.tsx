@@ -209,7 +209,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
     return 'All file types including ZIP archives';
   };
   return <div className={cn("w-full", className)}>
-      <div {...getRootProps()} className={cn("relative border-2 border-dashed rounded-3xl p-12 sm:p-20 text-center transition-all duration-700 ease-out", "bg-gradient-to-br from-card/98 via-card/95 to-card/98 backdrop-blur-2xl", "border-border/30 hover:border-primary/60 shadow-premium hover:shadow-glow", "group overflow-hidden", !disabled && "cursor-pointer hover:scale-[1.02] active:scale-[0.98]", isDragActive && !isDragReject && "border-primary/80 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/10 scale-[1.03] shadow-glow ring-4 ring-primary/20", isDragReject && "border-destructive/60 bg-destructive/5", disabled && "opacity-50 cursor-not-allowed")}>
+      <div {...getRootProps()} className={cn("relative border-2 border-dashed rounded-2xl sm:rounded-3xl p-6 sm:p-12 md:p-20 text-center transition-all duration-700 ease-out", "bg-gradient-to-br from-card/98 via-card/95 to-card/98 backdrop-blur-2xl", "border-border/30 hover:border-primary/60 shadow-premium hover:shadow-glow", "group overflow-hidden", !disabled && "cursor-pointer hover:scale-[1.01] sm:hover:scale-[1.02] active:scale-[0.98]", isDragActive && !isDragReject && "border-primary/80 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/10 scale-[1.02] sm:scale-[1.03] shadow-glow ring-2 sm:ring-4 ring-primary/20", isDragReject && "border-destructive/60 bg-destructive/5", disabled && "opacity-50 cursor-not-allowed")}>
         <input {...getInputProps()} ref={fileInputRef} />
         
         {/* Animated Background Gradient */}
@@ -222,96 +222,98 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
           <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-shimmer"></div>
         </div>
 
-        {/* Floating Orbs */}
-        <div className="absolute top-10 right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
-        <div className="absolute bottom-10 left-10 w-40 h-40 bg-primary-glow/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000 delay-100"></div>
+        {/* Floating Orbs - Hidden on mobile for performance */}
+        <div className="hidden sm:block absolute top-10 right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
+        <div className="hidden sm:block absolute bottom-10 left-10 w-40 h-40 bg-primary-glow/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000 delay-100"></div>
         
         {/* Upload Icon with Premium Effects */}
-        <div className={cn("relative w-24 h-24 mx-auto mb-10 rounded-3xl flex items-center justify-center transition-all duration-700", "bg-gradient-primary shadow-glow ring-8 ring-primary/15", "group-hover:ring-primary/30 group-hover:shadow-premium group-hover:-translate-y-4 group-hover:scale-110 group-hover:rotate-3", isDragActive && !isDragReject && "scale-125 ring-primary/50 shadow-glow animate-bounce-slow")}>
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-white/30 via-white/10 to-transparent opacity-80"></div>
+        <div className={cn("relative w-16 h-16 sm:w-20 md:w-24 sm:h-20 md:h-24 mx-auto mb-6 sm:mb-8 md:mb-10 rounded-2xl sm:rounded-3xl flex items-center justify-center transition-all duration-700", "bg-gradient-primary shadow-glow ring-4 sm:ring-6 md:ring-8 ring-primary/15", "group-hover:ring-primary/30 group-hover:shadow-premium group-hover:-translate-y-2 sm:group-hover:-translate-y-4 group-hover:scale-105 sm:group-hover:scale-110 group-hover:rotate-3", isDragActive && !isDragReject && "scale-110 sm:scale-125 ring-primary/50 shadow-glow animate-bounce-slow")}>
+          <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-white/30 via-white/10 to-transparent opacity-80"></div>
           
-          {isDragActive && !isDragReject ? <FileCheck className="relative w-12 h-12 text-primary-foreground drop-shadow-2xl animate-scale-in" /> : <Upload className="relative w-12 h-12 text-primary-foreground drop-shadow-2xl transition-transform duration-500 group-hover:scale-125 group-hover:-rotate-6" />}
+          {isDragActive && !isDragReject ? <FileCheck className="relative w-8 h-8 sm:w-10 md:w-12 sm:h-10 md:h-12 text-primary-foreground drop-shadow-2xl animate-scale-in" /> : <Upload className="relative w-8 h-8 sm:w-10 md:w-12 sm:h-10 md:h-12 text-primary-foreground drop-shadow-2xl transition-transform duration-500 group-hover:scale-125 group-hover:-rotate-6" />}
         </div>
 
         {/* Main Text with Gradient Animation */}
-        <div className="relative z-10 space-y-5 mb-12">
-          <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+        <div className="relative z-10 space-y-3 sm:space-y-4 md:space-y-5 mb-6 sm:mb-8 md:mb-12">
+          <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
             <span className={cn("bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent transition-all duration-500", "bg-[length:200%_auto] group-hover:bg-[length:100%_auto] animate-gradient-x")}>
               {isDragActive && !isDragReject ? "Drop your files here" : "Upload your files"}
             </span>
           </h3>
 
           {/* Description */}
-          <p className="text-muted-foreground text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto font-medium">
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto font-medium px-2">
             {isDragActive && !isDragReject ? "Release to upload your files instantly" : "Drag and drop files here, or use the buttons below"}
           </p>
 
           {/* Feature Pills */}
-          <div className="flex flex-wrap gap-3 justify-center items-center pt-2">
+          <div className="flex flex-wrap gap-2 sm:gap-3 justify-center items-center pt-1 sm:pt-2 px-2">
             <span className={cn(
-              "px-4 py-2 border rounded-full text-sm font-semibold backdrop-blur-sm",
+              "px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 border rounded-full text-xs sm:text-sm font-semibold backdrop-blur-sm",
               isPremium 
                 ? "bg-primary/10 border-primary/20 text-primary" 
                 : "bg-muted/50 border-border/50 text-muted-foreground"
             )}>
               Up to {maxFileSizeGB}GB {isPremium && '✨'}
             </span>
-            <span className="px-4 py-2 bg-success/10 border border-success/20 rounded-full text-sm font-semibold text-success backdrop-blur-sm">
+            <span className="px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-success/10 border border-success/20 rounded-full text-xs sm:text-sm font-semibold text-success backdrop-blur-sm">
               All Formats
             </span>
-            <span className="px-4 py-2 bg-accent/50 border border-accent-foreground/20 rounded-full text-sm font-semibold text-accent-foreground backdrop-blur-sm">
+            <span className="px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-accent/50 border border-accent-foreground/20 rounded-full text-xs sm:text-sm font-semibold text-accent-foreground backdrop-blur-sm">
               Secure Upload
             </span>
           </div>
         </div>
 
-        {/* Upload Buttons with Enhanced Design */}
-        <div className="relative z-10 flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <Button type="button" onClick={handleBrowseClick} disabled={disabled} size="lg" className="relative px-10 py-7 text-lg font-bold rounded-2xl shadow-glow hover:shadow-premium transition-all duration-500 group/btn overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-glow via-primary to-primary-dark opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
-            <span className="relative z-10 flex items-center gap-2">
-              <Upload className="w-5 h-5" />
-              Browse Files
-            </span>
-          </Button>
-          
-          <div className="relative">
-            <input type="file" ref={folderInputRef} onChange={handleFolderUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" {...{
-            webkitdirectory: ""
-          } as any} multiple disabled={disabled} />
-            <Button type="button" variant="outline" onClick={handleFolderClick} disabled={disabled} size="lg" className="relative px-10 py-7 text-lg font-bold rounded-2xl border-2 border-border/50 hover:border-primary/50 bg-card/50 hover:bg-card transition-all duration-500 shadow-card hover:shadow-hover backdrop-blur-sm">
-              <span className="relative z-10 flex items-center gap-2">
-                <Archive className="w-5 h-5" />
-                Upload Folder
+        {/* Upload Buttons with Enhanced Design - Mobile Responsive */}
+        <div className="relative z-10 flex flex-col gap-3 sm:gap-4 justify-center mb-6 sm:mb-8 px-2 sm:px-0">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <Button type="button" onClick={handleBrowseClick} disabled={disabled} size="lg" className="relative w-full sm:w-auto px-6 sm:px-8 md:px-10 py-5 sm:py-6 md:py-7 text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl shadow-glow hover:shadow-premium transition-all duration-500 group/btn overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-glow via-primary to-primary-dark opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
+                Browse Files
               </span>
             </Button>
+            
+            <div className="relative w-full sm:w-auto">
+              <input type="file" ref={folderInputRef} onChange={handleFolderUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" {...{
+              webkitdirectory: ""
+            } as any} multiple disabled={disabled} />
+              <Button type="button" variant="outline" onClick={handleFolderClick} disabled={disabled} size="lg" className="relative w-full sm:w-auto px-6 sm:px-8 md:px-10 py-5 sm:py-6 md:py-7 text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl border-2 border-border/50 hover:border-primary/50 bg-card/50 hover:bg-card transition-all duration-500 shadow-card hover:shadow-hover backdrop-blur-sm">
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <Archive className="w-4 h-4 sm:w-5 sm:h-5" />
+                  Upload Folder
+                </span>
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Premium Trust Badges */}
-        <div className="relative z-10 flex flex-wrap gap-4 justify-center items-center text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-success animate-glow"></div>
-            <span className="font-medium">End-to-end Encrypted</span>
+        {/* Premium Trust Badges - Mobile Responsive Grid */}
+        <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 justify-center items-center text-xs sm:text-sm text-muted-foreground px-4 sm:px-0">
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-success animate-glow flex-shrink-0"></div>
+            <span className="font-medium whitespace-nowrap">End-to-end Encrypted</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary animate-glow"></div>
-            <span className="font-medium">Lightning Fast</span>
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-glow flex-shrink-0"></div>
+            <span className="font-medium whitespace-nowrap">Lightning Fast</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-warning animate-glow"></div>
-            <span className="font-medium">Auto-delete After Download</span>
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-warning animate-glow flex-shrink-0"></div>
+            <span className="font-medium whitespace-nowrap">Auto-delete After Download</span>
           </div>
         </div>
 
         {/* Error State */}
-        {isDragReject && <div className="absolute inset-0 flex items-center justify-center bg-destructive/10 backdrop-blur-2xl rounded-3xl border-2 border-dashed border-destructive/60">
-            <div className="text-center animate-scale-in p-8">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-destructive/20 flex items-center justify-center ring-8 ring-destructive/30 shadow-hover">
-                <FileText className="w-10 h-10 text-destructive" />
+        {isDragReject && <div className="absolute inset-0 flex items-center justify-center bg-destructive/10 backdrop-blur-2xl rounded-2xl sm:rounded-3xl border-2 border-dashed border-destructive/60">
+            <div className="text-center animate-scale-in p-4 sm:p-6 md:p-8">
+              <div className="w-14 h-14 sm:w-16 md:w-20 sm:h-16 md:h-20 mx-auto mb-4 sm:mb-6 rounded-2xl sm:rounded-3xl bg-destructive/20 flex items-center justify-center ring-4 sm:ring-6 md:ring-8 ring-destructive/30 shadow-hover">
+                <FileText className="w-7 h-7 sm:w-8 md:w-10 sm:h-8 md:h-10 text-destructive" />
               </div>
-              <p className="text-destructive font-bold text-2xl mb-3">Invalid file type</p>
-              <p className="text-destructive/80 text-base font-medium">Please upload a supported file format</p>
+              <p className="text-destructive font-bold text-lg sm:text-xl md:text-2xl mb-2 sm:mb-3">Invalid file type</p>
+              <p className="text-destructive/80 text-sm sm:text-base font-medium px-4">Please upload a supported file format</p>
             </div>
           </div>}
       </div>
