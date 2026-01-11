@@ -101,7 +101,7 @@ const TestimonialsSection = () => {
     stopOnInteraction: false,
     stopOnMouseEnter: true,
     stopOnFocusIn: false
-  })]);
+  }) as any]);
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
   }, [emblaApi]);

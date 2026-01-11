@@ -10,3 +10,9 @@ export {
   DashboardTableSkeleton,
   DashboardFullSkeleton
 } from './DashboardSkeleton';
+export {
+  FileCardSkeleton,
+  FileCardSkeletonList,
+  FileCardSkeletonCompact,
+  FileCardSkeletonGrid
+} from './FileCardSkeleton';

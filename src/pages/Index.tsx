@@ -235,50 +235,54 @@ const Index = () => {
       <main className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-12 sm:py-16 md:py-24">
         {/* Premium Hero Section with Clean Modern Design */}
         <ScrollReveal direction="fade" duration={0.8}>
-          <div className="text-center mb-24 sm:mb-32 space-y-12 sm:space-y-16 max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16 sm:mb-24 md:mb-32 space-y-8 sm:space-y-12 md:space-y-16 max-w-7xl mx-auto relative z-10">
             
             {/* Premium Trust Badge */}
-            <div className="inline-flex items-center gap-4 px-6 py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border/50 shadow-card hover:shadow-lg transition-all duration-500 hover:scale-105">
-              <span className="relative flex h-3 w-3">
+            <div className="inline-flex items-center gap-2 sm:gap-4 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border/50 shadow-card hover:shadow-lg transition-all duration-500 hover:scale-105">
+              <span className="relative flex h-2 w-2 sm:h-3 sm:w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-success"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 sm:h-3 sm:w-3 bg-success"></span>
               </span>
-              <span className="text-sm font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                🔐 Bank-Level Security • ⚡ Instant Transfer • 🌐 Global CDN
+              <span className="text-xs sm:text-sm font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                <span className="hidden xs:inline">🔐 Bank-Level Security • ⚡ Instant Transfer • 🌐 Global CDN</span>
+                <span className="xs:hidden">🔐 Secure • ⚡ Fast • 🌐 Global</span>
               </span>
             </div>
             
             {/* Premium Headline with Clean Typography */}
-            <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight px-2 leading-[0.95]">
+            <h2 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight px-2 leading-[0.95]">
               <span className="block bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/70">
                 Share Files
               </span>
-              <span className="block mt-3 bg-clip-text text-transparent bg-gradient-hero animate-gradient-x bg-[length:200%_auto] text-6xl">
+              <span className="block mt-2 sm:mt-3 bg-clip-text text-transparent bg-gradient-hero animate-gradient-x bg-[length:200%_auto] text-3xl xs:text-4xl sm:text-5xl md:text-6xl">
                 Securely
               </span>
             </h2>
             
-            <p className="text-xl sm:text-2xl text-muted-foreground max-w-5xl mx-auto px-4 leading-relaxed font-medium md:text-2xl">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-5xl mx-auto px-4 leading-relaxed font-medium">
               Enterprise-grade file sharing with{' '}
               <span className="font-extrabold text-foreground">end-to-end encryption</span>.
-              <span className="block mt-3 text-lg sm:text-base">
-                No signup • Up to <span className="text-primary font-black text-2xl">1GB</span> • Auto-delete
+              <span className="block mt-2 sm:mt-3 text-sm sm:text-base md:text-lg">
+                No signup • Up to <span className="text-primary font-black text-lg sm:text-xl md:text-2xl">1GB</span> • Auto-delete
               </span>
             </p>
 
             {/* Clean Feature Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-6 px-2">
-              <Badge variant="secondary" className="text-sm sm:text-base px-5 py-3 shadow-card hover:shadow-hover transition-all duration-500 hover:scale-105 border border-border/40 backdrop-blur-sm bg-card/80">
-                <Shield className="h-5 w-5 mr-2 text-primary" />
-                Military-Grade Encryption
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4 pt-4 sm:pt-6 px-2">
+              <Badge variant="secondary" className="text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 shadow-card hover:shadow-hover transition-all duration-500 hover:scale-105 border border-border/40 backdrop-blur-sm bg-card/80">
+                <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 mr-1.5 sm:mr-2 text-primary" />
+                <span className="hidden xs:inline">Military-Grade Encryption</span>
+                <span className="xs:hidden">Encrypted</span>
               </Badge>
-              <Badge variant="secondary" className="text-sm sm:text-base px-5 py-3 shadow-card hover:shadow-hover transition-all duration-500 hover:scale-105 border border-border/40 backdrop-blur-sm bg-card/80">
-                <Zap className="h-5 w-5 mr-2 text-success" />
-                Lightning Fast
+              <Badge variant="secondary" className="text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 shadow-card hover:shadow-hover transition-all duration-500 hover:scale-105 border border-border/40 backdrop-blur-sm bg-card/80">
+                <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 mr-1.5 sm:mr-2 text-success" />
+                <span className="hidden xs:inline">Lightning Fast</span>
+                <span className="xs:hidden">Fast</span>
               </Badge>
-              <Badge variant="secondary" className="text-sm sm:text-base px-5 py-3 shadow-card hover:shadow-hover transition-all duration-500 hover:scale-105 border border-border/40 backdrop-blur-sm bg-card/80">
-                <Lock className="h-5 w-5 mr-2 text-warning" />
-                Password Protected
+              <Badge variant="secondary" className="text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 shadow-card hover:shadow-hover transition-all duration-500 hover:scale-105 border border-border/40 backdrop-blur-sm bg-card/80">
+                <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 mr-1.5 sm:mr-2 text-warning" />
+                <span className="hidden xs:inline">Password Protected</span>
+                <span className="xs:hidden">Protected</span>
               </Badge>
             </div>
           </div>
@@ -286,9 +290,9 @@ const Index = () => {
         
         {/* Premium Upload Section with Glass Design */}
         <ScrollReveal direction="up" delay={100}>
-          <div id="upload-section" className="mb-28 sm:mb-36 scroll-mt-20 relative z-10 opacity-100">
+          <div id="upload-section" className="mb-16 sm:mb-24 md:mb-36 scroll-mt-20 relative z-10 opacity-100">
             
-            <Card className="relative border border-border/40 shadow-premium bg-card/95 backdrop-blur-xl overflow-hidden p-10 sm:p-12 md:p-16 lg:p-20">
+            <Card className="relative border border-border/40 shadow-premium bg-card/95 backdrop-blur-xl overflow-hidden p-4 sm:p-8 md:p-12 lg:p-16 xl:p-20">
               <div className="relative z-10">
                 <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
               </div>
@@ -298,33 +302,33 @@ const Index = () => {
 
         {/* Clean Statistics Section */}
         <ScrollReveal direction="up" delay={150}>
-          <div className="mb-28 sm:mb-36 relative z-10">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+          <div className="mb-16 sm:mb-24 md:mb-36 relative z-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
               <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-6 sm:p-8 text-center relative z-10">
-                  <div className="text-4xl sm:text-5xl font-black bg-gradient-primary bg-clip-text text-transparent mb-2">10M+</div>
-                  <div className="text-sm text-muted-foreground font-medium">Files Shared</div>
+                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
+                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-primary bg-clip-text text-transparent mb-1 sm:mb-2">10M+</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Files Shared</div>
                 </div>
               </Card>
               
               <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-6 sm:p-8 text-center relative z-10">
-                  <div className="text-4xl sm:text-5xl font-black bg-gradient-success bg-clip-text text-transparent mb-2">500K+</div>
-                  <div className="text-sm text-muted-foreground font-medium">Active Users</div>
+                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
+                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-success bg-clip-text text-transparent mb-1 sm:mb-2">500K+</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Active Users</div>
                 </div>
               </Card>
               
               <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-6 sm:p-8 text-center relative z-10">
-                  <div className="text-4xl sm:text-5xl font-black text-warning mb-2">50TB+</div>
-                  <div className="text-sm text-muted-foreground font-medium">Data Transferred</div>
+                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
+                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-warning mb-1 sm:mb-2">50TB+</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Data Transferred</div>
                 </div>
               </Card>
               
               <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-6 sm:p-8 text-center relative z-10">
-                  <div className="text-4xl sm:text-5xl font-black text-primary-glow mb-2">99.9%</div>
-                  <div className="text-sm text-muted-foreground font-medium">Uptime</div>
+                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
+                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-primary-glow mb-1 sm:mb-2">99.9%</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Uptime</div>
                 </div>
               </Card>
             </div>

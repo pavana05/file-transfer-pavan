@@ -109,46 +109,48 @@ const EnhancedFilePreviewModal: React.FC<EnhancedFilePreviewModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl h-[90vh] p-0 gap-0 animate-scale-in">
+      <DialogContent className="max-w-7xl w-[95vw] h-[90vh] sm:h-[90vh] p-0 gap-0 animate-scale-in">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur-sm animate-slide-in-from-top">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg truncate">{fileName}</h3>
-            <p className="text-sm text-muted-foreground">{fileType}</p>
+        <div className="flex items-center justify-between p-3 sm:p-4 border-b bg-background/95 backdrop-blur-sm animate-slide-in-from-top">
+          <div className="flex-1 min-w-0 pr-2">
+            <h3 className="font-semibold text-sm sm:text-lg truncate">{fileName}</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">{fileType}</p>
           </div>
           
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onOpenChange(false)}
-            className="flex-shrink-0"
+            className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10"
           >
             <X className="h-4 w-4" />
           </Button>
         </div>
 
-        {/* Toolbar */}
-        <div className="flex items-center justify-between gap-2 p-3 border-b bg-muted/30 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <div className="flex items-center gap-2">
+        {/* Toolbar - Responsive */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 p-2 sm:p-3 border-b bg-muted/30 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          {/* Zoom Controls */}
+          <div className="flex items-center gap-1 sm:gap-2 justify-center sm:justify-start">
             <Button
               variant="outline"
               size="icon"
               onClick={handleZoomOut}
               disabled={zoom <= 25}
+              className="h-8 w-8 sm:h-9 sm:w-9"
             >
-              <ZoomOut className="h-4 w-4" />
+              <ZoomOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
             
-            <div className="flex items-center gap-2 px-3">
+            <div className="flex items-center gap-1 sm:gap-2 px-1 sm:px-3">
               <Slider
                 value={[zoom]}
                 onValueChange={(value) => setZoom(value[0])}
                 min={25}
                 max={400}
                 step={25}
-                className="w-32"
+                className="w-20 sm:w-32"
               />
-              <span className="text-sm font-medium w-12 text-center">
+              <span className="text-xs sm:text-sm font-medium w-10 sm:w-12 text-center">
                 {zoom}%
               </span>
             </div>
@@ -158,8 +160,9 @@ const EnhancedFilePreviewModal: React.FC<EnhancedFilePreviewModalProps> = ({
               size="icon"
               onClick={handleZoomIn}
               disabled={zoom >= 400}
+              className="h-8 w-8 sm:h-9 sm:w-9"
             >
-              <ZoomIn className="h-4 w-4" />
+              <ZoomIn className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
 
             {isImage && (
@@ -167,8 +170,9 @@ const EnhancedFilePreviewModal: React.FC<EnhancedFilePreviewModalProps> = ({
                 variant="outline"
                 size="icon"
                 onClick={handleRotate}
+                className="h-8 w-8 sm:h-9 sm:w-9"
               >
-                <RotateCw className="h-4 w-4" />
+                <RotateCw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             )}
 
@@ -176,43 +180,50 @@ const EnhancedFilePreviewModal: React.FC<EnhancedFilePreviewModalProps> = ({
               variant="outline"
               size="sm"
               onClick={handleReset}
+              className="h-8 px-2 sm:px-3 text-xs sm:text-sm"
             >
               Reset
             </Button>
           </div>
 
-          {isPDF && numPages > 0 && (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setPageNumber(prev => Math.max(prev - 1, 1))}
-                disabled={pageNumber <= 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-sm font-medium">
-                Page {pageNumber} of {numPages}
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setPageNumber(prev => Math.min(prev + 1, numPages))}
-                disabled={pageNumber >= numPages}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
+          {/* PDF Navigation & Download */}
+          <div className="flex items-center justify-center sm:justify-end gap-2">
+            {isPDF && numPages > 0 && (
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPageNumber(prev => Math.max(prev - 1, 1))}
+                  disabled={pageNumber <= 1}
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </Button>
+                <span className="text-xs sm:text-sm font-medium whitespace-nowrap">
+                  {pageNumber} / {numPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPageNumber(prev => Math.min(prev + 1, numPages))}
+                  disabled={pageNumber >= numPages}
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                >
+                  <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </Button>
+              </div>
+            )}
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownload}
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Download
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              className="h-8 px-2 sm:px-3 text-xs sm:text-sm"
+            >
+              <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Download</span>
+            </Button>
+          </div>
         </div>
 
         {/* Preview Area */}
