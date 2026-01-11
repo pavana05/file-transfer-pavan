@@ -26,6 +26,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [error, setError] = useState(false);
 
   // Determine file category
@@ -47,6 +48,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
   useEffect(() => {
     if (fileCategory === 'image' && fileSize < 10 * 1024 * 1024) { // Only load images under 10MB
       setLoading(true);
+      setImageLoaded(false);
       UploadService.getFileUrl(storagePath)
         .then(url => {
           setPreviewUrl(url);
@@ -96,10 +98,23 @@ const FilePreview: React.FC<FilePreviewProps> = ({
     return (
       <div className="relative group/preview w-full">
         <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-muted/20 shadow-xl shadow-black/10 transition-all duration-300 group-hover/preview:shadow-2xl group-hover/preview:shadow-primary/20">
+          {/* Blur placeholder shown while image is loading */}
+          {!imageLoaded && (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-muted/30 to-accent/10 animate-pulse">
+              <div className="absolute inset-0 backdrop-blur-xl flex items-center justify-center">
+                <FileImage className="w-16 h-16 text-muted-foreground/30 animate-pulse" />
+              </div>
+            </div>
+          )}
           <img
             src={previewUrl}
             alt={fileName}
-            className="w-full h-full object-contain transition-transform duration-500 group-hover/preview:scale-105"
+            className={`w-full h-full object-contain transition-all duration-500 group-hover/preview:scale-105 ${
+              imageLoaded 
+                ? 'opacity-100 blur-0 scale-100' 
+                : 'opacity-0 blur-lg scale-105'
+            }`}
+            onLoad={() => setImageLoaded(true)}
             onError={() => setError(true)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
@@ -115,9 +130,15 @@ const FilePreview: React.FC<FilePreviewProps> = ({
   if (fileCategory === 'image' && loading) {
     return (
       <div className="relative w-full">
-        <div className="w-full aspect-[4/3] rounded-xl bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center shadow-xl shadow-black/10 border border-border/50">
-          <div className="text-center space-y-3">
-            <FileImage className="w-16 h-16 text-muted-foreground/50 mx-auto animate-pulse" />
+        <div className="w-full aspect-[4/3] rounded-xl bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center shadow-xl shadow-black/10 border border-border/50 overflow-hidden">
+          {/* Animated blur placeholder */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-muted/20 to-accent/5 animate-pulse" />
+          <div className="absolute inset-0 backdrop-blur-sm" />
+          <div className="text-center space-y-3 z-10">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
+              <FileImage className="w-16 h-16 text-muted-foreground/50 mx-auto relative animate-pulse" />
+            </div>
             <p className="text-sm text-muted-foreground font-medium">Loading preview...</p>
           </div>
         </div>
