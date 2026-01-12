@@ -568,7 +568,7 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row items-center gap-6">
               <Button variant="ghost" size="sm" onClick={() => window.location.href = '/loading-demo'} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 <Sparkles className="h-4 w-4 mr-2" />
-                View Loading States
+                Made with ❤️ by PAVAN A      
               </Button>
               <p className="text-sm text-muted-foreground">
                 © 2025 FileShare Pro. All rights reserved.
