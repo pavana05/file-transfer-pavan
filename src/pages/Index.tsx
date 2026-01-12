@@ -570,9 +570,7 @@ const Index = () => {
                 <Sparkles className="h-4 w-4 mr-2" />
                 Made with ❤️ by PAVAN A      
               </Button>
-              <p className="text-sm text-muted-foreground">
-                © 2025 FileShare Pro. All rights reserved.
-              </p>
+              <p className="text-sm text-muted-foreground">© 2026 FileShare Pro. All rights reserved.</p>
             </div>
           </div>
         </div>
