@@ -349,7 +349,7 @@ const Index = () => {
                 Premium Features
               </div>
               
-              <h3 className="text-4xl sm:text-5xl font-black mb-6 bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <h3 className="text-4xl sm:text-5xl mb-6 bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent font-bold font-serif">
                 Everything You Need
               </h3>
               <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
