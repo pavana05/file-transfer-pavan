@@ -565,7 +565,10 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Secure File Sharing Platform</p>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/contact'} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                Contact Support
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => window.location.href = '/loading-demo'} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 <Sparkles className="h-4 w-4 mr-2" />
                 Made with ❤️ by PAVAN A      
