@@ -179,7 +179,7 @@ export const generateInvoicePDF = (data: InvoiceData): jsPDF => {
   
   doc.setTextColor(darkText[0], darkText[1], darkText[2]);
   doc.text(formattedAmount, 180, summaryY + 14, { align: 'right' });
-  doc.text('₹0', 180, summaryY + 26, { align: 'right' });
+  doc.text('\u20B90', 180, summaryY + 26, { align: 'right' });
   
   // Total row with gradient
   doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
