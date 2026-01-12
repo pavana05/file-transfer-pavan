@@ -313,7 +313,7 @@ const Index = () => {
               
               <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
                 <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
-                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-success bg-clip-text text-transparent mb-1 sm:mb-2">500K+</div>
+                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-success bg-clip-text text-transparent mb-1 sm:mb-2">50K+</div>
                   <div className="text-xs sm:text-sm text-muted-foreground font-medium">Active Users</div>
                 </div>
               </Card>
