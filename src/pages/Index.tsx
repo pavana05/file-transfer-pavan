@@ -460,7 +460,7 @@ const Index = () => {
               <div className="bg-gradient-to-br from-primary/5 via-primary/2 to-transparent p-12 sm:p-16 lg:p-20 relative z-10">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-16">
                   <div className="flex-1 space-y-8">
-                    <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-primary/25 border border-primary/40 text-sm font-bold text-primary shadow-lg backdrop-blur-sm">
+                    <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-primary/25 border border-primary/40 text-sm font-bold shadow-lg backdrop-blur-sm text-secondary-foreground">
                       <Sparkles className="h-5 w-5 animate-pulse" />
                       Revolutionary Technology
                     </div>
