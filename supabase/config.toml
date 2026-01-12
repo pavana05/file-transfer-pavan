@@ -70,3 +70,6 @@ verify_jwt = false
 
 [functions.send-expiration-reminder]
 verify_jwt = false
+
+[functions.ai-chat]
+verify_jwt = false

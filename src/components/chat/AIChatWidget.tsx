@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Bot, User, Sparkles, Minimize2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Sparkles, Minimize2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface Message {
   id: string;
@@ -20,24 +21,7 @@ const quickReplies = [
   "Pricing information",
 ];
 
-const botResponses: Record<string, string> = {
-  "upload": "To upload files, simply drag and drop them into the upload zone on the home page, or click to browse your files. You can upload multiple files at once!",
-  "size": "File size limits depend on your plan:\n• Free: Up to 100MB per file\n• Pro: Up to 500MB per file\n• Business: Up to 2GB per file",
-  "share": "All files are shared with a unique PIN and link. You can also add password protection for extra security. Simply copy the share link and send it to anyone!",
-  "price": "We offer flexible pricing:\n• Trial: ₹29 for basic features\n• Pro: ₹99 for larger files\n• Business: ₹249 for maximum storage\n\nVisit our pricing page for more details!",
-  "help": "I'm here to help! You can ask me about:\n• File uploads and sharing\n• Account and billing\n• Security features\n• Technical support\n\nWhat would you like to know?",
-  "default": "Thanks for your message! Our team will get back to you shortly. In the meantime, you can check our FAQ section or try asking about file uploads, sharing, or pricing."
-};
-
-const getAIResponse = (message: string): string => {
-  const lower = message.toLowerCase();
-  if (lower.includes('upload') || lower.includes('file')) return botResponses.upload;
-  if (lower.includes('size') || lower.includes('limit')) return botResponses.size;
-  if (lower.includes('share') || lower.includes('secure') || lower.includes('link')) return botResponses.share;
-  if (lower.includes('price') || lower.includes('cost') || lower.includes('plan')) return botResponses.price;
-  if (lower.includes('help') || lower.includes('support')) return botResponses.help;
-  return botResponses.default;
-};
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
 
 export const AIChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +35,7 @@ export const AIChatWidget = () => {
     }
   ]);
   const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -67,9 +51,108 @@ export const AIChatWidget = () => {
     }
   }, [isOpen]);
 
+  const streamChat = useCallback(async (userMessages: Message[]) => {
+    try {
+      const response = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          messages: userMessages.map(m => ({ role: m.role, content: m.content })),
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to get response');
+      }
+
+      if (!response.body) {
+        throw new Error('No response body');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let assistantContent = "";
+
+      // Add initial empty assistant message
+      const assistantId = Date.now().toString();
+      setMessages(prev => [...prev, {
+        id: assistantId,
+        role: 'assistant',
+        content: '',
+        timestamp: new Date(),
+      }]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
+              setMessages(prev => prev.map(m => 
+                m.id === assistantId ? { ...m, content: assistantContent } : m
+              ));
+            }
+          } catch {
+            // Incomplete JSON, re-buffer
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
+      }
+
+      // Final flush
+      if (textBuffer.trim()) {
+        for (let raw of textBuffer.split("\n")) {
+          if (!raw) continue;
+          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+          if (raw.startsWith(":") || raw.trim() === "") continue;
+          if (!raw.startsWith("data: ")) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
+              setMessages(prev => prev.map(m => 
+                m.id === assistantId ? { ...m, content: assistantContent } : m
+              ));
+            }
+          } catch { /* ignore */ }
+        }
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to get AI response');
+      throw error;
+    }
+  }, []);
+
   const handleSend = async (text?: string) => {
     const messageText = text || input.trim();
-    if (!messageText) return;
+    if (!messageText || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -78,22 +161,18 @@ export const AIChatWidget = () => {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput('');
-    setIsTyping(true);
+    setIsLoading(true);
 
-    // Simulate AI thinking
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-
-    const aiResponse: Message = {
-      id: (Date.now() + 1).toString(),
-      role: 'assistant',
-      content: getAIResponse(messageText),
-      timestamp: new Date(),
-    };
-
-    setIsTyping(false);
-    setMessages(prev => [...prev, aiResponse]);
+    try {
+      await streamChat(updatedMessages);
+    } catch {
+      // Error already handled in streamChat
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -141,7 +220,6 @@ export const AIChatWidget = () => {
               opacity: 1, 
               y: 0, 
               scale: 1,
-              height: isMinimized ? 'auto' : 'auto'
             }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
@@ -163,7 +241,7 @@ export const AIChatWidget = () => {
                     AI Assistant
                     <Sparkles className="h-3.5 w-3.5" />
                   </h3>
-                  <p className="text-xs text-white/80">Always here to help</p>
+                  <p className="text-xs text-white/80">Powered by Gemini</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -202,7 +280,7 @@ export const AIChatWidget = () => {
                           key={message.id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
+                          transition={{ delay: index * 0.02 }}
                           className={cn(
                             "flex gap-2",
                             message.role === 'user' ? 'justify-end' : 'justify-start'
@@ -221,7 +299,7 @@ export const AIChatWidget = () => {
                                 : 'bg-muted text-foreground rounded-bl-md'
                             )}
                           >
-                            <p className="whitespace-pre-wrap">{message.content}</p>
+                            <p className="whitespace-pre-wrap">{message.content || '...'}</p>
                           </div>
                           {message.role === 'user' && (
                             <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center shrink-0">
@@ -231,8 +309,8 @@ export const AIChatWidget = () => {
                         </motion.div>
                       ))}
 
-                      {/* Typing indicator */}
-                      {isTyping && (
+                      {/* Loading indicator */}
+                      {isLoading && messages[messages.length - 1]?.role === 'user' && (
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -242,11 +320,7 @@ export const AIChatWidget = () => {
                             <Bot className="h-4 w-4 text-primary" />
                           </div>
                           <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-                            <div className="flex gap-1">
-                              <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                              <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                              <span className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                            </div>
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                           </div>
                         </motion.div>
                       )}
@@ -260,7 +334,8 @@ export const AIChatWidget = () => {
                         <button
                           key={reply}
                           onClick={() => handleSend(reply)}
-                          className="text-xs px-3 py-1.5 rounded-full bg-primary/5 hover:bg-primary/10 text-primary border border-primary/20 transition-colors"
+                          disabled={isLoading}
+                          className="text-xs px-3 py-1.5 rounded-full bg-primary/5 hover:bg-primary/10 text-primary border border-primary/20 transition-colors disabled:opacity-50"
                         >
                           {reply}
                         </button>
@@ -277,15 +352,20 @@ export const AIChatWidget = () => {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={handleKeyPress}
                         placeholder="Type your message..."
+                        disabled={isLoading}
                         className="flex-1 bg-background border-border/50 focus-visible:ring-primary/30"
                       />
                       <Button
                         onClick={() => handleSend()}
-                        disabled={!input.trim() || isTyping}
+                        disabled={!input.trim() || isLoading}
                         size="icon"
                         className="shrink-0"
                       >
-                        <Send className="h-4 w-4" />
+                        {isLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Send className="h-4 w-4" />
+                        )}
                       </Button>
                     </div>
                     <p className="text-[10px] text-muted-foreground text-center mt-2">

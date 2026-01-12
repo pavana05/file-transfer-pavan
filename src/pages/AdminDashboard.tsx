@@ -7,7 +7,8 @@ import {
   CheckCircle, XCircle, Clock, IndianRupee, Activity,
   BarChart3, PieChart, Calendar, RefreshCw, Shield,
   Crown, Zap, Building2, ChevronDown, ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight, FileSpreadsheet, Table as TableIcon,
+  Lock, AlertTriangle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -23,6 +24,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import {
   Select,
@@ -32,19 +34,19 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
+  ResponsiveContainer, BarChart, Bar, PieChart as RechartsPie, 
+  Pie, Cell, Legend
+} from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
-
-interface User {
-  id: string;
-  email: string;
-  created_at: string;
-  display_name?: string;
-  total_files?: number;
-  total_purchases?: number;
-}
+import { format, subDays, startOfDay, parseISO } from 'date-fns';
+import { 
+  exportPaymentsToCSV, exportPaymentsToExcel, 
+  exportFilesToCSV, exportFilesToExcel 
+} from '@/lib/export-utils';
 
 interface Payment {
   id: string;
@@ -78,13 +80,23 @@ interface Stats {
   recentRevenueGrowth: number;
 }
 
+interface ChartData {
+  date: string;
+  revenue: number;
+  uploads: number;
+  downloads: number;
+}
+
+const COLORS = ['hsl(217, 91%, 45%)', 'hsl(152, 76%, 48%)', 'hsl(38, 92%, 50%)', 'hsl(280, 70%, 50%)'];
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { isAdmin, isLoading: authLoading, user } = useAdminAccess();
   const [activeTab, setActiveTab] = useState('overview');
-  const [users, setUsers] = useState<User[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [files, setFiles] = useState<FileRecord[]>([]);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [planDistribution, setPlanDistribution] = useState<{name: string; value: number}[]>([]);
   const [stats, setStats] = useState<Stats>({
     totalUsers: 0,
     totalRevenue: 0,
@@ -98,8 +110,10 @@ const AdminDashboard = () => {
   const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    if (!authLoading && user) {
+      loadDashboardData();
+    }
+  }, [authLoading, user]);
 
   const loadDashboardData = async () => {
     setLoading(true);
@@ -133,7 +147,7 @@ const AdminDashboard = () => {
       const totalRevenue = completedPayments.reduce((sum, p) => sum + (p.amount_inr || 0), 0);
       const totalDownloads = (filesData || []).reduce((sum, f) => sum + (f.download_count || 0), 0);
       
-      // Get unique users from payments and files
+      // Get unique users
       const uniqueUserIds = new Set([
         ...processedPayments.map(p => p.user_id),
         ...(filesData || []).map(f => f.user_id)
@@ -147,6 +161,51 @@ const AdminDashboard = () => {
         recentUsersGrowth: 12.5,
         recentRevenueGrowth: 23.1,
       });
+
+      // Generate chart data for last 7 days
+      const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const date = subDays(new Date(), 6 - i);
+        const dateStr = format(date, 'yyyy-MM-dd');
+        const dayStart = startOfDay(date);
+        
+        const dayRevenue = processedPayments
+          .filter(p => {
+            const pDate = startOfDay(parseISO(p.created_at));
+            return pDate.getTime() === dayStart.getTime() && p.status === 'completed';
+          })
+          .reduce((sum, p) => sum + (p.amount_inr || 0), 0);
+
+        const dayUploads = (filesData || [])
+          .filter(f => {
+            const fDate = startOfDay(parseISO(f.upload_date));
+            return fDate.getTime() === dayStart.getTime();
+          }).length;
+
+        const dayDownloads = (filesData || [])
+          .filter(f => {
+            const fDate = startOfDay(parseISO(f.upload_date));
+            return fDate.getTime() === dayStart.getTime();
+          })
+          .reduce((sum, f) => sum + (f.download_count || 0), 0);
+
+        return {
+          date: format(date, 'MMM dd'),
+          revenue: dayRevenue / 100,
+          uploads: dayUploads,
+          downloads: dayDownloads,
+        };
+      });
+
+      setChartData(last7Days);
+
+      // Calculate plan distribution
+      const planCounts: Record<string, number> = {};
+      completedPayments.forEach(p => {
+        planCounts[p.plan_name] = (planCounts[p.plan_name] || 0) + 1;
+      });
+      
+      const distribution = Object.entries(planCounts).map(([name, value]) => ({ name, value }));
+      setPlanDistribution(distribution);
 
     } catch (error) {
       console.error('Error loading dashboard:', error);
@@ -199,12 +258,89 @@ const AdminDashboard = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const handleExportPayments = (format: 'csv' | 'excel') => {
+    const exportData = filteredPayments.map(p => ({
+      id: p.id,
+      plan_name: p.plan_name,
+      amount_inr: p.amount_inr,
+      status: p.status,
+      razorpay_payment_id: p.razorpay_payment_id,
+      created_at: p.created_at,
+    }));
+
+    if (format === 'csv') {
+      exportPaymentsToCSV(exportData);
+      toast.success('Payments exported to CSV');
+    } else {
+      exportPaymentsToExcel(exportData);
+      toast.success('Payments exported to Excel');
+    }
+  };
+
+  const handleExportFiles = (format: 'csv' | 'excel') => {
+    const exportData = files.map(f => ({
+      id: f.id,
+      filename: f.filename,
+      file_size: f.file_size,
+      file_type: f.file_type,
+      download_count: f.download_count,
+      upload_date: f.upload_date,
+    }));
+
+    if (format === 'csv') {
+      exportFilesToCSV(exportData);
+      toast.success('Files exported to CSV');
+    } else {
+      exportFilesToExcel(exportData);
+      toast.success('Files exported to Excel');
+    }
+  };
+
+  // Show loading state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <RefreshCw className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-muted-foreground">Verifying access...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show access denied if not admin
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardContent className="pt-6 text-center space-y-4">
+            <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+              <Lock className="h-8 w-8 text-destructive" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">Access Denied</h2>
+              <p className="text-muted-foreground mt-2">
+                You don't have permission to access the admin dashboard.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+              <Button variant="outline" onClick={() => navigate('/')}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Go Home
+              </Button>
+              <Button onClick={() => navigate('/contact')}>
+                Contact Support
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
 
   const itemVariants = {
@@ -225,12 +361,7 @@ const AdminDashboard = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/')}
-                className="shrink-0"
-              >
+              <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div className="flex items-center gap-3">
@@ -252,7 +383,7 @@ const AdminDashboard = () => {
                 className="gap-2"
               >
                 <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                Refresh
+                <span className="hidden sm:inline">Refresh</span>
               </Button>
               <ThemeToggle />
             </div>
@@ -261,12 +392,7 @@ const AdminDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-8"
-        >
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
           {/* Stats Grid */}
           <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Total Users */}
@@ -280,7 +406,6 @@ const AdminDashboard = () => {
                     <div className="flex items-center gap-1 text-xs">
                       <ArrowUpRight className="h-3 w-3 text-success" />
                       <span className="text-success font-medium">+{stats.recentUsersGrowth}%</span>
-                      <span className="text-muted-foreground">vs last month</span>
                     </div>
                   </div>
                   <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -301,7 +426,6 @@ const AdminDashboard = () => {
                     <div className="flex items-center gap-1 text-xs">
                       <ArrowUpRight className="h-3 w-3 text-success" />
                       <span className="text-success font-medium">+{stats.recentRevenueGrowth}%</span>
-                      <span className="text-muted-foreground">vs last month</span>
                     </div>
                   </div>
                   <div className="h-12 w-12 rounded-2xl bg-success/10 flex items-center justify-center">
@@ -347,6 +471,103 @@ const AdminDashboard = () => {
                   <div className="h-12 w-12 rounded-2xl bg-purple-500/10 flex items-center justify-center">
                     <Download className="h-6 w-6 text-purple-500" />
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Charts Section */}
+          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Revenue & Activity Chart */}
+            <Card className="lg:col-span-2 border-border/50">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                  Revenue & Activity (Last 7 Days)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(217, 91%, 45%)" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(217, 91%, 45%)" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="colorUploads" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(152, 76%, 48%)" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(152, 76%, 48%)" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'hsl(var(--card))', 
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px'
+                        }}
+                      />
+                      <Legend />
+                      <Area 
+                        type="monotone" 
+                        dataKey="revenue" 
+                        stroke="hsl(217, 91%, 45%)" 
+                        fillOpacity={1} 
+                        fill="url(#colorRevenue)"
+                        name="Revenue (₹)"
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="uploads" 
+                        stroke="hsl(152, 76%, 48%)" 
+                        fillOpacity={1} 
+                        fill="url(#colorUploads)"
+                        name="Uploads"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Plan Distribution */}
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <PieChart className="h-5 w-5 text-primary" />
+                  Plan Distribution
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  {planDistribution.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPie>
+                        <Pie
+                          data={planDistribution}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={100}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {planDistribution.map((_, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </RechartsPie>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-muted-foreground">
+                      No data available
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -447,7 +668,7 @@ const AdminDashboard = () => {
                   </Card>
                 </div>
 
-                {/* Quick Stats */}
+                {/* Platform Health */}
                 <Card className="border-border/50">
                   <CardHeader>
                     <CardTitle className="text-lg">Platform Health</CardTitle>
@@ -497,14 +718,14 @@ const AdminDashboard = () => {
                         <CardTitle>All Payments</CardTitle>
                         <CardDescription>Manage and track all payment transactions</CardDescription>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3">
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                           <Input
-                            placeholder="Search payments..."
+                            placeholder="Search..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9 w-64"
+                            className="pl-9 w-48"
                           />
                         </div>
                         <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -518,11 +739,29 @@ const AdminDashboard = () => {
                             <SelectItem value="failed">Failed</SelectItem>
                           </SelectContent>
                         </Select>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="gap-2">
+                              <Download className="h-4 w-4" />
+                              Export
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => handleExportPayments('csv')}>
+                              <TableIcon className="h-4 w-4 mr-2" />
+                              Export as CSV
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExportPayments('excel')}>
+                              <FileSpreadsheet className="h-4 w-4 mr-2" />
+                              Export as Excel
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="rounded-lg border border-border/50 overflow-hidden">
+                    <div className="rounded-lg border border-border/50 overflow-hidden overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-muted/30">
@@ -544,14 +783,14 @@ const AdminDashboard = () => {
                                 </div>
                               </TableCell>
                               <TableCell className="font-mono text-xs">
-                                {payment.razorpay_payment_id?.slice(0, 20) || 'N/A'}
+                                {payment.razorpay_payment_id?.slice(0, 18) || 'N/A'}
                               </TableCell>
                               <TableCell className="font-semibold">
                                 {formatCurrency(payment.amount_inr)}
                               </TableCell>
                               <TableCell>{getStatusBadge(payment.status)}</TableCell>
                               <TableCell className="text-muted-foreground">
-                                {format(new Date(payment.created_at), 'MMM dd, yyyy HH:mm')}
+                                {format(new Date(payment.created_at), 'MMM dd, yyyy')}
                               </TableCell>
                               <TableCell className="text-right">
                                 <DropdownMenu>
@@ -597,17 +836,34 @@ const AdminDashboard = () => {
                         <CardTitle>All Files</CardTitle>
                         <CardDescription>View and manage uploaded files</CardDescription>
                       </div>
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search files..."
-                          className="pl-9 w-64"
-                        />
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input placeholder="Search files..." className="pl-9 w-48" />
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="gap-2">
+                              <Download className="h-4 w-4" />
+                              Export
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => handleExportFiles('csv')}>
+                              <TableIcon className="h-4 w-4 mr-2" />
+                              Export as CSV
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExportFiles('excel')}>
+                              <FileSpreadsheet className="h-4 w-4 mr-2" />
+                              Export as Excel
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="rounded-lg border border-border/50 overflow-hidden">
+                    <div className="rounded-lg border border-border/50 overflow-hidden overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-muted/30">
@@ -657,6 +913,7 @@ const AdminDashboard = () => {
                                       <Eye className="h-4 w-4 mr-2" />
                                       Preview
                                     </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
                                     <DropdownMenuItem className="text-destructive">
                                       <Ban className="h-4 w-4 mr-2" />
                                       Remove
