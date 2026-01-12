@@ -10,6 +10,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "@/components/animations/PageTransition";
+import { AIChatWidget } from "@/components/chat/AIChatWidget";
 import Index from "./pages/Index";
 import FileShare from "./pages/FileShare";
 import CollectionShare from "./pages/CollectionShare";
@@ -22,6 +23,7 @@ import Pricing from "./pages/Pricing";
 import Profile from "./pages/Profile";
 import PaymentHistory from "./pages/PaymentHistory";
 import Contact from "./pages/Contact";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -72,6 +74,14 @@ const AnimatedRoutes = () => {
             </AuthGuard>
           } 
         />
+        <Route 
+          path="/admin" 
+          element={
+            <AuthGuard>
+              <PageTransition><AdminDashboard /></PageTransition>
+            </AuthGuard>
+          } 
+        />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
@@ -90,6 +100,7 @@ const App = () => {
                 <Toaster />
                 <Sonner />
                 <AnimatedRoutes />
+                <AIChatWidget />
               </BrowserRouter>
             </AuthProvider>
           </TooltipProvider>
