@@ -21,6 +21,7 @@ import Install from "./pages/Install";
 import Pricing from "./pages/Pricing";
 import Profile from "./pages/Profile";
 import PaymentHistory from "./pages/PaymentHistory";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -46,6 +47,7 @@ const AnimatedRoutes = () => {
         <Route path="/scan" element={<PageTransition><ScanQR /></PageTransition>} />
         <Route path="/install" element={<PageTransition><Install /></PageTransition>} />
         <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route 
           path="/dashboard" 
           element={
