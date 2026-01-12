@@ -6,13 +6,14 @@ import { Clock, Upload, CheckCircle, AlertCircle } from 'lucide-react';
 import { UploadStats as IUploadStats } from '@/types/upload';
 import { formatFileSize, formatDuration } from '@/lib/file-utils';
 import { cn } from '@/lib/utils';
-
 interface UploadStatsProps {
   stats: IUploadStats;
   className?: string;
 }
-
-export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) => {
+export const UploadStats: React.FC<UploadStatsProps> = ({
+  stats,
+  className
+}) => {
   const {
     totalFiles,
     completedFiles,
@@ -23,20 +24,12 @@ export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) =>
     estimatedTimeRemaining,
     errors
   } = stats;
-
-  return (
-    <Card className={cn("p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass", className)}>
+  return <Card className={cn("p-8 bg-gradient-glass border border-border/50 backdrop-blur-sm rounded-2xl shadow-glass", className)}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Upload Progress</h3>
-          <Badge 
-            variant={overallProgress === 100 ? "default" : "secondary"}
-            className={cn(
-              "px-3 py-1 rounded-full font-medium",
-              overallProgress === 100 && "bg-gradient-success text-white shadow-glow"
-            )}
-          >
+          <Badge variant={overallProgress === 100 ? "default" : "secondary"} className={cn("px-3 py-1 rounded-full font-medium", overallProgress === 100 && "bg-gradient-success text-white shadow-glow")}>
             {completedFiles}/{totalFiles} files
           </Badge>
         </div>
@@ -48,13 +41,10 @@ export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) =>
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">{Math.round(overallProgress)}%</span>
           </div>
           <div className="relative">
-            <Progress 
-              value={overallProgress} 
-              className="h-4 bg-muted/50 rounded-full shadow-inner"
-            />
-            <div className="absolute top-0 left-0 h-4 bg-gradient-primary rounded-full shadow-glow opacity-20 animate-pulse" 
-                 style={{ width: `${overallProgress}%` }}
-            ></div>
+            <Progress value={overallProgress} className="h-4 bg-muted/50 rounded-full shadow-inner" />
+            <div className="absolute top-0 left-0 h-4 bg-gradient-primary rounded-full shadow-glow opacity-20 animate-pulse" style={{
+            width: `${overallProgress}%`
+          }}></div>
           </div>
         </div>
 
@@ -74,15 +64,7 @@ export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) =>
           </div>
 
           {/* Upload Speed */}
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Upload className="w-4 h-4" />
-              <span>Speed</span>
-            </div>
-            <div className="text-lg font-semibold">
-              {uploadSpeed > 0 ? `${formatFileSize(uploadSpeed)}/s` : '--'}
-            </div>
-          </div>
+          
 
           {/* Completed Files */}
           <div className="space-y-1">
@@ -96,40 +78,22 @@ export const UploadStats: React.FC<UploadStatsProps> = ({ stats, className }) =>
           </div>
 
           {/* Time Remaining */}
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="w-4 h-4" />
-              <span>Time Left</span>
-            </div>
-            <div className="text-lg font-semibold">
-              {estimatedTimeRemaining > 0 && overallProgress < 100
-                ? formatDuration(estimatedTimeRemaining)
-                : '--'
-              }
-            </div>
-          </div>
+          
         </div>
 
         {/* Error Count */}
-        {errors > 0 && (
-          <div className="flex items-center gap-2 p-3 bg-destructive/5 rounded-lg">
+        {errors > 0 && <div className="flex items-center gap-2 p-3 bg-destructive/5 rounded-lg">
             <AlertCircle className="w-5 h-5 text-destructive" />
             <span className="text-sm text-destructive font-medium">
               {errors} file{errors !== 1 ? 's' : ''} failed to upload
             </span>
-          </div>
-        )}
+          </div>}
 
         {/* Completion Status */}
-        {overallProgress === 100 && errors === 0 && (
-          <div className="flex items-center gap-2 p-3 bg-success/5 rounded-lg">
+        {overallProgress === 100 && errors === 0 && <div className="flex items-center gap-2 p-3 bg-success/5 rounded-lg">
             <CheckCircle className="w-5 h-5 text-success" />
-            <span className="text-sm text-success font-medium">
-              All files uploaded successfully!
-            </span>
-          </div>
-        )}
+            <span className="text-sm text-success font-medium">All files uploaded successfully! 🎉 </span>
+          </div>}
       </div>
-    </Card>
-  );
+    </Card>;
 };
