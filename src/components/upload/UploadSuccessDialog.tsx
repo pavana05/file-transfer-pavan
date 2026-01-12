@@ -149,7 +149,7 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
                     Copy PIN
                   </Button>
                   
-                  <p className="text-[10px] sm:text-xs text-muted-foreground bg-background/50 px-3 py-2 rounded-lg border border-border/40">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground bg-background/50 px-3 py-2 rounded-lg border border-border/40 font-mono font-extrabold">
                     💡 Access at <span className="font-mono text-primary font-semibold">/pin</span> with this code
                   </p>
                   
