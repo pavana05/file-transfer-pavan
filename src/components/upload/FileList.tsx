@@ -236,36 +236,65 @@ export const FileList: React.FC<FileListProps> = ({
                   </div>
                 </div>}
 
-              {/* Share Link */}
-              {file.status === 'completed' && file.url && <div className="mt-3 group/share relative overflow-hidden">
-                  {/* Gradient background with subtle animation */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-success/5 via-success/10 to-success/5 rounded-xl opacity-80"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-xl transform -skew-x-12 translate-x-[-100%] group-hover/share:translate-x-[200%] transition-transform duration-1000"></div>
+              {/* Share Link - Premium Design */}
+              {file.status === 'completed' && file.url && <div className="mt-4 group/share relative overflow-hidden">
+                  {/* Animated gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-success/10 via-emerald-500/5 to-success/10 rounded-2xl opacity-80"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-2xl transform -skew-x-12 translate-x-[-100%] group-hover/share:translate-x-[200%] transition-transform duration-1000"></div>
                   
-                  <div className="relative flex items-center gap-3 p-4 border border-success/20 rounded-xl backdrop-blur-sm hover:border-success/40 transition-all duration-300 hover:shadow-lg hover:shadow-success/10">
-                    {/* Enhanced icon with glow effect */}
-                    <div className="relative">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-success to-success/80 flex items-center justify-center shadow-lg group-hover/share:shadow-success/25 transition-all duration-300 group-hover/share:scale-110">
-                        <Share className="w-5 h-5 text-white drop-shadow-sm" />
-                      </div>
-                      <div className="absolute inset-0 rounded-xl bg-success/20 blur-sm group-hover/share:bg-success/40 transition-all duration-300"></div>
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-foreground font-semibold block text-base font-mono text-justify my-0 mx-0">Ready to share 🎉 </span>
-                        <div className="flex-1 h-px bg-gradient-to-r from-success/30 to-transparent"></div>
-                      </div>
-                      <div className="relative group/input">
+                  <div className="relative p-4 sm:p-5 border border-success/25 rounded-2xl backdrop-blur-sm hover:border-success/50 transition-all duration-300 hover:shadow-xl hover:shadow-success/10">
+                    {/* Header Row */}
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <div className="flex items-center gap-3">
+                        {/* Enhanced icon with glow effect */}
+                        <div className="relative flex-shrink-0">
+                          <div className="absolute inset-0 rounded-xl bg-success/30 blur-lg group-hover/share:bg-success/50 transition-all duration-300"></div>
+                          <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-success via-emerald-500 to-success/80 flex items-center justify-center shadow-lg group-hover/share:shadow-success/40 transition-all duration-300 group-hover/share:scale-105">
+                            <Share className="w-5 h-5 text-white drop-shadow-sm" />
+                          </div>
+                        </div>
                         
-                        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-success/5 to-transparent opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-foreground font-bold text-base sm:text-lg">Ready to share</span>
+                            <span className="text-lg">🎉</span>
+                          </div>
+                          <span className="text-xs text-success/80 font-medium">File uploaded successfully</span>
+                        </div>
+                      </div>
+                      
+                      {/* Copy Button - Desktop */}
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        onClick={() => copyShareLink(file.url!)} 
+                        className="hidden sm:flex h-10 px-5 bg-gradient-to-r from-success to-emerald-500 hover:from-success/90 hover:to-emerald-500/90 text-white border-0 shadow-lg shadow-success/25 hover:shadow-success/40 transition-all duration-300 hover:scale-105 font-semibold"
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy Link
+                      </Button>
+                    </div>
+                    
+                    {/* URL Display Box */}
+                    <div className="relative group/url">
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-success/5 via-transparent to-success/5 opacity-0 group-hover/url:opacity-100 transition-opacity duration-300"></div>
+                      <div className="relative flex items-center gap-2 p-3 sm:p-3.5 bg-background/60 dark:bg-background/40 border border-border/50 rounded-xl">
+                        <Globe className="w-4 h-4 text-success/70 flex-shrink-0" />
+                        <p className="text-xs sm:text-sm font-mono text-muted-foreground truncate flex-1 select-all">
+                          {file.url}
+                        </p>
                       </div>
                     </div>
                     
-                    <Button variant="outline" size="sm" onClick={() => copyShareLink(file.url!)} className="h-10 border-success/30 hover:border-success/50 hover:bg-success/10 hover:text-success transition-all duration-300 hover:scale-105 hover:shadow-md group/copy relative overflow-hidden mx-[20px] px-[20px] mt-0 ml-[35px] mr-0">
-                      <div className="absolute inset-0 bg-gradient-to-r from-success/10 to-transparent opacity-0 group-hover/copy:opacity-100 transition-opacity duration-300 mx-[10px]"></div>
-                      <Copy className="w-4 h-4 mr-2 relative z-10" />
-                      <span className="relative z-10 font-medium">Copy Link</span>
+                    {/* Copy Button - Mobile */}
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      onClick={() => copyShareLink(file.url!)} 
+                      className="sm:hidden w-full mt-3 h-11 bg-gradient-to-r from-success to-emerald-500 hover:from-success/90 hover:to-emerald-500/90 text-white border-0 shadow-lg shadow-success/25 font-semibold"
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy Share Link
                     </Button>
                   </div>
                 </div>}
