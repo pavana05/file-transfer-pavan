@@ -173,7 +173,7 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[calc(100%-1.5rem)] max-w-md sm:max-w-lg mx-auto p-0 border-0 bg-transparent shadow-none overflow-visible">
+      <DialogContent className="w-[calc(100%-1.5rem)] max-w-md sm:max-w-lg mx-auto p-0 border-0 bg-transparent shadow-none max-h-[90vh] overflow-hidden">
         <AnimatePresence mode="wait">
           {isOpen && (
             <motion.div
@@ -181,7 +181,7 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="relative bg-card/95 backdrop-blur-2xl border border-border/50 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
+              className="relative bg-card/95 backdrop-blur-2xl border border-border/50 rounded-2xl sm:rounded-3xl shadow-2xl max-h-[85vh] overflow-hidden flex flex-col"
             >
               {/* Gradient Border Effect */}
               <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary/20 via-transparent to-accent/20 pointer-events-none" />
@@ -217,8 +217,8 @@ const UploadSuccessDialog: React.FC<UploadSuccessDialogProps> = ({
               <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,_hsl(var(--foreground))_1px,_transparent_0)] bg-[size:20px_20px] pointer-events-none" />
               
               {/* Content */}
-              <div className="relative p-5 sm:p-8">
-                <DialogHeader className="mb-5 sm:mb-8">
+              <div className="relative p-5 sm:p-8 overflow-y-auto max-h-[80vh] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+                <DialogHeader className="mb-5 sm:mb-8 flex-shrink-0">
                   <motion.div variants={itemVariants} className="flex flex-col items-center text-center gap-4">
                     {/* Success Icon */}
                     <motion.div variants={iconVariants} className="relative">
