@@ -27,6 +27,7 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
   const { toast } = useToast();
@@ -57,15 +58,40 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    toast({
-      title: "Message sent!",
-      description: "We'll get back to you as soon as possible."
-    });
+    try {
+      // Call edge function to send email
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          category: formData.category,
+          message: formData.message
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log('Contact form submitted successfully:', data);
+      
+      setIsSubmitted(true);
+      
+      toast({
+        title: "Message sent!",
+        description: "We've sent you a confirmation email. We'll get back to you within 24-48 hours."
+      });
+    } catch (error: any) {
+      console.error('Error submitting contact form:', error);
+      toast({
+        title: "Failed to send message",
+        description: error.message || "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const containerVariants = {
