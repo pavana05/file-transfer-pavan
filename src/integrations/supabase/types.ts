@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_submissions: {
+        Row: {
+          admin_notes: string | null
+          category: string
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          replied_at: string | null
+          status: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          category?: string
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          replied_at?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          category?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          replied_at?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       file_analytics: {
         Row: {
           accessed_at: string
@@ -563,35 +605,20 @@ export type Database = {
           user_id: string
         }[]
       }
-      insert_file_with_password:
-        | {
-            Args: {
-              p_file_size: number
-              p_file_type: string
-              p_filename: string
-              p_original_name: string
-              p_password?: string
-              p_share_pin: string
-              p_share_token: string
-              p_storage_path: string
-              p_user_id: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              p_file_size: number
-              p_file_type: string
-              p_filename: string
-              p_original_name: string
-              p_password?: string
-              p_share_pin: string
-              p_share_token: string
-              p_storage_path: string
-              p_user_id: string
-            }
-            Returns: string
-          }
+      insert_file_with_password: {
+        Args: {
+          p_file_size: number
+          p_file_type: string
+          p_filename: string
+          p_original_name: string
+          p_password?: string
+          p_share_pin: string
+          p_share_token: string
+          p_storage_path: string
+          p_user_id?: string
+        }
+        Returns: string
+      }
       log_file_access: {
         Args: {
           p_event_type: string
