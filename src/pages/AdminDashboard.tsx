@@ -8,13 +8,15 @@ import {
   BarChart3, PieChart, Calendar, RefreshCw, Shield,
   Crown, Zap, Building2, ChevronDown, ArrowUpRight,
   ArrowDownRight, FileSpreadsheet, Table as TableIcon,
-  Lock, AlertTriangle
+  Lock, AlertTriangle, Mail, MessageSquare, Reply,
+  Inbox, CheckCheck, Archive, Trash2, Send
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Textarea } from '@/components/ui/textarea';
 import { 
   Table, TableBody, TableCell, TableHead, 
   TableHeader, TableRow 
@@ -33,6 +35,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
@@ -63,12 +73,31 @@ interface Payment {
 interface FileRecord {
   id: string;
   filename: string;
+  original_name: string;
   file_size: number;
   file_type: string;
   user_id: string;
   user_email?: string;
   download_count: number;
   upload_date: string;
+  share_pin: string;
+  share_token: string;
+  is_public: boolean;
+  password_hash: string | null;
+}
+
+interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  subject: string | null;
+  category: string;
+  message: string;
+  status: string;
+  admin_notes: string | null;
+  replied_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Stats {
@@ -76,6 +105,8 @@ interface Stats {
   totalRevenue: number;
   totalFiles: number;
   totalDownloads: number;
+  totalContacts: number;
+  pendingContacts: number;
   recentUsersGrowth: number;
   recentRevenueGrowth: number;
 }
@@ -95,6 +126,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [payments, setPayments] = useState<Payment[]>([]);
   const [files, setFiles] = useState<FileRecord[]>([]);
+  const [contacts, setContacts] = useState<ContactSubmission[]>([]);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [planDistribution, setPlanDistribution] = useState<{name: string; value: number}[]>([]);
   const [stats, setStats] = useState<Stats>({
@@ -102,12 +134,18 @@ const AdminDashboard = () => {
     totalRevenue: 0,
     totalFiles: 0,
     totalDownloads: 0,
+    totalContacts: 0,
+    pendingContacts: 0,
     recentUsersGrowth: 12.5,
     recentRevenueGrowth: 23.1,
   });
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [contactStatusFilter, setContactStatusFilter] = useState('all');
+  const [selectedContact, setSelectedContact] = useState<ContactSubmission | null>(null);
+  const [adminNotes, setAdminNotes] = useState('');
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -119,7 +157,7 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       // Load payments with plan info
-      const { data: paymentsData } = await supabase
+      const { data: paymentsData, error: paymentsError } = await supabase
         .from('premium_purchases')
         .select(`
           *,
@@ -127,11 +165,29 @@ const AdminDashboard = () => {
         `)
         .order('created_at', { ascending: false });
 
+      if (paymentsError) {
+        console.error('Error loading payments:', paymentsError);
+      }
+
       // Load files
-      const { data: filesData } = await supabase
+      const { data: filesData, error: filesError } = await supabase
         .from('uploaded_files')
         .select('*')
         .order('upload_date', { ascending: false });
+
+      if (filesError) {
+        console.error('Error loading files:', filesError);
+      }
+
+      // Load contact submissions
+      const { data: contactsData, error: contactsError } = await supabase
+        .from('contact_submissions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (contactsError) {
+        console.error('Error loading contacts:', contactsError);
+      }
 
       // Process payments
       const processedPayments = (paymentsData || []).map(p => ({
@@ -141,16 +197,18 @@ const AdminDashboard = () => {
 
       setPayments(processedPayments);
       setFiles(filesData || []);
+      setContacts(contactsData || []);
 
       // Calculate stats
       const completedPayments = processedPayments.filter(p => p.status === 'completed');
       const totalRevenue = completedPayments.reduce((sum, p) => sum + (p.amount_inr || 0), 0);
       const totalDownloads = (filesData || []).reduce((sum, f) => sum + (f.download_count || 0), 0);
+      const pendingContacts = (contactsData || []).filter(c => c.status === 'new' || c.status === 'in_progress').length;
       
       // Get unique users
       const uniqueUserIds = new Set([
         ...processedPayments.map(p => p.user_id),
-        ...(filesData || []).map(f => f.user_id)
+        ...(filesData || []).filter(f => f.user_id).map(f => f.user_id)
       ]);
 
       setStats({
@@ -158,6 +216,8 @@ const AdminDashboard = () => {
         totalRevenue,
         totalFiles: filesData?.length || 0,
         totalDownloads,
+        totalContacts: contactsData?.length || 0,
+        pendingContacts,
         recentUsersGrowth: 12.5,
         recentRevenueGrowth: 23.1,
       });
@@ -244,6 +304,32 @@ const AdminDashboard = () => {
     }
   };
 
+  const getContactStatusBadge = (status: string) => {
+    switch (status) {
+      case 'new':
+        return <Badge className="bg-primary/10 text-primary border-primary/20"><Inbox className="h-3 w-3 mr-1" /> New</Badge>;
+      case 'in_progress':
+        return <Badge className="bg-warning/10 text-warning border-warning/20"><Clock className="h-3 w-3 mr-1" /> In Progress</Badge>;
+      case 'resolved':
+        return <Badge className="bg-success/10 text-success border-success/20"><CheckCheck className="h-3 w-3 mr-1" /> Resolved</Badge>;
+      case 'closed':
+        return <Badge className="bg-muted text-muted-foreground border-muted-foreground/20"><Archive className="h-3 w-3 mr-1" /> Closed</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
+  const getCategoryBadge = (category: string) => {
+    const categories: Record<string, { label: string; className: string }> = {
+      general: { label: 'General', className: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
+      support: { label: 'Support', className: 'bg-purple-500/10 text-purple-500 border-purple-500/20' },
+      bug: { label: 'Bug', className: 'bg-destructive/10 text-destructive border-destructive/20' },
+      feature: { label: 'Feature', className: 'bg-success/10 text-success border-success/20' },
+    };
+    const cat = categories[category] || { label: category, className: 'bg-muted text-muted-foreground' };
+    return <Badge className={cat.className}>{cat.label}</Badge>;
+  };
+
   const getPlanIcon = (plan: string) => {
     const lower = plan.toLowerCase();
     if (lower.includes('business')) return <Building2 className="h-4 w-4 text-purple-500" />;
@@ -255,6 +341,15 @@ const AdminDashboard = () => {
     const matchesSearch = p.razorpay_payment_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          p.plan_name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const filteredContacts = contacts.filter(c => {
+    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         c.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         c.message.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = contactStatusFilter === 'all' || c.status === contactStatusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -293,6 +388,116 @@ const AdminDashboard = () => {
     } else {
       exportFilesToExcel(exportData);
       toast.success('Files exported to Excel');
+    }
+  };
+
+  const handleViewContact = (contact: ContactSubmission) => {
+    setSelectedContact(contact);
+    setAdminNotes(contact.admin_notes || '');
+    setIsViewDialogOpen(true);
+  };
+
+  const handleUpdateContactStatus = async (contactId: string, newStatus: string) => {
+    try {
+      const updateData: any = { status: newStatus };
+      if (newStatus === 'resolved') {
+        updateData.replied_at = new Date().toISOString();
+      }
+
+      const { error } = await supabase
+        .from('contact_submissions')
+        .update(updateData)
+        .eq('id', contactId);
+
+      if (error) throw error;
+
+      setContacts(prev => prev.map(c => 
+        c.id === contactId ? { ...c, ...updateData } : c
+      ));
+      
+      if (selectedContact?.id === contactId) {
+        setSelectedContact(prev => prev ? { ...prev, ...updateData } : null);
+      }
+
+      toast.success(`Status updated to ${newStatus}`);
+    } catch (error) {
+      console.error('Error updating contact status:', error);
+      toast.error('Failed to update status');
+    }
+  };
+
+  const handleSaveNotes = async () => {
+    if (!selectedContact) return;
+
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .update({ admin_notes: adminNotes })
+        .eq('id', selectedContact.id);
+
+      if (error) throw error;
+
+      setContacts(prev => prev.map(c => 
+        c.id === selectedContact.id ? { ...c, admin_notes: adminNotes } : c
+      ));
+      setSelectedContact(prev => prev ? { ...prev, admin_notes: adminNotes } : null);
+
+      toast.success('Notes saved successfully');
+    } catch (error) {
+      console.error('Error saving notes:', error);
+      toast.error('Failed to save notes');
+    }
+  };
+
+  const handleDeleteContact = async (contactId: string) => {
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .delete()
+        .eq('id', contactId);
+
+      if (error) throw error;
+
+      setContacts(prev => prev.filter(c => c.id !== contactId));
+      if (selectedContact?.id === contactId) {
+        setIsViewDialogOpen(false);
+        setSelectedContact(null);
+      }
+
+      toast.success('Contact deleted successfully');
+    } catch (error) {
+      console.error('Error deleting contact:', error);
+      toast.error('Failed to delete contact');
+    }
+  };
+
+  const handleDeleteFile = async (fileId: string) => {
+    try {
+      const file = files.find(f => f.id === fileId);
+      if (!file) return;
+
+      // Delete from storage first
+      const { error: storageError } = await supabase.storage
+        .from('uploads')
+        .remove([`files/${file.filename}`]);
+
+      if (storageError) {
+        console.warn('Storage deletion failed:', storageError);
+      }
+
+      // Delete from database
+      const { error: dbError } = await supabase
+        .from('uploaded_files')
+        .delete()
+        .eq('id', fileId);
+
+      if (dbError) throw dbError;
+
+      setFiles(prev => prev.filter(f => f.id !== fileId));
+      toast.success('File deleted successfully');
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      toast.error('Failed to delete file');
     }
   };
 
@@ -375,6 +580,18 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {stats.pendingContacts > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setActiveTab('contacts')}
+                  className="gap-2 border-warning/50 text-warning hover:bg-warning/10"
+                >
+                  <Mail className="h-4 w-4" />
+                  <span className="hidden sm:inline">{stats.pendingContacts} Pending</span>
+                  <span className="sm:hidden">{stats.pendingContacts}</span>
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
@@ -394,7 +611,7 @@ const AdminDashboard = () => {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
           {/* Stats Grid */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {/* Total Users */}
             <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
@@ -470,6 +687,35 @@ const AdminDashboard = () => {
                   </div>
                   <div className="h-12 w-12 rounded-2xl bg-purple-500/10 flex items-center justify-center">
                     <Download className="h-6 w-6 text-purple-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Contact Submissions */}
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">Contact Messages</p>
+                    <p className="text-3xl font-bold">{stats.totalContacts.toLocaleString()}</p>
+                    <div className="flex items-center gap-1 text-xs">
+                      {stats.pendingContacts > 0 ? (
+                        <>
+                          <Clock className="h-3 w-3 text-warning" />
+                          <span className="text-warning font-medium">{stats.pendingContacts} pending</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCheck className="h-3 w-3 text-success" />
+                          <span className="text-success">All resolved</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
+                    <MessageSquare className="h-6 w-6 text-blue-500" />
                   </div>
                 </div>
               </CardContent>
@@ -589,6 +835,15 @@ const AdminDashboard = () => {
                   <FileUp className="h-4 w-4" />
                   Files
                 </TabsTrigger>
+                <TabsTrigger value="contacts" className="gap-2 relative">
+                  <MessageSquare className="h-4 w-4" />
+                  Contacts
+                  {stats.pendingContacts > 0 && (
+                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-warning text-[10px] font-bold flex items-center justify-center text-warning-foreground">
+                      {stats.pendingContacts}
+                    </span>
+                  )}
+                </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
@@ -630,38 +885,45 @@ const AdminDashboard = () => {
                     </CardContent>
                   </Card>
 
-                  {/* Recent Files */}
+                  {/* Recent Contacts */}
                   <Card className="border-border/50">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">Recent Files</CardTitle>
-                        <Button variant="ghost" size="sm" onClick={() => setActiveTab('files')}>
+                        <CardTitle className="text-lg">Recent Messages</CardTitle>
+                        <Button variant="ghost" size="sm" onClick={() => setActiveTab('contacts')}>
                           View All
                         </Button>
                       </div>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {files.slice(0, 5).map((file) => (
-                          <div key={file.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                            <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                                <FileUp className="h-5 w-5 text-primary" />
+                        {contacts.slice(0, 5).map((contact) => (
+                          <div 
+                            key={contact.id} 
+                            className="flex items-center justify-between p-3 rounded-lg bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors"
+                            onClick={() => handleViewContact(contact)}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <Mail className="h-5 w-5 text-primary" />
                               </div>
                               <div className="min-w-0">
-                                <p className="font-medium text-sm truncate max-w-[200px]">{file.filename}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  {formatFileSize(file.file_size)} • {file.download_count} downloads
+                                <p className="font-medium text-sm truncate">{contact.name}</p>
+                                <p className="text-xs text-muted-foreground truncate">
+                                  {contact.subject || contact.message.slice(0, 40)}...
                                 </p>
                               </div>
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                              {format(new Date(file.upload_date), 'MMM dd')}
-                            </p>
+                            <div className="flex flex-col items-end gap-1">
+                              {getContactStatusBadge(contact.status)}
+                              <p className="text-xs text-muted-foreground">
+                                {format(new Date(contact.created_at), 'MMM dd')}
+                              </p>
+                            </div>
                           </div>
                         ))}
-                        {files.length === 0 && (
-                          <p className="text-center text-muted-foreground py-8">No files uploaded yet</p>
+                        {contacts.length === 0 && (
+                          <p className="text-center text-muted-foreground py-8">No messages yet</p>
                         )}
                       </div>
                     </CardContent>
@@ -815,7 +1077,7 @@ const AdminDashboard = () => {
                           ))}
                           {filteredPayments.length === 0 && (
                             <TableRow>
-                              <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                              <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                                 No payments found
                               </TableCell>
                             </TableRow>
@@ -834,13 +1096,9 @@ const AdminDashboard = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <CardTitle>All Files</CardTitle>
-                        <CardDescription>View and manage uploaded files</CardDescription>
+                        <CardDescription>Manage uploaded files and their sharing settings</CardDescription>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input placeholder="Search files..." className="pl-9 w-48" />
-                        </div>
+                      <div className="flex flex-wrap items-center gap-3">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm" className="gap-2">
@@ -867,11 +1125,13 @@ const AdminDashboard = () => {
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-muted/30">
-                            <TableHead>File Name</TableHead>
+                            <TableHead>File</TableHead>
                             <TableHead>Type</TableHead>
                             <TableHead>Size</TableHead>
                             <TableHead>Downloads</TableHead>
-                            <TableHead>Upload Date</TableHead>
+                            <TableHead>PIN</TableHead>
+                            <TableHead>Protected</TableHead>
+                            <TableHead>Date</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -879,24 +1139,31 @@ const AdminDashboard = () => {
                           {files.map((file) => (
                             <TableRow key={file.id} className="hover:bg-muted/20">
                               <TableCell>
-                                <div className="flex items-center gap-3">
-                                  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                                    <FileUp className="h-4 w-4 text-primary" />
-                                  </div>
-                                  <span className="font-medium truncate max-w-[200px]">{file.filename}</span>
+                                <div className="flex items-center gap-2">
+                                  <FileUp className="h-4 w-4 text-primary" />
+                                  <span className="font-medium truncate max-w-[200px]">{file.original_name || file.filename}</span>
                                 </div>
                               </TableCell>
-                              <TableCell>
-                                <Badge variant="secondary" className="font-mono text-xs">
-                                  {file.file_type.split('/')[1]?.toUpperCase() || file.file_type}
-                                </Badge>
+                              <TableCell className="text-muted-foreground text-sm">
+                                {file.file_type.split('/')[1]?.toUpperCase() || file.file_type}
                               </TableCell>
-                              <TableCell>{formatFileSize(file.file_size)}</TableCell>
+                              <TableCell className="text-muted-foreground">
+                                {formatFileSize(file.file_size)}
+                              </TableCell>
                               <TableCell>
-                                <div className="flex items-center gap-1">
-                                  <Download className="h-3 w-3 text-muted-foreground" />
-                                  {file.download_count}
-                                </div>
+                                <Badge variant="secondary">{file.download_count}</Badge>
+                              </TableCell>
+                              <TableCell className="font-mono text-sm">
+                                {file.share_pin || 'N/A'}
+                              </TableCell>
+                              <TableCell>
+                                {file.password_hash ? (
+                                  <Badge className="bg-warning/10 text-warning border-warning/20">
+                                    <Lock className="h-3 w-3 mr-1" /> Yes
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="secondary">No</Badge>
+                                )}
                               </TableCell>
                               <TableCell className="text-muted-foreground">
                                 {format(new Date(file.upload_date), 'MMM dd, yyyy')}
@@ -909,14 +1176,17 @@ const AdminDashboard = () => {
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => window.open(`/share/${file.share_token}`, '_blank')}>
                                       <Eye className="h-4 w-4 mr-2" />
-                                      Preview
+                                      View Share Page
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="text-destructive">
-                                      <Ban className="h-4 w-4 mr-2" />
-                                      Remove
+                                    <DropdownMenuItem 
+                                      className="text-destructive"
+                                      onClick={() => handleDeleteFile(file.id)}
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Delete File
                                     </DropdownMenuItem>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
@@ -925,8 +1195,137 @@ const AdminDashboard = () => {
                           ))}
                           {files.length === 0 && (
                             <TableRow>
-                              <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
-                                No files found
+                              <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                                No files uploaded yet
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Contacts Tab */}
+              <TabsContent value="contacts" className="space-y-6">
+                <Card className="border-border/50">
+                  <CardHeader>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <CardTitle>Contact Submissions</CardTitle>
+                        <CardDescription>Manage and respond to user inquiries</CardDescription>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search messages..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-9 w-48"
+                          />
+                        </div>
+                        <Select value={contactStatusFilter} onValueChange={setContactStatusFilter}>
+                          <SelectTrigger className="w-36">
+                            <SelectValue placeholder="Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="new">New</SelectItem>
+                            <SelectItem value="in_progress">In Progress</SelectItem>
+                            <SelectItem value="resolved">Resolved</SelectItem>
+                            <SelectItem value="closed">Closed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="rounded-lg border border-border/50 overflow-hidden overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/30">
+                            <TableHead>From</TableHead>
+                            <TableHead>Subject</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredContacts.map((contact) => (
+                            <TableRow 
+                              key={contact.id} 
+                              className="hover:bg-muted/20 cursor-pointer"
+                              onClick={() => handleViewContact(contact)}
+                            >
+                              <TableCell>
+                                <div>
+                                  <p className="font-medium">{contact.name}</p>
+                                  <p className="text-xs text-muted-foreground">{contact.email}</p>
+                                </div>
+                              </TableCell>
+                              <TableCell className="max-w-[200px] truncate">
+                                {contact.subject || contact.message.slice(0, 50) + '...'}
+                              </TableCell>
+                              <TableCell>{getCategoryBadge(contact.category)}</TableCell>
+                              <TableCell>{getContactStatusBadge(contact.status)}</TableCell>
+                              <TableCell className="text-muted-foreground">
+                                {format(new Date(contact.created_at), 'MMM dd, yyyy')}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                      <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleViewContact(contact);
+                                    }}>
+                                      <Eye className="h-4 w-4 mr-2" />
+                                      View Details
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={(e) => {
+                                      e.stopPropagation();
+                                      window.open(`mailto:${contact.email}?subject=Re: ${contact.subject || 'Your inquiry'}`, '_blank');
+                                    }}>
+                                      <Reply className="h-4 w-4 mr-2" />
+                                      Reply via Email
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleUpdateContactStatus(contact.id, 'resolved');
+                                      }}
+                                    >
+                                      <CheckCheck className="h-4 w-4 mr-2" />
+                                      Mark Resolved
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                      className="text-destructive"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteContact(contact.id);
+                                      }}
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                          {filteredContacts.length === 0 && (
+                            <TableRow>
+                              <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                                No contact submissions found
                               </TableCell>
                             </TableRow>
                           )}
@@ -940,6 +1339,132 @@ const AdminDashboard = () => {
           </motion.div>
         </motion.div>
       </main>
+
+      {/* Contact Detail Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-primary" />
+              Contact Details
+            </DialogTitle>
+            <DialogDescription>
+              View and manage this contact submission
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedContact && (
+            <div className="space-y-6">
+              {/* Contact Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">From</p>
+                  <p className="font-medium">{selectedContact.name}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Email</p>
+                  <a href={`mailto:${selectedContact.email}`} className="font-medium text-primary hover:underline">
+                    {selectedContact.email}
+                  </a>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Category</p>
+                  {getCategoryBadge(selectedContact.category)}
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Status</p>
+                  <Select 
+                    value={selectedContact.status} 
+                    onValueChange={(value) => handleUpdateContactStatus(selectedContact.id, value)}
+                  >
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="new">New</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="resolved">Resolved</SelectItem>
+                      <SelectItem value="closed">Closed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Received</p>
+                  <p className="text-sm">{format(new Date(selectedContact.created_at), 'PPpp')}</p>
+                </div>
+                {selectedContact.replied_at && (
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground uppercase font-medium">Replied</p>
+                    <p className="text-sm">{format(new Date(selectedContact.replied_at), 'PPpp')}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Subject & Message */}
+              <div className="space-y-4">
+                {selectedContact.subject && (
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground uppercase font-medium">Subject</p>
+                    <p className="font-medium">{selectedContact.subject}</p>
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Message</p>
+                  <div className="p-4 rounded-lg bg-muted/50 whitespace-pre-wrap">
+                    {selectedContact.message}
+                  </div>
+                </div>
+              </div>
+
+              {/* Admin Notes */}
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground uppercase font-medium">Admin Notes</p>
+                <Textarea
+                  placeholder="Add internal notes about this inquiry..."
+                  value={adminNotes}
+                  onChange={(e) => setAdminNotes(e.target.value)}
+                  rows={3}
+                />
+                <Button size="sm" onClick={handleSaveNotes} className="gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  Save Notes
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsViewDialogOpen(false)}
+            >
+              Close
+            </Button>
+            {selectedContact && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => window.open(`mailto:${selectedContact.email}?subject=Re: ${selectedContact.subject || 'Your inquiry'}`, '_blank')}
+                  className="gap-2"
+                >
+                  <Send className="h-4 w-4" />
+                  Reply via Email
+                </Button>
+                <Button
+                  onClick={() => {
+                    handleUpdateContactStatus(selectedContact.id, 'resolved');
+                    setIsViewDialogOpen(false);
+                  }}
+                  className="gap-2"
+                >
+                  <CheckCheck className="h-4 w-4" />
+                  Mark Resolved
+                </Button>
+              </>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
