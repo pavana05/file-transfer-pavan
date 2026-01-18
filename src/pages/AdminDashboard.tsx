@@ -9,7 +9,9 @@ import {
   Crown, Zap, Building2, ChevronDown, ArrowUpRight,
   ArrowDownRight, FileSpreadsheet, Table as TableIcon,
   Lock, AlertTriangle, Mail, MessageSquare, Reply,
-  Inbox, CheckCheck, Archive, Trash2, Send
+  Inbox, CheckCheck, Archive, Trash2, Send, UserCog,
+  UserPlus, UserMinus, Sparkles, Settings, Database,
+  HardDrive, Globe, CheckSquare, Square
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -17,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { 
   Table, TableBody, TableCell, TableHead, 
   TableHeader, TableRow 
@@ -43,11 +46,21 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
   ResponsiveContainer, BarChart, Bar, PieChart as RechartsPie, 
-  Pie, Cell, Legend
+  Pie, Cell, Legend, LineChart, Line
 } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
@@ -100,6 +113,16 @@ interface ContactSubmission {
   updated_at: string;
 }
 
+interface UserRecord {
+  user_id: string;
+  email?: string;
+  files_count: number;
+  total_downloads: number;
+  total_storage: number;
+  has_premium: boolean;
+  created_at?: string;
+}
+
 interface Stats {
   totalUsers: number;
   totalRevenue: number;
@@ -107,6 +130,8 @@ interface Stats {
   totalDownloads: number;
   totalContacts: number;
   pendingContacts: number;
+  totalStorage: number;
+  premiumUsers: number;
   recentUsersGrowth: number;
   recentRevenueGrowth: number;
 }
@@ -127,6 +152,7 @@ const AdminDashboard = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [files, setFiles] = useState<FileRecord[]>([]);
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
+  const [users, setUsers] = useState<UserRecord[]>([]);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [planDistribution, setPlanDistribution] = useState<{name: string; value: number}[]>([]);
   const [stats, setStats] = useState<Stats>({
@@ -136,6 +162,8 @@ const AdminDashboard = () => {
     totalDownloads: 0,
     totalContacts: 0,
     pendingContacts: 0,
+    totalStorage: 0,
+    premiumUsers: 0,
     recentUsersGrowth: 12.5,
     recentRevenueGrowth: 23.1,
   });
@@ -146,6 +174,10 @@ const AdminDashboard = () => {
   const [selectedContact, setSelectedContact] = useState<ContactSubmission | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+  const [bulkDeleteType, setBulkDeleteType] = useState<'files' | 'contacts'>('files');
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -199,25 +231,62 @@ const AdminDashboard = () => {
       setFiles(filesData || []);
       setContacts(contactsData || []);
 
+      // Build user records from files and payments
+      const userMap = new Map<string, UserRecord>();
+      
+      (filesData || []).forEach(file => {
+        if (file.user_id) {
+          if (!userMap.has(file.user_id)) {
+            userMap.set(file.user_id, {
+              user_id: file.user_id,
+              files_count: 0,
+              total_downloads: 0,
+              total_storage: 0,
+              has_premium: false,
+            });
+          }
+          const user = userMap.get(file.user_id)!;
+          user.files_count += 1;
+          user.total_downloads += file.download_count || 0;
+          user.total_storage += file.file_size || 0;
+        }
+      });
+
+      processedPayments.forEach(payment => {
+        if (payment.user_id && payment.status === 'completed') {
+          if (!userMap.has(payment.user_id)) {
+            userMap.set(payment.user_id, {
+              user_id: payment.user_id,
+              files_count: 0,
+              total_downloads: 0,
+              total_storage: 0,
+              has_premium: true,
+            });
+          } else {
+            userMap.get(payment.user_id)!.has_premium = true;
+          }
+        }
+      });
+
+      setUsers(Array.from(userMap.values()));
+
       // Calculate stats
       const completedPayments = processedPayments.filter(p => p.status === 'completed');
       const totalRevenue = completedPayments.reduce((sum, p) => sum + (p.amount_inr || 0), 0);
       const totalDownloads = (filesData || []).reduce((sum, f) => sum + (f.download_count || 0), 0);
+      const totalStorage = (filesData || []).reduce((sum, f) => sum + (f.file_size || 0), 0);
       const pendingContacts = (contactsData || []).filter(c => c.status === 'new' || c.status === 'in_progress').length;
+      const premiumUsers = Array.from(userMap.values()).filter(u => u.has_premium).length;
       
-      // Get unique users
-      const uniqueUserIds = new Set([
-        ...processedPayments.map(p => p.user_id),
-        ...(filesData || []).filter(f => f.user_id).map(f => f.user_id)
-      ]);
-
       setStats({
-        totalUsers: uniqueUserIds.size,
+        totalUsers: userMap.size,
         totalRevenue,
         totalFiles: filesData?.length || 0,
         totalDownloads,
         totalContacts: contactsData?.length || 0,
         pendingContacts,
+        totalStorage,
+        premiumUsers,
         recentUsersGrowth: 12.5,
         recentRevenueGrowth: 23.1,
       });
@@ -286,7 +355,7 @@ const AdminDashboard = () => {
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
@@ -351,6 +420,15 @@ const AdminDashboard = () => {
                          c.message.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = contactStatusFilter === 'all' || c.status === contactStatusFilter;
     return matchesSearch && matchesStatus;
+  });
+
+  const filteredFiles = files.filter(f => {
+    return f.original_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           f.filename?.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const filteredUsers = users.filter(u => {
+    return u.user_id.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   const handleExportPayments = (format: 'csv' | 'excel') => {
@@ -501,6 +579,89 @@ const AdminDashboard = () => {
     }
   };
 
+  // Bulk actions
+  const handleToggleFileSelection = (fileId: string) => {
+    setSelectedFiles(prev => 
+      prev.includes(fileId) 
+        ? prev.filter(id => id !== fileId)
+        : [...prev, fileId]
+    );
+  };
+
+  const handleToggleContactSelection = (contactId: string) => {
+    setSelectedContacts(prev => 
+      prev.includes(contactId) 
+        ? prev.filter(id => id !== contactId)
+        : [...prev, contactId]
+    );
+  };
+
+  const handleSelectAllFiles = () => {
+    if (selectedFiles.length === filteredFiles.length) {
+      setSelectedFiles([]);
+    } else {
+      setSelectedFiles(filteredFiles.map(f => f.id));
+    }
+  };
+
+  const handleSelectAllContacts = () => {
+    if (selectedContacts.length === filteredContacts.length) {
+      setSelectedContacts([]);
+    } else {
+      setSelectedContacts(filteredContacts.map(c => c.id));
+    }
+  };
+
+  const handleBulkDeleteFiles = async () => {
+    try {
+      for (const fileId of selectedFiles) {
+        const file = files.find(f => f.id === fileId);
+        if (file) {
+          await supabase.storage.from('uploads').remove([`files/${file.filename}`]);
+          await supabase.from('uploaded_files').delete().eq('id', fileId);
+        }
+      }
+      setFiles(prev => prev.filter(f => !selectedFiles.includes(f.id)));
+      setSelectedFiles([]);
+      setIsBulkDeleteOpen(false);
+      toast.success(`${selectedFiles.length} files deleted successfully`);
+    } catch (error) {
+      console.error('Bulk delete error:', error);
+      toast.error('Failed to delete some files');
+    }
+  };
+
+  const handleBulkDeleteContacts = async () => {
+    try {
+      for (const contactId of selectedContacts) {
+        await supabase.from('contact_submissions').delete().eq('id', contactId);
+      }
+      setContacts(prev => prev.filter(c => !selectedContacts.includes(c.id)));
+      setSelectedContacts([]);
+      setIsBulkDeleteOpen(false);
+      toast.success(`${selectedContacts.length} contacts deleted successfully`);
+    } catch (error) {
+      console.error('Bulk delete error:', error);
+      toast.error('Failed to delete some contacts');
+    }
+  };
+
+  const handleBulkUpdateContactStatus = async (status: string) => {
+    try {
+      for (const contactId of selectedContacts) {
+        await supabase.from('contact_submissions').update({ status }).eq('id', contactId);
+      }
+      setContacts(prev => prev.map(c => 
+        selectedContacts.includes(c.id) ? { ...c, status } : c
+      ));
+      setSelectedContacts([]);
+      toast.success(`${selectedContacts.length} contacts updated to ${status}`);
+    } catch (error) {
+      console.error('Bulk update error:', error);
+      toast.error('Failed to update some contacts');
+    }
+  };
+
   // Show loading state
   if (authLoading) {
     return (
@@ -558,7 +719,8 @@ const AdminDashboard = () => {
       {/* Premium Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/3 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.02)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
       {/* Header */}
@@ -570,7 +732,7 @@ const AdminDashboard = () => {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shadow-lg shadow-primary/20">
                   <Shield className="h-5 w-5 text-white" />
                 </div>
                 <div>
@@ -611,111 +773,101 @@ const AdminDashboard = () => {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
           {/* Stats Grid */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <motion.div variants={itemVariants} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {/* Total Users */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-6">
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-primary/30 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <CardContent className="p-4">
                 <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Total Users</p>
-                    <p className="text-3xl font-bold">{stats.totalUsers.toLocaleString()}</p>
-                    <div className="flex items-center gap-1 text-xs">
-                      <ArrowUpRight className="h-3 w-3 text-success" />
-                      <span className="text-success font-medium">+{stats.recentUsersGrowth}%</span>
-                    </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Total Users</p>
+                    <p className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</p>
                   </div>
-                  <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-primary" />
+                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Premium Users */}
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-amber-500/30 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Premium Users</p>
+                    <p className="text-2xl font-bold">{stats.premiumUsers.toLocaleString()}</p>
+                  </div>
+                  <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Crown className="h-5 w-5 text-amber-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Total Revenue */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-6">
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-success/30 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-success/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <CardContent className="p-4">
                 <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
-                    <p className="text-3xl font-bold">{formatCurrency(stats.totalRevenue)}</p>
-                    <div className="flex items-center gap-1 text-xs">
-                      <ArrowUpRight className="h-3 w-3 text-success" />
-                      <span className="text-success font-medium">+{stats.recentRevenueGrowth}%</span>
-                    </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Total Revenue</p>
+                    <p className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</p>
                   </div>
-                  <div className="h-12 w-12 rounded-2xl bg-success/10 flex items-center justify-center">
-                    <IndianRupee className="h-6 w-6 text-success" />
+                  <div className="h-10 w-10 rounded-xl bg-success/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <IndianRupee className="h-5 w-5 text-success" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Total Files */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-warning/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-6">
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-warning/30 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-warning/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <CardContent className="p-4">
                 <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Total Files</p>
-                    <p className="text-3xl font-bold">{stats.totalFiles.toLocaleString()}</p>
-                    <div className="flex items-center gap-1 text-xs">
-                      <FileUp className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-muted-foreground">Uploaded files</span>
-                    </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Total Files</p>
+                    <p className="text-2xl font-bold">{stats.totalFiles.toLocaleString()}</p>
                   </div>
-                  <div className="h-12 w-12 rounded-2xl bg-warning/10 flex items-center justify-center">
-                    <FileUp className="h-6 w-6 text-warning" />
+                  <div className="h-10 w-10 rounded-xl bg-warning/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <FileUp className="h-5 w-5 text-warning" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Total Downloads */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-6">
+            {/* Total Storage */}
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-purple-500/30 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <CardContent className="p-4">
                 <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Total Downloads</p>
-                    <p className="text-3xl font-bold">{stats.totalDownloads.toLocaleString()}</p>
-                    <div className="flex items-center gap-1 text-xs">
-                      <Activity className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-muted-foreground">All time</span>
-                    </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Storage Used</p>
+                    <p className="text-2xl font-bold">{formatFileSize(stats.totalStorage)}</p>
                   </div>
-                  <div className="h-12 w-12 rounded-2xl bg-purple-500/10 flex items-center justify-center">
-                    <Download className="h-6 w-6 text-purple-500" />
+                  <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <HardDrive className="h-5 w-5 text-purple-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Contact Submissions */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-6">
+            {/* Contact Messages */}
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-blue-500/30 transition-all">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <CardContent className="p-4">
                 <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Contact Messages</p>
-                    <p className="text-3xl font-bold">{stats.totalContacts.toLocaleString()}</p>
-                    <div className="flex items-center gap-1 text-xs">
-                      {stats.pendingContacts > 0 ? (
-                        <>
-                          <Clock className="h-3 w-3 text-warning" />
-                          <span className="text-warning font-medium">{stats.pendingContacts} pending</span>
-                        </>
-                      ) : (
-                        <>
-                          <CheckCheck className="h-3 w-3 text-success" />
-                          <span className="text-success">All resolved</span>
-                        </>
-                      )}
-                    </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Messages</p>
+                    <p className="text-2xl font-bold">{stats.totalContacts.toLocaleString()}</p>
+                    {stats.pendingContacts > 0 && (
+                      <p className="text-xs text-warning font-medium">{stats.pendingContacts} pending</p>
+                    )}
                   </div>
-                  <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
-                    <MessageSquare className="h-6 w-6 text-blue-500" />
+                  <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <MessageSquare className="h-5 w-5 text-blue-500" />
                   </div>
                 </div>
               </CardContent>
@@ -725,7 +877,7 @@ const AdminDashboard = () => {
           {/* Charts Section */}
           <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Revenue & Activity Chart */}
-            <Card className="lg:col-span-2 border-border/50">
+            <Card className="lg:col-span-2 border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-primary" />
@@ -780,7 +932,7 @@ const AdminDashboard = () => {
             </Card>
 
             {/* Plan Distribution */}
-            <Card className="border-border/50">
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <PieChart className="h-5 w-5 text-primary" />
@@ -811,7 +963,10 @@ const AdminDashboard = () => {
                     </ResponsiveContainer>
                   ) : (
                     <div className="h-full flex items-center justify-center text-muted-foreground">
-                      No data available
+                      <div className="text-center">
+                        <PieChart className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                        <p>No data available</p>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -822,22 +977,26 @@ const AdminDashboard = () => {
           {/* Tabs */}
           <motion.div variants={itemVariants}>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="bg-muted/50 p-1">
+              <TabsList className="bg-muted/50 p-1 flex-wrap h-auto gap-1">
                 <TabsTrigger value="overview" className="gap-2">
                   <BarChart3 className="h-4 w-4" />
-                  Overview
+                  <span className="hidden sm:inline">Overview</span>
+                </TabsTrigger>
+                <TabsTrigger value="users" className="gap-2">
+                  <Users className="h-4 w-4" />
+                  <span className="hidden sm:inline">Users</span>
                 </TabsTrigger>
                 <TabsTrigger value="payments" className="gap-2">
                   <CreditCard className="h-4 w-4" />
-                  Payments
+                  <span className="hidden sm:inline">Payments</span>
                 </TabsTrigger>
                 <TabsTrigger value="files" className="gap-2">
                   <FileUp className="h-4 w-4" />
-                  Files
+                  <span className="hidden sm:inline">Files</span>
                 </TabsTrigger>
                 <TabsTrigger value="contacts" className="gap-2 relative">
                   <MessageSquare className="h-4 w-4" />
-                  Contacts
+                  <span className="hidden sm:inline">Contacts</span>
                   {stats.pendingContacts > 0 && (
                     <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-warning text-[10px] font-bold flex items-center justify-center text-warning-foreground">
                       {stats.pendingContacts}
@@ -850,7 +1009,7 @@ const AdminDashboard = () => {
               <TabsContent value="overview" className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Recent Payments */}
-                  <Card className="border-border/50">
+                  <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">Recent Payments</CardTitle>
@@ -860,9 +1019,9 @@ const AdminDashboard = () => {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {payments.slice(0, 5).map((payment) => (
-                          <div key={payment.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                          <div key={payment.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors">
                             <div className="flex items-center gap-3">
                               {getPlanIcon(payment.plan_name)}
                               <div>
@@ -873,99 +1032,197 @@ const AdminDashboard = () => {
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-sm">{formatCurrency(payment.amount_inr)}</p>
+                              <p className="font-bold">{formatCurrency(payment.amount_inr)}</p>
                               {getStatusBadge(payment.status)}
                             </div>
                           </div>
                         ))}
                         {payments.length === 0 && (
-                          <p className="text-center text-muted-foreground py-8">No payments yet</p>
+                          <div className="text-center py-8 text-muted-foreground">
+                            No payments yet
+                          </div>
                         )}
                       </div>
                     </CardContent>
                   </Card>
 
-                  {/* Recent Contacts */}
-                  <Card className="border-border/50">
+                  {/* Recent Files */}
+                  <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">Recent Messages</CardTitle>
-                        <Button variant="ghost" size="sm" onClick={() => setActiveTab('contacts')}>
+                        <CardTitle className="text-lg">Recent Uploads</CardTitle>
+                        <Button variant="ghost" size="sm" onClick={() => setActiveTab('files')}>
                           View All
                         </Button>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
-                        {contacts.slice(0, 5).map((contact) => (
-                          <div 
-                            key={contact.id} 
-                            className="flex items-center justify-between p-3 rounded-lg bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors"
-                            onClick={() => handleViewContact(contact)}
-                          >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                <Mail className="h-5 w-5 text-primary" />
+                      <div className="space-y-3">
+                        {files.slice(0, 5).map((file) => (
+                          <div key={file.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                                <FileUp className="h-5 w-5 text-primary" />
                               </div>
-                              <div className="min-w-0">
-                                <p className="font-medium text-sm truncate">{contact.name}</p>
-                                <p className="text-xs text-muted-foreground truncate">
-                                  {contact.subject || contact.message.slice(0, 40)}...
+                              <div className="max-w-[150px]">
+                                <p className="font-medium text-sm truncate">{file.original_name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {formatFileSize(file.file_size)}
                                 </p>
                               </div>
                             </div>
-                            <div className="flex flex-col items-end gap-1">
-                              {getContactStatusBadge(contact.status)}
-                              <p className="text-xs text-muted-foreground">
-                                {format(new Date(contact.created_at), 'MMM dd')}
-                              </p>
+                            <div className="text-right">
+                              <Badge variant="secondary" className="mb-1">
+                                <Download className="h-3 w-3 mr-1" />
+                                {file.download_count}
+                              </Badge>
+                              {file.password_hash && (
+                                <Badge className="bg-warning/10 text-warning border-warning/20 ml-1">
+                                  <Lock className="h-3 w-3" />
+                                </Badge>
+                              )}
                             </div>
                           </div>
                         ))}
-                        {contacts.length === 0 && (
-                          <p className="text-center text-muted-foreground py-8">No messages yet</p>
+                        {files.length === 0 && (
+                          <div className="text-center py-8 text-muted-foreground">
+                            No files yet
+                          </div>
                         )}
                       </div>
                     </CardContent>
                   </Card>
                 </div>
 
-                {/* Platform Health */}
-                <Card className="border-border/50">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Platform Health</CardTitle>
-                    <CardDescription>System metrics and performance indicators</CardDescription>
+                {/* Recent Contacts */}
+                <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">Recent Contact Messages</CardTitle>
+                      <Button variant="ghost" size="sm" onClick={() => setActiveTab('contacts')}>
+                        View All
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="p-4 rounded-lg bg-success/5 border border-success/20">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CheckCircle className="h-4 w-4 text-success" />
-                          <span className="text-sm font-medium">Uptime</span>
+                    <div className="space-y-3">
+                      {contacts.slice(0, 3).map((contact) => (
+                        <div 
+                          key={contact.id} 
+                          className="flex items-center justify-between p-4 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+                          onClick={() => handleViewContact(contact)}
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                              <Mail className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium text-sm">{contact.name}</p>
+                                {getCategoryBadge(contact.category)}
+                              </div>
+                              <p className="text-xs text-muted-foreground truncate max-w-[300px]">
+                                {contact.subject || contact.message.slice(0, 50)}...
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            {getContactStatusBadge(contact.status)}
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {format(new Date(contact.created_at), 'MMM dd')}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-2xl font-bold text-success">99.9%</p>
-                      </div>
-                      <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Activity className="h-4 w-4 text-primary" />
-                          <span className="text-sm font-medium">Avg Response</span>
+                      ))}
+                      {contacts.length === 0 && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          No contact submissions yet
                         </div>
-                        <p className="text-2xl font-bold text-primary">45ms</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Users Tab */}
+              <TabsContent value="users" className="space-y-6">
+                <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                  <CardHeader>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <CardTitle>User Management</CardTitle>
+                        <CardDescription>View and manage platform users</CardDescription>
                       </div>
-                      <div className="p-4 rounded-lg bg-warning/5 border border-warning/20">
-                        <div className="flex items-center gap-2 mb-2">
-                          <TrendingUp className="h-4 w-4 text-warning" />
-                          <span className="text-sm font-medium">Success Rate</span>
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search users..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-9 w-48"
+                          />
                         </div>
-                        <p className="text-2xl font-bold text-warning">98.5%</p>
                       </div>
-                      <div className="p-4 rounded-lg bg-purple-500/5 border border-purple-500/20">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Shield className="h-4 w-4 text-purple-500" />
-                          <span className="text-sm font-medium">Security</span>
-                        </div>
-                        <p className="text-2xl font-bold text-purple-500">A+</p>
-                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="rounded-lg border border-border/50 overflow-hidden overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/30">
+                            <TableHead>User ID</TableHead>
+                            <TableHead>Files</TableHead>
+                            <TableHead>Downloads</TableHead>
+                            <TableHead>Storage</TableHead>
+                            <TableHead>Status</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredUsers.map((userRecord) => (
+                            <TableRow key={userRecord.user_id} className="hover:bg-muted/20">
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <Users className="h-4 w-4 text-primary" />
+                                  </div>
+                                  <span className="font-mono text-xs truncate max-w-[150px]">
+                                    {userRecord.user_id.slice(0, 8)}...
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="secondary">{userRecord.files_count}</Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="secondary">
+                                  <Download className="h-3 w-3 mr-1" />
+                                  {userRecord.total_downloads}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">
+                                {formatFileSize(userRecord.total_storage)}
+                              </TableCell>
+                              <TableCell>
+                                {userRecord.has_premium ? (
+                                  <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">
+                                    <Crown className="h-3 w-3 mr-1" /> Premium
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="secondary">Free</Badge>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                          {filteredUsers.length === 0 && (
+                            <TableRow>
+                              <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                                No users found
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
                     </div>
                   </CardContent>
                 </Card>
@@ -973,25 +1230,25 @@ const AdminDashboard = () => {
 
               {/* Payments Tab */}
               <TabsContent value="payments" className="space-y-6">
-                <Card className="border-border/50">
+                <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
-                        <CardTitle>All Payments</CardTitle>
-                        <CardDescription>Manage and track all payment transactions</CardDescription>
+                        <CardTitle>Payment History</CardTitle>
+                        <CardDescription>All transactions and purchases</CardDescription>
                       </div>
                       <div className="flex flex-wrap items-center gap-3">
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                           <Input
-                            placeholder="Search..."
+                            placeholder="Search payments..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="pl-9 w-48"
                           />
                         </div>
                         <Select value={statusFilter} onValueChange={setStatusFilter}>
-                          <SelectTrigger className="w-32">
+                          <SelectTrigger className="w-36">
                             <SelectValue placeholder="Status" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1091,7 +1348,7 @@ const AdminDashboard = () => {
 
               {/* Files Tab */}
               <TabsContent value="files" className="space-y-6">
-                <Card className="border-border/50">
+                <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
@@ -1099,6 +1356,29 @@ const AdminDashboard = () => {
                         <CardDescription>Manage uploaded files and their sharing settings</CardDescription>
                       </div>
                       <div className="flex flex-wrap items-center gap-3">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search files..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-9 w-48"
+                          />
+                        </div>
+                        {selectedFiles.length > 0 && (
+                          <Button 
+                            variant="destructive" 
+                            size="sm" 
+                            onClick={() => {
+                              setBulkDeleteType('files');
+                              setIsBulkDeleteOpen(true);
+                            }}
+                            className="gap-2"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Delete ({selectedFiles.length})
+                          </Button>
+                        )}
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm" className="gap-2">
@@ -1125,6 +1405,12 @@ const AdminDashboard = () => {
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-muted/30">
+                            <TableHead className="w-10">
+                              <Checkbox 
+                                checked={selectedFiles.length === filteredFiles.length && filteredFiles.length > 0}
+                                onCheckedChange={handleSelectAllFiles}
+                              />
+                            </TableHead>
                             <TableHead>File</TableHead>
                             <TableHead>Type</TableHead>
                             <TableHead>Size</TableHead>
@@ -1136,8 +1422,14 @@ const AdminDashboard = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {files.map((file) => (
+                          {filteredFiles.map((file) => (
                             <TableRow key={file.id} className="hover:bg-muted/20">
+                              <TableCell>
+                                <Checkbox 
+                                  checked={selectedFiles.includes(file.id)}
+                                  onCheckedChange={() => handleToggleFileSelection(file.id)}
+                                />
+                              </TableCell>
                               <TableCell>
                                 <div className="flex items-center gap-2">
                                   <FileUp className="h-4 w-4 text-primary" />
@@ -1193,9 +1485,9 @@ const AdminDashboard = () => {
                               </TableCell>
                             </TableRow>
                           ))}
-                          {files.length === 0 && (
+                          {filteredFiles.length === 0 && (
                             <TableRow>
-                              <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                              <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
                                 No files uploaded yet
                               </TableCell>
                             </TableRow>
@@ -1209,7 +1501,7 @@ const AdminDashboard = () => {
 
               {/* Contacts Tab */}
               <TabsContent value="contacts" className="space-y-6">
-                <Card className="border-border/50">
+                <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
@@ -1238,6 +1530,39 @@ const AdminDashboard = () => {
                             <SelectItem value="closed">Closed</SelectItem>
                           </SelectContent>
                         </Select>
+                        {selectedContacts.length > 0 && (
+                          <>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm" className="gap-2">
+                                  <Settings className="h-4 w-4" />
+                                  Bulk Actions ({selectedContacts.length})
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => handleBulkUpdateContactStatus('resolved')}>
+                                  <CheckCheck className="h-4 w-4 mr-2" />
+                                  Mark as Resolved
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleBulkUpdateContactStatus('closed')}>
+                                  <Archive className="h-4 w-4 mr-2" />
+                                  Mark as Closed
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem 
+                                  className="text-destructive"
+                                  onClick={() => {
+                                    setBulkDeleteType('contacts');
+                                    setIsBulkDeleteOpen(true);
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete Selected
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </>
+                        )}
                       </div>
                     </div>
                   </CardHeader>
@@ -1246,6 +1571,12 @@ const AdminDashboard = () => {
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-muted/30">
+                            <TableHead className="w-10">
+                              <Checkbox 
+                                checked={selectedContacts.length === filteredContacts.length && filteredContacts.length > 0}
+                                onCheckedChange={handleSelectAllContacts}
+                              />
+                            </TableHead>
                             <TableHead>From</TableHead>
                             <TableHead>Subject</TableHead>
                             <TableHead>Category</TableHead>
@@ -1261,6 +1592,12 @@ const AdminDashboard = () => {
                               className="hover:bg-muted/20 cursor-pointer"
                               onClick={() => handleViewContact(contact)}
                             >
+                              <TableCell onClick={(e) => e.stopPropagation()}>
+                                <Checkbox 
+                                  checked={selectedContacts.includes(contact.id)}
+                                  onCheckedChange={() => handleToggleContactSelection(contact.id)}
+                                />
+                              </TableCell>
                               <TableCell>
                                 <div>
                                   <p className="font-medium">{contact.name}</p>
@@ -1324,7 +1661,7 @@ const AdminDashboard = () => {
                           ))}
                           {filteredContacts.length === 0 && (
                             <TableRow>
-                              <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                              <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                                 No contact submissions found
                               </TableCell>
                             </TableRow>
@@ -1465,6 +1802,28 @@ const AdminDashboard = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Bulk Delete Confirmation */}
+      <AlertDialog open={isBulkDeleteOpen} onOpenChange={setIsBulkDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Bulk Delete</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete {bulkDeleteType === 'files' ? selectedFiles.length : selectedContacts.length} {bulkDeleteType}? 
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={bulkDeleteType === 'files' ? handleBulkDeleteFiles : handleBulkDeleteContacts}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Delete {bulkDeleteType === 'files' ? selectedFiles.length : selectedContacts.length} {bulkDeleteType}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
