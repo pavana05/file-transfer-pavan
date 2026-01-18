@@ -70,6 +70,7 @@ import {
   exportPaymentsToCSV, exportPaymentsToExcel, 
   exportFilesToCSV, exportFilesToExcel 
 } from '@/lib/export-utils';
+import { downloadInvoice } from '@/lib/invoice-generator';
 
 interface Payment {
   id: string;
@@ -79,8 +80,18 @@ interface Payment {
   amount_inr: number;
   status: string;
   razorpay_payment_id: string | null;
+  razorpay_order_id?: string;
   created_at: string;
   purchased_at: string | null;
+}
+
+type EmailTemplate = 'custom' | 'acknowledgment' | 'resolution' | 'follow_up';
+
+interface EmailTemplateOption {
+  value: EmailTemplate;
+  label: string;
+  description: string;
+  icon: React.ReactNode;
 }
 
 interface FileRecord {
@@ -178,6 +189,19 @@ const AdminDashboard = () => {
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [bulkDeleteType, setBulkDeleteType] = useState<'files' | 'contacts'>('files');
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [isPaymentDetailOpen, setIsPaymentDetailOpen] = useState(false);
+  const [emailTemplate, setEmailTemplate] = useState<EmailTemplate>('custom');
+  const [replySubject, setReplySubject] = useState('');
+  const [replyMessage, setReplyMessage] = useState('');
+  const [isSendingReply, setIsSendingReply] = useState(false);
+
+  const emailTemplates: EmailTemplateOption[] = [
+    { value: 'custom', label: 'Custom Reply', description: 'Write your own message', icon: <Mail className="h-4 w-4" /> },
+    { value: 'acknowledgment', label: 'Acknowledgment', description: 'Confirm receipt and next steps', icon: <Inbox className="h-4 w-4" /> },
+    { value: 'resolution', label: 'Resolution', description: 'Issue resolved notification', icon: <CheckCheck className="h-4 w-4" /> },
+    { value: 'follow_up', label: 'Follow Up', description: 'Request more information', icon: <Reply className="h-4 w-4" /> },
+  ];
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -659,6 +683,102 @@ const AdminDashboard = () => {
     } catch (error) {
       console.error('Bulk update error:', error);
       toast.error('Failed to update some contacts');
+    }
+  };
+
+  // Payment actions
+  const handleViewPaymentDetails = (payment: Payment) => {
+    setSelectedPayment(payment);
+    setIsPaymentDetailOpen(true);
+  };
+
+  const handleDownloadInvoice = (payment: Payment) => {
+    if (payment.status !== 'completed') {
+      toast.error('Invoice only available for completed payments');
+      return;
+    }
+    
+    try {
+      downloadInvoice({
+        invoiceNumber: `INV-${payment.id.slice(0, 8).toUpperCase()}`,
+        purchaseDate: format(new Date(payment.purchased_at || payment.created_at), 'PPP'),
+        planName: payment.plan_name,
+        amount: payment.amount_inr,
+        userName: 'Customer',
+        userEmail: payment.user_email || 'N/A',
+        paymentId: payment.razorpay_payment_id || 'N/A',
+        orderId: payment.razorpay_order_id || payment.id,
+      });
+      toast.success('Invoice downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
+      toast.error('Failed to download invoice');
+    }
+  };
+
+  // Send admin reply email
+  const handleSendReply = async () => {
+    if (!selectedContact || !replyMessage.trim()) {
+      toast.error('Please enter a message');
+      return;
+    }
+
+    setIsSendingReply(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      const response = await supabase.functions.invoke('send-admin-reply', {
+        body: {
+          contactId: selectedContact.id,
+          recipientName: selectedContact.name,
+          recipientEmail: selectedContact.email,
+          subject: replySubject || `Re: ${selectedContact.subject || 'Your FileShare Pro Inquiry'}`,
+          message: replyMessage,
+          templateType: emailTemplate,
+        },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to send reply');
+      }
+
+      // Update local state
+      setContacts(prev => prev.map(c => 
+        c.id === selectedContact.id 
+          ? { ...c, status: 'resolved', replied_at: new Date().toISOString() } 
+          : c
+      ));
+      setSelectedContact(prev => prev ? { ...prev, status: 'resolved', replied_at: new Date().toISOString() } : null);
+      
+      toast.success('Reply sent successfully!');
+      setReplyMessage('');
+      setReplySubject('');
+      setEmailTemplate('custom');
+    } catch (error: any) {
+      console.error('Error sending reply:', error);
+      toast.error(error.message || 'Failed to send reply');
+    } finally {
+      setIsSendingReply(false);
+    }
+  };
+
+  const getTemplatePreview = (template: EmailTemplate): string => {
+    switch (template) {
+      case 'acknowledgment':
+        return "Thank you for reaching out. We've received your inquiry and our team is reviewing it. We typically respond within 24-48 hours.";
+      case 'resolution':
+        return "Great news! We've resolved the issue you reported. [Add details about the resolution here]";
+      case 'follow_up':
+        return "We're following up on your inquiry. To help you better, we need: [Add what information you need]";
+      default:
+        return '';
+    }
+  };
+
+  const handleTemplateChange = (template: EmailTemplate) => {
+    setEmailTemplate(template);
+    if (template !== 'custom') {
+      setReplyMessage(getTemplatePreview(template));
     }
   };
 
@@ -1319,11 +1439,14 @@ const AdminDashboard = () => {
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleViewPaymentDetails(payment)}>
                                       <Eye className="h-4 w-4 mr-2" />
                                       View Details
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                      onClick={() => handleDownloadInvoice(payment)}
+                                      disabled={payment.status !== 'completed'}
+                                    >
                                       <Download className="h-4 w-4 mr-2" />
                                       Download Invoice
                                     </DropdownMenuItem>
@@ -1767,6 +1890,72 @@ const AdminDashboard = () => {
                   Save Notes
                 </Button>
               </div>
+
+              {/* Email Reply Section */}
+              <div className="space-y-4 border-t pt-6">
+                <div className="flex items-center gap-2">
+                  <Send className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">Send Reply</h3>
+                </div>
+                
+                {/* Template Selection */}
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Email Template</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {emailTemplates.map((template) => (
+                      <button
+                        key={template.value}
+                        onClick={() => handleTemplateChange(template.value)}
+                        className={`p-3 rounded-lg border text-left transition-all ${
+                          emailTemplate === template.value 
+                            ? 'border-primary bg-primary/5 ring-1 ring-primary' 
+                            : 'border-border/50 hover:border-primary/50 hover:bg-muted/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          {template.icon}
+                          <span className="font-medium text-sm">{template.label}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{template.description}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Subject */}
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Subject</p>
+                  <Input
+                    placeholder={`Re: ${selectedContact.subject || 'Your FileShare Pro Inquiry'}`}
+                    value={replySubject}
+                    onChange={(e) => setReplySubject(e.target.value)}
+                  />
+                </div>
+
+                {/* Message */}
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Message</p>
+                  <Textarea
+                    placeholder="Type your reply here..."
+                    value={replyMessage}
+                    onChange={(e) => setReplyMessage(e.target.value)}
+                    rows={5}
+                  />
+                </div>
+
+                <Button 
+                  onClick={handleSendReply} 
+                  disabled={isSendingReply || !replyMessage.trim()}
+                  className="w-full gap-2"
+                >
+                  {isSendingReply ? (
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                  {isSendingReply ? 'Sending...' : 'Send Reply'}
+                </Button>
+              </div>
             </div>
           )}
 
@@ -1778,26 +1967,99 @@ const AdminDashboard = () => {
               Close
             </Button>
             {selectedContact && (
-              <>
-                <Button
-                  variant="outline"
-                  onClick={() => window.open(`mailto:${selectedContact.email}?subject=Re: ${selectedContact.subject || 'Your inquiry'}`, '_blank')}
-                  className="gap-2"
-                >
-                  <Send className="h-4 w-4" />
-                  Reply via Email
-                </Button>
-                <Button
-                  onClick={() => {
-                    handleUpdateContactStatus(selectedContact.id, 'resolved');
-                    setIsViewDialogOpen(false);
-                  }}
-                  className="gap-2"
-                >
-                  <CheckCheck className="h-4 w-4" />
-                  Mark Resolved
-                </Button>
-              </>
+              <Button
+                onClick={() => {
+                  handleUpdateContactStatus(selectedContact.id, 'resolved');
+                  setIsViewDialogOpen(false);
+                }}
+                className="gap-2"
+              >
+                <CheckCheck className="h-4 w-4" />
+                Mark Resolved
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Detail Dialog */}
+      <Dialog open={isPaymentDetailOpen} onOpenChange={setIsPaymentDetailOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CreditCard className="h-5 w-5 text-primary" />
+              Payment Details
+            </DialogTitle>
+            <DialogDescription>
+              Complete transaction information
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedPayment && (
+            <div className="space-y-6">
+              {/* Status Badge */}
+              <div className="flex justify-center">
+                <div className={`px-6 py-3 rounded-xl ${
+                  selectedPayment.status === 'completed' 
+                    ? 'bg-success/10' 
+                    : selectedPayment.status === 'pending'
+                    ? 'bg-warning/10'
+                    : 'bg-destructive/10'
+                }`}>
+                  {getStatusBadge(selectedPayment.status)}
+                </div>
+              </div>
+
+              {/* Amount */}
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground uppercase font-medium mb-1">Amount</p>
+                <p className="text-3xl font-bold">{formatCurrency(selectedPayment.amount_inr)}</p>
+              </div>
+
+              {/* Details Grid */}
+              <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-muted/30">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Plan</p>
+                  <div className="flex items-center gap-2">
+                    {getPlanIcon(selectedPayment.plan_name)}
+                    <span className="font-medium">{selectedPayment.plan_name}</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Date</p>
+                  <p className="font-medium">{format(new Date(selectedPayment.created_at), 'PPP')}</p>
+                </div>
+                <div className="space-y-1 col-span-2">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Payment ID</p>
+                  <p className="font-mono text-sm break-all">{selectedPayment.razorpay_payment_id || 'N/A'}</p>
+                </div>
+                <div className="space-y-1 col-span-2">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">Order ID</p>
+                  <p className="font-mono text-sm break-all">{selectedPayment.razorpay_order_id || selectedPayment.id}</p>
+                </div>
+                <div className="space-y-1 col-span-2">
+                  <p className="text-xs text-muted-foreground uppercase font-medium">User ID</p>
+                  <p className="font-mono text-sm break-all">{selectedPayment.user_id}</p>
+                </div>
+                {selectedPayment.purchased_at && (
+                  <div className="space-y-1 col-span-2">
+                    <p className="text-xs text-muted-foreground uppercase font-medium">Completed At</p>
+                    <p className="font-medium">{format(new Date(selectedPayment.purchased_at), 'PPpp')}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setIsPaymentDetailOpen(false)}>
+              Close
+            </Button>
+            {selectedPayment?.status === 'completed' && (
+              <Button onClick={() => handleDownloadInvoice(selectedPayment)} className="gap-2">
+                <Download className="h-4 w-4" />
+                Download Invoice
+              </Button>
             )}
           </DialogFooter>
         </DialogContent>
