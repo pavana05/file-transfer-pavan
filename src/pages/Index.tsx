@@ -569,7 +569,7 @@ const Index = () => {
               <Button variant="ghost" size="sm" onClick={() => window.location.href = '/contact'} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Contact Support
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/loading-demo'} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Button variant="ghost" size="sm" onClick={() => window.open('https://pavan-05.framer.ai/', '_blank')} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 <Sparkles className="h-4 w-4 mr-2" />
                 Made with ❤️ by PAVAN A      
               </Button>
