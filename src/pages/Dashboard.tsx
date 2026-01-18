@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { motion } from 'framer-motion';
 import { 
   ArrowLeft, 
   Upload, 
@@ -16,16 +17,42 @@ import {
   HardDrive,
   Eye,
   Lock,
-  Unlock
+  Unlock,
+  FileUp,
+  TrendingUp,
+  BarChart3,
+  Trash2,
+  Search,
+  Filter,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
+  FolderOpen
 } from 'lucide-react';
 import { formatFileSize } from '@/lib/file-utils';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { FileAnalytics } from '@/components/dashboard/FileAnalytics';
 import { FileListSkeleton } from '@/components/dashboard/FileListSkeleton';
-import { DashboardHeaderSkeleton, DashboardStatsSkeleton } from '@/components/skeletons';
-import { LoadingWrapper } from '@/components/LoadingWrapper';
-import { usePageLoading } from '@/hooks/usePageLoading';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface SharedFile {
   id: string;
@@ -39,12 +66,27 @@ interface SharedFile {
   password_hash: string | null;
 }
 
+interface FileStats {
+  totalFiles: number;
+  totalDownloads: number;
+  totalStorage: number;
+  protectedFiles: number;
+}
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [files, setFiles] = useState<SharedFile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [stats, setStats] = useState<FileStats>({
+    totalFiles: 0,
+    totalDownloads: 0,
+    totalStorage: 0,
+    protectedFiles: 0
+  });
 
   useEffect(() => {
     if (authLoading) return;
@@ -67,7 +109,17 @@ const Dashboard = () => {
         .order('upload_date', { ascending: false });
 
       if (error) throw error;
-      setFiles(data || []);
+      
+      const filesData = data || [];
+      setFiles(filesData);
+      
+      // Calculate stats
+      setStats({
+        totalFiles: filesData.length,
+        totalDownloads: filesData.reduce((sum, f) => sum + (f.download_count || 0), 0),
+        totalStorage: filesData.reduce((sum, f) => sum + (f.file_size || 0), 0),
+        protectedFiles: filesData.filter(f => f.password_hash).length
+      });
     } catch (error) {
       toast({
         title: 'Error loading files',
@@ -90,173 +142,365 @@ const Dashboard = () => {
   const getShareUrl = (token: string) => 
     `${window.location.origin}/share/${encodeURIComponent(token)}`;
 
+  const handleDeleteFile = async (fileId: string, filename: string) => {
+    try {
+      // Delete from storage
+      const file = files.find(f => f.id === fileId);
+      if (file) {
+        await supabase.storage.from('uploads').remove([`files/${filename}`]);
+      }
+      
+      // Delete from database
+      const { error } = await supabase
+        .from('uploaded_files')
+        .delete()
+        .eq('id', fileId);
+
+      if (error) throw error;
+
+      setFiles(prev => prev.filter(f => f.id !== fileId));
+      toast({
+        title: 'File deleted',
+        description: 'File has been successfully deleted.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error deleting file',
+        description: 'Failed to delete the file',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  // Filter files
+  const filteredFiles = files.filter(file => {
+    const matchesSearch = file.original_name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = filterType === 'all' || 
+      (filterType === 'protected' && file.password_hash) ||
+      (filterType === 'public' && !file.password_hash);
+    return matchesSearch && matchesFilter;
+  });
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-background to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent"></div>
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/3 rounded-full blur-[100px] animate-float"></div>
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-accent/3 rounded-full blur-[100px] animate-float" style={{ animationDelay: '1s' }}></div>
+      {/* Premium Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-primary/8 via-primary/4 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-accent/8 to-transparent rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.02)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5">
-          <div className="flex items-center justify-between gap-2">
-            <Button 
-              variant="ghost"
-              onClick={() => navigate('/')}
-              size="sm"
-              className="text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-all group rounded-xl h-9 sm:h-10 md:h-11 px-2 sm:px-3 md:px-4 flex-shrink-0"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-2 group-hover:-translate-x-1 transition-transform" />
-              <span className="hidden xs:inline text-xs sm:text-sm">Back</span>
-            </Button>
-            
-            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-primary flex items-center justify-center shadow-lg">
-                <Upload className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              </div>
-              <span className="font-bold text-foreground text-sm sm:text-lg truncate max-w-[120px] sm:max-w-none">My Files</span>
+      <header className="relative border-b border-border/40 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost"
+                onClick={() => navigate('/')}
+                size="sm"
+                className="text-muted-foreground hover:text-foreground transition-all group"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                Back
+              </Button>
             </div>
             
-            <ThemeToggle />
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shadow-lg shadow-primary/20">
+                <FolderOpen className="w-5 h-5 text-white" />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="font-bold text-lg">My Files</h1>
+                <p className="text-xs text-muted-foreground">Manage your shared files</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <Link to="/profile">
+                <Button variant="outline" size="sm">Profile</Button>
+              </Link>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-20 sm:py-24 md:py-28 max-w-7xl">
-        <div className="mb-6 sm:mb-8 md:mb-10">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">Your Shared Files</h1>
-          <p className="text-muted-foreground text-sm sm:text-base md:text-lg">
-            Manage and access all your uploaded files and their share links
-          </p>
-        </div>
-
-        {/* Analytics Section */}
-        {!loading && files.length > 0 && (
-          <div className="mb-10">
-            <FileAnalytics />
-          </div>
-        )}
-
-        {loading ? (
-          <FileListSkeleton />
-        ) : files.length === 0 ? (
-          <Card className="p-16 text-center bg-card/60 backdrop-blur-xl border border-border/50 rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-            <Upload className="w-20 h-20 mx-auto mb-6 text-muted-foreground" />
-            <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">No files shared yet</h3>
-            <p className="text-muted-foreground text-sm sm:text-base md:text-lg mb-6 sm:mb-8">Upload your first file to get started</p>
-            <Button onClick={() => navigate('/')} className="bg-gradient-primary text-white h-11 sm:h-12 md:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl text-sm sm:text-base shadow-lg hover:shadow-xl transition-all">
-              <Upload className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-              Upload Files
+      <main className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
+        <motion.div 
+          variants={containerVariants} 
+          initial="hidden" 
+          animate="visible"
+          className="space-y-8"
+        >
+          {/* Page Header */}
+          <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
+                Your Shared Files
+              </h1>
+              <p className="text-muted-foreground">
+                Manage and access all your uploaded files and their share links
+              </p>
+            </div>
+            <Button 
+              onClick={() => navigate('/')} 
+              className="bg-gradient-to-r from-primary to-primary-glow hover:shadow-lg hover:shadow-primary/25 transition-all gap-2"
+            >
+              <Upload className="w-4 h-4" />
+              Upload New File
             </Button>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:gap-6">
-            {files.map((file) => (
-              <Card 
-                key={file.id} 
-                className="p-4 sm:p-6 md:p-8 bg-card/60 backdrop-blur-xl border border-border/50 hover:border-primary/40 rounded-2xl sm:rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.15)] transition-all duration-300"
-              >
-                <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
-                  {/* File Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
-                      <div className="relative group flex-shrink-0">
-                        <div className="absolute inset-0 bg-gradient-primary rounded-xl sm:rounded-2xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity"></div>
-                        <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-gradient-primary flex items-center justify-center shadow-lg">
-                          <Upload className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-base sm:text-lg md:text-xl truncate mb-1 sm:mb-2">{file.original_name}</h3>
-                        <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm md:text-base text-muted-foreground">
-                          <span className="flex items-center gap-1 sm:gap-2">
-                            <HardDrive className="w-3 h-3 sm:w-4 sm:h-4" />
-                            {formatFileSize(file.file_size)}
-                          </span>
-                          <span className="flex items-center gap-1 sm:gap-2">
-                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
-                            <span className="hidden xs:inline">{format(new Date(file.upload_date), 'MMM d, yyyy')}</span>
-                            <span className="xs:hidden">{format(new Date(file.upload_date), 'MMM d')}</span>
-                          </span>
-                          <span className="flex items-center gap-1 sm:gap-2">
-                            <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-                            {file.download_count}
-                          </span>
-                        </div>
-                      </div>
-                      {file.password_hash && (
-                        <Badge variant="secondary" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm flex-shrink-0">
-                          <Lock className="w-3 h-3 sm:w-4 sm:h-4" />
-                          <span className="hidden xs:inline">Protected</span>
-                        </Badge>
-                      )}
+          </motion.div>
+
+          {/* Stats Grid */}
+          <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: FileUp, label: 'Total Files', value: stats.totalFiles, color: 'primary', gradient: 'from-primary/10 to-primary/5' },
+              { icon: Download, label: 'Total Downloads', value: stats.totalDownloads, color: 'success', gradient: 'from-success/10 to-success/5' },
+              { icon: HardDrive, label: 'Storage Used', value: formatFileSize(stats.totalStorage), color: 'warning', gradient: 'from-warning/10 to-warning/5' },
+              { icon: Lock, label: 'Protected Files', value: stats.protectedFiles, color: 'accent', gradient: 'from-accent/10 to-accent/5' },
+            ].map((stat, i) => (
+              <Card key={i} className="border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden relative group hover:border-primary/30 transition-all">
+                <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-50`} />
+                <CardContent className="p-5 relative">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-muted-foreground">{stat.label}</p>
+                      <p className="text-2xl lg:text-3xl font-bold">{stat.value}</p>
                     </div>
-
-                    {/* Share Links */}
-                    <div className="space-y-3 sm:space-y-4">
-                      {/* PIN */}
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <Badge variant="outline" className="font-mono text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl">
-                          PIN: {file.share_pin}
-                        </Badge>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyToClipboard(file.share_pin, 'PIN')}
-                          className="h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-lg sm:rounded-xl hover:bg-muted/80 flex-shrink-0"
-                        >
-                          <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </Button>
-                      </div>
-
-                      {/* Share URL */}
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <div className="flex-1 min-w-0 bg-muted/60 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-xl sm:rounded-2xl border border-border/40">
-                          <p className="text-xs sm:text-sm font-mono truncate">{getShareUrl(file.share_token)}</p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyToClipboard(getShareUrl(file.share_token), 'Link')}
-                          className="h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-lg sm:rounded-xl hover:bg-muted/80 flex-shrink-0"
-                        >
-                          <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => window.open(getShareUrl(file.share_token), '_blank')}
-                          className="h-9 w-9 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-lg sm:rounded-xl hover:bg-muted/80 flex-shrink-0"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </Button>
-                      </div>
+                    <div className={`w-10 h-10 rounded-xl bg-${stat.color}/10 flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                      <stat.icon className={`w-5 h-5 text-${stat.color}`} />
                     </div>
                   </div>
-
-                  {/* Actions */}
-                  <div className="flex lg:flex-col gap-2 sm:gap-3 lg:w-36">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 lg:w-full h-10 sm:h-11 md:h-12 rounded-lg sm:rounded-xl hover:bg-primary/5 hover:border-primary/40 text-xs sm:text-sm"
-                      onClick={() => window.open(`/pin`, '_blank')}
-                    >
-                      <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                      <span className="hidden xs:inline">Test PIN</span>
-                    </Button>
-                  </div>
-                </div>
+                </CardContent>
               </Card>
             ))}
-          </div>
-        )}
-      </div>
+          </motion.div>
+
+          {/* Analytics Section */}
+          {!loading && files.length > 0 && (
+            <motion.div variants={itemVariants}>
+              <FileAnalytics />
+            </motion.div>
+          )}
+
+          {/* Search and Filters */}
+          {!loading && files.length > 0 && (
+            <motion.div variants={itemVariants}>
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardContent className="p-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search files..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9"
+                      />
+                    </div>
+                    <Select value={filterType} onValueChange={setFilterType}>
+                      <SelectTrigger className="w-full sm:w-40">
+                        <Filter className="w-4 h-4 mr-2" />
+                        <SelectValue placeholder="Filter" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Files</SelectItem>
+                        <SelectItem value="protected">Protected</SelectItem>
+                        <SelectItem value="public">Public</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Files List */}
+          {loading ? (
+            <FileListSkeleton />
+          ) : filteredFiles.length === 0 ? (
+            <motion.div variants={itemVariants}>
+              <Card className="p-12 md:p-16 text-center bg-card/60 backdrop-blur-xl border border-border/50 rounded-3xl">
+                <div className="relative inline-block mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-2xl" />
+                  <div className="relative w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center border border-primary/20">
+                    <Upload className="w-10 h-10 text-primary" />
+                  </div>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold mb-3">
+                  {files.length === 0 ? 'No files shared yet' : 'No files match your search'}
+                </h3>
+                <p className="text-muted-foreground text-sm sm:text-base mb-8 max-w-md mx-auto">
+                  {files.length === 0 
+                    ? 'Upload your first file to start sharing with secure links and PINs'
+                    : 'Try adjusting your search or filter criteria'}
+                </p>
+                {files.length === 0 && (
+                  <Button 
+                    onClick={() => navigate('/')} 
+                    className="bg-gradient-to-r from-primary to-primary-glow hover:shadow-xl hover:shadow-primary/25 transition-all h-12 px-8"
+                  >
+                    <Upload className="w-5 h-5 mr-2" />
+                    Upload Files
+                  </Button>
+                )}
+              </Card>
+            </motion.div>
+          ) : (
+            <motion.div variants={itemVariants} className="grid gap-4">
+              {filteredFiles.map((file, index) => (
+                <motion.div
+                  key={file.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Card className="group bg-card/60 backdrop-blur-xl border border-border/50 hover:border-primary/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+                    <CardContent className="p-4 sm:p-6">
+                      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+                        {/* File Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start gap-4 mb-4">
+                            <div className="relative flex-shrink-0">
+                              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity" />
+                              <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center border border-primary/10">
+                                <FileUp className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
+                              </div>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-base sm:text-lg truncate mb-1">{file.original_name}</h3>
+                              <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                                <span className="flex items-center gap-1.5">
+                                  <HardDrive className="w-3.5 h-3.5" />
+                                  {formatFileSize(file.file_size)}
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                  <Calendar className="w-3.5 h-3.5" />
+                                  {format(new Date(file.upload_date), 'MMM d, yyyy')}
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                  <Download className="w-3.5 h-3.5" />
+                                  {file.download_count} downloads
+                                </span>
+                              </div>
+                            </div>
+                            {file.password_hash ? (
+                              <Badge variant="secondary" className="flex items-center gap-1.5 bg-warning/10 text-warning border-warning/20 flex-shrink-0">
+                                <Lock className="w-3 h-3" />
+                                <span className="hidden xs:inline">Protected</span>
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="flex items-center gap-1.5 bg-success/10 text-success border-success/20 flex-shrink-0">
+                                <Unlock className="w-3 h-3" />
+                                <span className="hidden xs:inline">Public</span>
+                              </Badge>
+                            )}
+                          </div>
+
+                          {/* Share Links */}
+                          <div className="space-y-3">
+                            {/* PIN */}
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="font-mono text-sm px-4 py-2 rounded-lg bg-muted/50">
+                                PIN: {file.share_pin}
+                              </Badge>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => copyToClipboard(file.share_pin, 'PIN')}
+                                className="h-9 w-9 rounded-lg hover:bg-primary/10"
+                              >
+                                <Copy className="w-4 h-4" />
+                              </Button>
+                            </div>
+
+                            {/* Share URL */}
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 min-w-0 bg-muted/50 px-4 py-2.5 rounded-xl border border-border/40">
+                                <p className="text-xs sm:text-sm font-mono truncate">{getShareUrl(file.share_token)}</p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => copyToClipboard(getShareUrl(file.share_token), 'Link')}
+                                className="h-9 w-9 rounded-lg hover:bg-primary/10 flex-shrink-0"
+                              >
+                                <Copy className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(getShareUrl(file.share_token), '_blank')}
+                                className="h-9 w-9 rounded-lg hover:bg-primary/10 flex-shrink-0"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex lg:flex-col gap-2 lg:w-28 flex-shrink-0">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 lg:w-full h-10 rounded-lg hover:bg-primary/5 hover:border-primary/40"
+                            onClick={() => window.open(`/pin`, '_blank')}
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            Test PIN
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-1 lg:w-full h-10 rounded-lg text-destructive hover:bg-destructive/10 hover:border-destructive/40"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete this file?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. The file will be permanently deleted and the share link will no longer work.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction 
+                                  onClick={() => handleDeleteFile(file.id, file.share_token)}
+                                  className="bg-destructive hover:bg-destructive/90"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </motion.div>
+      </main>
     </div>
   );
 };
