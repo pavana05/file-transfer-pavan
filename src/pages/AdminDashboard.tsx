@@ -132,6 +132,16 @@ interface UserRecord {
   total_storage: number;
   has_premium: boolean;
   created_at?: string;
+  roles: string[];
+}
+
+type PaymentEmailType = 'confirmation' | 'reminder' | 'expiring' | 'custom';
+
+interface PaymentEmailTemplate {
+  value: PaymentEmailType;
+  label: string;
+  description: string;
+  icon: React.ReactNode;
 }
 
 interface Stats {
@@ -195,12 +205,27 @@ const AdminDashboard = () => {
   const [replySubject, setReplySubject] = useState('');
   const [replyMessage, setReplyMessage] = useState('');
   const [isSendingReply, setIsSendingReply] = useState(false);
+  const [selectedUserForRole, setSelectedUserForRole] = useState<UserRecord | null>(null);
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [isUpdatingRole, setIsUpdatingRole] = useState(false);
+  const [isPaymentEmailDialogOpen, setIsPaymentEmailDialogOpen] = useState(false);
+  const [paymentEmailType, setPaymentEmailType] = useState<PaymentEmailType>('confirmation');
+  const [paymentEmailSubject, setPaymentEmailSubject] = useState('');
+  const [paymentEmailMessage, setPaymentEmailMessage] = useState('');
+  const [isSendingPaymentEmail, setIsSendingPaymentEmail] = useState(false);
 
   const emailTemplates: EmailTemplateOption[] = [
     { value: 'custom', label: 'Custom Reply', description: 'Write your own message', icon: <Mail className="h-4 w-4" /> },
     { value: 'acknowledgment', label: 'Acknowledgment', description: 'Confirm receipt and next steps', icon: <Inbox className="h-4 w-4" /> },
     { value: 'resolution', label: 'Resolution', description: 'Issue resolved notification', icon: <CheckCheck className="h-4 w-4" /> },
     { value: 'follow_up', label: 'Follow Up', description: 'Request more information', icon: <Reply className="h-4 w-4" /> },
+  ];
+
+  const paymentEmailTemplates: PaymentEmailTemplate[] = [
+    { value: 'confirmation', label: 'Payment Confirmation', description: 'Confirm successful payment', icon: <CheckCircle className="h-4 w-4" /> },
+    { value: 'reminder', label: 'Payment Reminder', description: 'Remind about pending payment', icon: <Clock className="h-4 w-4" /> },
+    { value: 'expiring', label: 'Plan Expiring', description: 'Notify about expiring plan', icon: <AlertTriangle className="h-4 w-4" /> },
+    { value: 'custom', label: 'Custom Message', description: 'Write your own message', icon: <Mail className="h-4 w-4" /> },
   ];
 
   useEffect(() => {
@@ -255,6 +280,24 @@ const AdminDashboard = () => {
       setFiles(filesData || []);
       setContacts(contactsData || []);
 
+      // Load user roles
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('*');
+
+      if (rolesError) {
+        console.error('Error loading user roles:', rolesError);
+      }
+
+      // Build a map of user roles
+      const userRolesMap = new Map<string, string[]>();
+      (rolesData || []).forEach(role => {
+        if (!userRolesMap.has(role.user_id)) {
+          userRolesMap.set(role.user_id, []);
+        }
+        userRolesMap.get(role.user_id)!.push(role.role);
+      });
+
       // Build user records from files and payments
       const userMap = new Map<string, UserRecord>();
       
@@ -267,6 +310,7 @@ const AdminDashboard = () => {
               total_downloads: 0,
               total_storage: 0,
               has_premium: false,
+              roles: userRolesMap.get(file.user_id) || [],
             });
           }
           const user = userMap.get(file.user_id)!;
@@ -285,10 +329,25 @@ const AdminDashboard = () => {
               total_downloads: 0,
               total_storage: 0,
               has_premium: true,
+              roles: userRolesMap.get(payment.user_id) || [],
             });
           } else {
             userMap.get(payment.user_id)!.has_premium = true;
           }
+        }
+      });
+
+      // Also add users from roles who might not have files/payments
+      userRolesMap.forEach((roles, userId) => {
+        if (!userMap.has(userId)) {
+          userMap.set(userId, {
+            user_id: userId,
+            files_count: 0,
+            total_downloads: 0,
+            total_storage: 0,
+            has_premium: false,
+            roles: roles,
+          });
         }
       });
 
@@ -782,7 +841,70 @@ const AdminDashboard = () => {
     }
   };
 
-  // Show loading state
+  // Role management handlers
+  const handleOpenRoleDialog = (userRecord: UserRecord) => {
+    setSelectedUserForRole(userRecord);
+    setIsRoleDialogOpen(true);
+  };
+
+  const handleAssignRole = async (role: 'admin' | 'moderator' | 'user') => {
+    if (!selectedUserForRole) return;
+    setIsUpdatingRole(true);
+    try {
+      await supabase.from('user_roles').delete().eq('user_id', selectedUserForRole.user_id);
+      const { error } = await supabase.from('user_roles').insert({ user_id: selectedUserForRole.user_id, role });
+      if (error) throw error;
+      setUsers(prev => prev.map(u => u.user_id === selectedUserForRole.user_id ? { ...u, roles: [role] } : u));
+      toast.success(`Role updated to ${role}`);
+      setIsRoleDialogOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update role');
+    } finally {
+      setIsUpdatingRole(false);
+    }
+  };
+
+  const handleOpenPaymentEmailDialog = (payment: Payment) => {
+    setSelectedPayment(payment);
+    setPaymentEmailType('confirmation');
+    setIsPaymentEmailDialogOpen(true);
+  };
+
+  const handleSendPaymentEmail = async () => {
+    if (!selectedPayment) return;
+    setIsSendingPaymentEmail(true);
+    try {
+      const response = await supabase.functions.invoke('send-payment-email', {
+        body: {
+          type: paymentEmailType,
+          recipientEmail: selectedPayment.user_email || '',
+          recipientName: 'Customer',
+          planName: selectedPayment.plan_name,
+          amount: selectedPayment.amount_inr,
+          purchaseDate: format(new Date(selectedPayment.purchased_at || selectedPayment.created_at), 'PPP'),
+          paymentId: selectedPayment.razorpay_payment_id,
+          subject: paymentEmailSubject,
+          message: paymentEmailMessage,
+        },
+      });
+      if (response.error) throw new Error(response.error.message);
+      toast.success('Payment email sent!');
+      setIsPaymentEmailDialogOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send email');
+    } finally {
+      setIsSendingPaymentEmail(false);
+    }
+  };
+
+  const getRoleBadge = (role: string) => {
+    switch (role) {
+      case 'admin': return <Badge className="bg-destructive/10 text-destructive border-destructive/20"><Shield className="h-3 w-3 mr-1" /> Admin</Badge>;
+      case 'moderator': return <Badge className="bg-primary/10 text-primary border-primary/20"><UserCog className="h-3 w-3 mr-1" /> Mod</Badge>;
+      default: return <Badge variant="secondary">User</Badge>;
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -1271,18 +1393,11 @@ const AdminDashboard = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <CardTitle>User Management</CardTitle>
-                        <CardDescription>View and manage platform users</CardDescription>
+                        <CardDescription>View and manage platform users and roles</CardDescription>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Search users..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9 w-48"
-                          />
-                        </div>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="Search users..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 w-48" />
                       </div>
                     </div>
                   </CardHeader>
@@ -1292,10 +1407,12 @@ const AdminDashboard = () => {
                         <TableHeader>
                           <TableRow className="bg-muted/30">
                             <TableHead>User ID</TableHead>
+                            <TableHead>Role</TableHead>
                             <TableHead>Files</TableHead>
                             <TableHead>Downloads</TableHead>
                             <TableHead>Storage</TableHead>
                             <TableHead>Status</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1306,41 +1423,34 @@ const AdminDashboard = () => {
                                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
                                     <Users className="h-4 w-4 text-primary" />
                                   </div>
-                                  <span className="font-mono text-xs truncate max-w-[150px]">
-                                    {userRecord.user_id.slice(0, 8)}...
-                                  </span>
+                                  <span className="font-mono text-xs truncate max-w-[150px]">{userRecord.user_id.slice(0, 8)}...</span>
                                 </div>
                               </TableCell>
                               <TableCell>
-                                <Badge variant="secondary">{userRecord.files_count}</Badge>
+                                <div className="flex flex-wrap gap-1">
+                                  {userRecord.roles.length > 0 ? userRecord.roles.map(role => <span key={role}>{getRoleBadge(role)}</span>) : getRoleBadge('user')}
+                                </div>
                               </TableCell>
+                              <TableCell><Badge variant="secondary">{userRecord.files_count}</Badge></TableCell>
+                              <TableCell><Badge variant="secondary"><Download className="h-3 w-3 mr-1" />{userRecord.total_downloads}</Badge></TableCell>
+                              <TableCell className="text-muted-foreground">{formatFileSize(userRecord.total_storage)}</TableCell>
                               <TableCell>
-                                <Badge variant="secondary">
-                                  <Download className="h-3 w-3 mr-1" />
-                                  {userRecord.total_downloads}
-                                </Badge>
+                                {userRecord.has_premium ? <Badge className="bg-warning/10 text-warning border-warning/20"><Crown className="h-3 w-3 mr-1" /> Premium</Badge> : <Badge variant="secondary">Free</Badge>}
                               </TableCell>
-                              <TableCell className="text-muted-foreground">
-                                {formatFileSize(userRecord.total_storage)}
-                              </TableCell>
-                              <TableCell>
-                                {userRecord.has_premium ? (
-                                  <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">
-                                    <Crown className="h-3 w-3 mr-1" /> Premium
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="secondary">Free</Badge>
-                                )}
+                              <TableCell className="text-right">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => handleOpenRoleDialog(userRecord)}><UserCog className="h-4 w-4 mr-2" />Manage Role</DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={() => handleAssignRole('admin')}><Shield className="h-4 w-4 mr-2" />Make Admin</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleAssignRole('moderator')}><UserCog className="h-4 w-4 mr-2" />Make Moderator</DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               </TableCell>
                             </TableRow>
                           ))}
-                          {filteredUsers.length === 0 && (
-                            <TableRow>
-                              <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                                No users found
-                              </TableCell>
-                            </TableRow>
-                          )}
+                          {filteredUsers.length === 0 && <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No users found</TableCell></TableRow>}
                         </TableBody>
                       </Table>
                     </div>

@@ -79,3 +79,6 @@ verify_jwt = false
 
 [functions.send-admin-reply]
 verify_jwt = false
+
+[functions.send-payment-email]
+verify_jwt = false
