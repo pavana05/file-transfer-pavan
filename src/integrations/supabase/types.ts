@@ -650,15 +650,10 @@ export type Database = {
         Args: { p_share_pin?: string; p_share_token?: string }
         Returns: boolean
       }
-      validate_file_password:
-        | {
-            Args: { p_password: string; p_share_pin: string }
-            Returns: boolean
-          }
-        | {
-            Args: { p_password: string; p_share_pin: string }
-            Returns: boolean
-          }
+      validate_file_password: {
+        Args: { p_password: string; p_share_pin: string }
+        Returns: boolean
+      }
       validate_file_upload: {
         Args: {
           p_file_size: number
