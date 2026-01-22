@@ -11,7 +11,7 @@ import {
   Lock, AlertTriangle, Mail, MessageSquare, Reply,
   Inbox, CheckCheck, Archive, Trash2, Send, UserCog,
   UserPlus, UserMinus, Sparkles, Settings, Database,
-  HardDrive, Globe, CheckSquare, Square
+  HardDrive, Globe, CheckSquare, Square, Heart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -1245,6 +1245,10 @@ const AdminDashboard = () => {
                     </span>
                   )}
                 </TabsTrigger>
+                <TabsTrigger value="settings" className="gap-2">
+                  <Settings className="h-4 w-4" />
+                  <span className="hidden sm:inline">Settings</span>
+                </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
@@ -1905,6 +1909,163 @@ const AdminDashboard = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
+
+              {/* Settings Tab */}
+              <TabsContent value="settings" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Quick Actions */}
+                  <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Zap className="h-5 w-5 text-primary" />
+                        Quick Actions
+                      </CardTitle>
+                      <CardDescription>Perform common administrative tasks</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Button 
+                          variant="outline" 
+                          className="h-auto py-4 flex-col gap-2 hover:border-primary/50"
+                          onClick={() => navigate('/support')}
+                        >
+                          <Heart className="h-5 w-5 text-pink-500" />
+                          <span className="text-sm">Support Page</span>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          className="h-auto py-4 flex-col gap-2 hover:border-primary/50"
+                          onClick={() => navigate('/pricing')}
+                        >
+                          <Crown className="h-5 w-5 text-amber-500" />
+                          <span className="text-sm">View Pricing</span>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          className="h-auto py-4 flex-col gap-2 hover:border-primary/50"
+                          onClick={() => navigate('/contact')}
+                        >
+                          <Mail className="h-5 w-5 text-blue-500" />
+                          <span className="text-sm">Contact Page</span>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          className="h-auto py-4 flex-col gap-2 hover:border-primary/50"
+                          onClick={loadDashboardData}
+                        >
+                          <RefreshCw className="h-5 w-5 text-success" />
+                          <span className="text-sm">Refresh Data</span>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* System Health */}
+                  <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Activity className="h-5 w-5 text-success" />
+                        System Health
+                      </CardTitle>
+                      <CardDescription>Monitor system status and performance</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                          <div className="flex items-center gap-3">
+                            <div className="h-3 w-3 rounded-full bg-success animate-pulse" />
+                            <span className="text-sm font-medium">Database Status</span>
+                          </div>
+                          <Badge className="bg-success/10 text-success border-success/20">Online</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                          <div className="flex items-center gap-3">
+                            <div className="h-3 w-3 rounded-full bg-success animate-pulse" />
+                            <span className="text-sm font-medium">Storage Service</span>
+                          </div>
+                          <Badge className="bg-success/10 text-success border-success/20">Healthy</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                          <div className="flex items-center gap-3">
+                            <div className="h-3 w-3 rounded-full bg-success animate-pulse" />
+                            <span className="text-sm font-medium">Payment Gateway</span>
+                          </div>
+                          <Badge className="bg-success/10 text-success border-success/20">Active</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                          <div className="flex items-center gap-3">
+                            <Database className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm font-medium">Storage Used</span>
+                          </div>
+                          <span className="text-sm font-semibold">{formatFileSize(stats.totalStorage)}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Data Export */}
+                  <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Download className="h-5 w-5 text-primary" />
+                        Export Data
+                      </CardTitle>
+                      <CardDescription>Download data reports in various formats</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Button variant="outline" onClick={() => handleExportPayments('csv')} className="gap-2">
+                          <TableIcon className="h-4 w-4" />
+                          Payments CSV
+                        </Button>
+                        <Button variant="outline" onClick={() => handleExportPayments('excel')} className="gap-2">
+                          <FileSpreadsheet className="h-4 w-4" />
+                          Payments Excel
+                        </Button>
+                        <Button variant="outline" onClick={() => handleExportFiles('csv')} className="gap-2">
+                          <TableIcon className="h-4 w-4" />
+                          Files CSV
+                        </Button>
+                        <Button variant="outline" onClick={() => handleExportFiles('excel')} className="gap-2">
+                          <FileSpreadsheet className="h-4 w-4" />
+                          Files Excel
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Admin Stats Summary */}
+                  <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        Summary
+                      </CardTitle>
+                      <CardDescription>Key metrics at a glance</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                          <span className="text-sm">Total Users</span>
+                          <span className="font-bold">{stats.totalUsers.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                          <span className="text-sm">Premium Users</span>
+                          <span className="font-bold text-amber-500">{stats.premiumUsers.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                          <span className="text-sm">Total Revenue</span>
+                          <span className="font-bold text-success">{formatCurrency(stats.totalRevenue)}</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                          <span className="text-sm">Files Uploaded</span>
+                          <span className="font-bold">{stats.totalFiles.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
             </Tabs>
           </motion.div>
         </motion.div>
@@ -2196,6 +2357,204 @@ const AdminDashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Role Management Dialog */}
+      <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserCog className="h-5 w-5 text-primary" />
+              Manage User Role
+            </DialogTitle>
+            <DialogDescription>
+              Assign or change the role for this user
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedUserForRole && (
+            <div className="space-y-6">
+              {/* User Info */}
+              <div className="p-4 rounded-xl bg-muted/30 text-center">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
+                <p className="font-mono text-sm text-muted-foreground break-all">
+                  {selectedUserForRole.user_id.slice(0, 20)}...
+                </p>
+                <div className="flex items-center justify-center gap-2 mt-2">
+                  {selectedUserForRole.roles.length > 0 ? (
+                    selectedUserForRole.roles.map(role => getRoleBadge(role))
+                  ) : (
+                    <Badge variant="secondary">User</Badge>
+                  )}
+                </div>
+              </div>
+
+              {/* Role Selection */}
+              <div className="space-y-3">
+                <p className="text-sm font-medium">Select New Role</p>
+                <div className="grid grid-cols-1 gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleAssignRole('user')}
+                    disabled={isUpdatingRole}
+                    className={`justify-start gap-3 h-auto py-3 ${
+                      selectedUserForRole.roles.includes('user') || selectedUserForRole.roles.length === 0
+                        ? 'border-primary bg-primary/5'
+                        : ''
+                    }`}
+                  >
+                    <Users className="h-4 w-4" />
+                    <div className="text-left">
+                      <p className="font-medium">User</p>
+                      <p className="text-xs text-muted-foreground">Standard user access</p>
+                    </div>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleAssignRole('moderator')}
+                    disabled={isUpdatingRole}
+                    className={`justify-start gap-3 h-auto py-3 ${
+                      selectedUserForRole.roles.includes('moderator')
+                        ? 'border-primary bg-primary/5'
+                        : ''
+                    }`}
+                  >
+                    <UserCog className="h-4 w-4 text-primary" />
+                    <div className="text-left">
+                      <p className="font-medium">Moderator</p>
+                      <p className="text-xs text-muted-foreground">Can manage content and users</p>
+                    </div>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleAssignRole('admin')}
+                    disabled={isUpdatingRole}
+                    className={`justify-start gap-3 h-auto py-3 ${
+                      selectedUserForRole.roles.includes('admin')
+                        ? 'border-destructive bg-destructive/5'
+                        : ''
+                    }`}
+                  >
+                    <Shield className="h-4 w-4 text-destructive" />
+                    <div className="text-left">
+                      <p className="font-medium">Admin</p>
+                      <p className="text-xs text-muted-foreground">Full administrative access</p>
+                    </div>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsRoleDialogOpen(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Email Dialog */}
+      <Dialog open={isPaymentEmailDialogOpen} onOpenChange={setIsPaymentEmailDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" />
+              Send Payment Email
+            </DialogTitle>
+            <DialogDescription>
+              Send a payment notification email to the user
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedPayment && (
+            <div className="space-y-6">
+              {/* Payment Info */}
+              <div className="p-4 rounded-xl bg-muted/30 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {getPlanIcon(selectedPayment.plan_name)}
+                  <div>
+                    <p className="font-medium">{selectedPayment.plan_name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {format(new Date(selectedPayment.created_at), 'PPP')}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-xl font-bold">{formatCurrency(selectedPayment.amount_inr)}</p>
+                  {getStatusBadge(selectedPayment.status)}
+                </div>
+              </div>
+
+              {/* Email Template Selection */}
+              <div className="space-y-3">
+                <p className="text-sm font-medium">Email Template</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {paymentEmailTemplates.map((template) => (
+                    <button
+                      key={template.value}
+                      onClick={() => setPaymentEmailType(template.value)}
+                      className={`p-3 rounded-lg border text-left transition-all ${
+                        paymentEmailType === template.value 
+                          ? 'border-primary bg-primary/5 ring-1 ring-primary' 
+                          : 'border-border/50 hover:border-primary/50 hover:bg-muted/50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        {template.icon}
+                        <span className="font-medium text-sm">{template.label}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{template.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Message (only for custom type) */}
+              {paymentEmailType === 'custom' && (
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground uppercase font-medium">Subject</p>
+                    <Input
+                      placeholder="Email subject..."
+                      value={paymentEmailSubject}
+                      onChange={(e) => setPaymentEmailSubject(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground uppercase font-medium">Message</p>
+                    <Textarea
+                      placeholder="Email message..."
+                      value={paymentEmailMessage}
+                      onChange={(e) => setPaymentEmailMessage(e.target.value)}
+                      rows={4}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setIsPaymentEmailDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSendPaymentEmail} 
+              disabled={isSendingPaymentEmail}
+              className="gap-2"
+            >
+              {isSendingPaymentEmail ? (
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+              {isSendingPaymentEmail ? 'Sending...' : 'Send Email'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

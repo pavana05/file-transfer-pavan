@@ -122,6 +122,55 @@ serve(async (req: Request) => {
       );
     }
 
+    // Handle donation/support payments
+    if (action === 'create-donation') {
+      const body = await req.json();
+      console.log('Creating donation for user:', user.id, 'amount:', body.amount);
+
+      // Create Razorpay order for donation
+      const orderData = {
+        amount: body.amount, // Amount in paise
+        currency: 'INR',
+        receipt: `donation_${Date.now()}`,
+        notes: {
+          user_id: user.id,
+          type: 'donation'
+        }
+      };
+
+      const razorpayAuth = btoa(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`);
+      const orderResponse = await fetch('https://api.razorpay.com/v1/orders', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${razorpayAuth}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      if (!orderResponse.ok) {
+        const errorText = await orderResponse.text();
+        console.error('Razorpay donation order creation failed:', errorText);
+        return new Response(
+          JSON.stringify({ error: 'Failed to create donation order' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const order = await orderResponse.json();
+      console.log('Razorpay donation order created:', order.id);
+
+      return new Response(
+        JSON.stringify({
+          order_id: order.id,
+          amount: order.amount,
+          currency: order.currency,
+          key_id: RAZORPAY_KEY_ID
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     if (action === 'verify-payment') {
       const body: VerifyPaymentRequest = await req.json();
       console.log('Verifying payment:', body.razorpay_order_id);
