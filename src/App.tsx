@@ -24,6 +24,7 @@ import Profile from "./pages/Profile";
 import PaymentHistory from "./pages/PaymentHistory";
 import Contact from "./pages/Contact";
 import AdminDashboard from "./pages/AdminDashboard";
+import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -82,6 +83,7 @@ const AnimatedRoutes = () => {
             </AuthGuard>
           } 
         />
+        <Route path="/support" element={<PageTransition><Support /></PageTransition>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
