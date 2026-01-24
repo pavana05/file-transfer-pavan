@@ -134,7 +134,9 @@ serve(async (req: Request) => {
         receipt: `donation_${Date.now()}`,
         notes: {
           user_id: user.id,
-          type: 'donation'
+          type: 'donation',
+          name: body.name,
+          message: body.message
         }
       };
 
@@ -160,6 +162,23 @@ serve(async (req: Request) => {
       const order = await orderResponse.json();
       console.log('Razorpay donation order created:', order.id);
 
+      // Store donation in database
+      const { error: insertError } = await supabase
+        .from('donations')
+        .insert({
+          user_id: user.id,
+          email: user.email || '',
+          name: body.name || user.user_metadata?.full_name || null,
+          amount: body.amount,
+          razorpay_order_id: order.id,
+          message: body.message || null,
+          status: 'pending'
+        });
+
+      if (insertError) {
+        console.error('Failed to store donation:', insertError);
+      }
+
       return new Response(
         JSON.stringify({
           order_id: order.id,
@@ -167,6 +186,109 @@ serve(async (req: Request) => {
           currency: order.currency,
           key_id: RAZORPAY_KEY_ID
         }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Verify donation payment
+    if (action === 'verify-donation') {
+      const body = await req.json();
+      console.log('Verifying donation payment:', body.razorpay_order_id);
+
+      // Verify signature
+      const text = `${body.razorpay_order_id}|${body.razorpay_payment_id}`;
+      const encoder = new TextEncoder();
+      const keyData = encoder.encode(RAZORPAY_KEY_SECRET);
+      const messageData = encoder.encode(text);
+      
+      const key = await crypto.subtle.importKey(
+        'raw',
+        keyData,
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      );
+      
+      const signature = await crypto.subtle.sign('HMAC', key, messageData);
+      const generatedSignature = Array.from(new Uint8Array(signature))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+
+      if (generatedSignature !== body.razorpay_signature) {
+        console.error('Donation signature verification failed');
+        return new Response(
+          JSON.stringify({ error: 'Invalid payment signature' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      console.log('Donation signature verified successfully');
+
+      // Update donation record
+      const { data: donationData, error: updateError } = await supabase
+        .from('donations')
+        .update({
+          razorpay_payment_id: body.razorpay_payment_id,
+          razorpay_signature: body.razorpay_signature,
+          status: 'completed',
+          completed_at: new Date().toISOString()
+        })
+        .eq('razorpay_order_id', body.razorpay_order_id)
+        .eq('user_id', user.id)
+        .select()
+        .single();
+
+      if (updateError) {
+        console.error('Failed to update donation:', updateError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to update donation record' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Send thank you email
+      try {
+        const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+        const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+        const amount = new Intl.NumberFormat('en-IN', {
+          style: 'currency',
+          currency: 'INR',
+          minimumFractionDigits: 0
+        }).format((donationData?.amount || 0) / 100);
+
+        const emailResponse = await fetch(
+          `${supabaseUrl}/functions/v1/send-donation-email`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseServiceKey}`
+            },
+            body: JSON.stringify({
+              email: user.email,
+              name: donationData?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Supporter',
+              amount,
+              donationDate: new Date().toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              }),
+              paymentId: body.razorpay_payment_id
+            })
+          }
+        );
+
+        if (!emailResponse.ok) {
+          console.error('Failed to send donation thank you email:', await emailResponse.text());
+        } else {
+          console.log('Donation thank you email sent successfully');
+        }
+      } catch (emailError) {
+        console.error('Error sending donation email:', emailError);
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'Donation verified successfully' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

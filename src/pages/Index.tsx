@@ -1,5 +1,5 @@
 import { FileUploadManager } from '@/components/upload/FileUploadManager';
-import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -110,6 +110,11 @@ const Index = () => {
                 <span className="text-sm font-medium">Pricing</span>
               </Button>
               
+              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/support'} className="gap-2 h-10 px-4 hover:bg-pink-500/10 hover:text-pink-500 transition-all">
+                <Heart className="h-4 w-4" />
+                <span className="text-sm font-medium">Support Us</span>
+              </Button>
+              
               <Button variant="ghost" size="sm" onClick={() => window.location.href = '/pin'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
                 <KeyRound className="h-4 w-4" />
                 <span className="text-sm font-medium">PIN Access</span>
@@ -178,6 +183,14 @@ const Index = () => {
           }} className="justify-start gap-3 h-12 text-base">
               <Crown className="h-5 w-5" />
               Pricing
+            </Button>
+            
+            <Button variant="ghost" size="lg" onClick={() => {
+            window.location.href = '/support';
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base text-pink-500 hover:text-pink-500">
+              <Heart className="h-5 w-5" />
+              Support Us ❤️
             </Button>
             
             <Button variant="ghost" size="lg" onClick={() => {
@@ -566,6 +579,10 @@ const Index = () => {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/support'} className="text-sm text-pink-500 hover:text-pink-600 transition-colors">
+                <Heart className="h-4 w-4 mr-2 fill-pink-500" />
+                Support Us ❤️
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => window.location.href = '/contact'} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Contact Support
               </Button>
