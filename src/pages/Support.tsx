@@ -30,24 +30,24 @@ interface SupportAmount {
 
 const supportAmounts: SupportAmount[] = [
   { 
-    amount: 4900, 
-    label: '₹49', 
+    amount: 2500, 
+    label: '₹25', 
     icon: <Coffee className="h-6 w-6" />, 
     description: 'Buy me a coffee',
     color: 'from-amber-500 to-orange-500',
     gradient: 'bg-gradient-to-br from-amber-500/20 to-orange-500/20'
   },
   { 
-    amount: 9900, 
-    label: '₹99', 
+    amount: 4900, 
+    label: '₹49', 
     icon: <Heart className="h-6 w-6" />, 
     description: 'Send some love',
     color: 'from-pink-500 to-rose-500',
     gradient: 'bg-gradient-to-br from-pink-500/20 to-rose-500/20'
   },
   { 
-    amount: 19900, 
-    label: '₹199', 
+    amount: 9900, 
+    label: '₹99', 
     icon: <Star className="h-6 w-6" />, 
     description: 'Be a star supporter',
     popular: true,
@@ -55,24 +55,24 @@ const supportAmounts: SupportAmount[] = [
     gradient: 'bg-gradient-to-br from-yellow-500/20 to-amber-500/20'
   },
   { 
-    amount: 49900, 
-    label: '₹499', 
+    amount: 14900, 
+    label: '₹149', 
     icon: <Crown className="h-6 w-6" />, 
     description: 'Premium supporter',
     color: 'from-purple-500 to-violet-500',
     gradient: 'bg-gradient-to-br from-purple-500/20 to-violet-500/20'
   },
   { 
-    amount: 99900, 
-    label: '₹999', 
+    amount: 49900, 
+    label: '₹499', 
     icon: <Diamond className="h-6 w-6" />, 
     description: 'Diamond supporter',
     color: 'from-cyan-500 to-blue-500',
     gradient: 'bg-gradient-to-br from-cyan-500/20 to-blue-500/20'
   },
   { 
-    amount: 199900, 
-    label: '₹1,999', 
+    amount: 99900, 
+    label: '₹999', 
     icon: <Trophy className="h-6 w-6" />, 
     description: 'Ultimate champion',
     color: 'from-emerald-500 to-teal-500',
@@ -96,6 +96,14 @@ const sparkles = Array.from({ length: 15 }, (_, i) => ({
   y: Math.random() * 100,
 }));
 
+interface WallSupporter {
+  id: string;
+  name: string | null;
+  amount: number;
+  message: string | null;
+  completed_at: string;
+}
+
 const Support = () => {
   const navigate = useNavigate();
   const { user, session } = useAuth();
@@ -108,11 +116,106 @@ const Support = () => {
   const [donorName, setDonorName] = useState('');
   const [donorMessage, setDonorMessage] = useState('');
   const [totalRaised] = useState(Math.floor(Math.random() * 50000) + 150000);
+  const [showOnWall, setShowOnWall] = useState(false);
+  const [wallSupporters, setWallSupporters] = useState<WallSupporter[]>([]);
+  const [loadingWall, setLoadingWall] = useState(true);
+
+  // Fetch wall supporters
+  useEffect(() => {
+    const fetchWallSupporters = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('donations')
+          .select('id, name, amount, message, completed_at')
+          .eq('show_on_wall', true)
+          .eq('status', 'completed')
+          .order('completed_at', { ascending: false })
+          .limit(12);
+
+        if (!error && data) {
+          setWallSupporters(data);
+        }
+      } catch (err) {
+        console.error('Error fetching wall supporters:', err);
+      } finally {
+        setLoadingWall(false);
+      }
+    };
+
+    fetchWallSupporters();
+  }, [showThankYou]);
+
+  const triggerAmountAnimation = (amount: number) => {
+    // Different confetti configurations based on amount
+    const baseColors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd'];
+    
+    if (amount >= 49900) {
+      // Premium tier - diamond burst effect
+      confetti({
+        particleCount: 100,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: ['#00d9ff', '#0066ff', '#9933ff', '#ffffff'],
+        shapes: ['star', 'circle'],
+        scalar: 1.2,
+      });
+      confetti({
+        particleCount: 50,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.6 },
+        colors: ['#00d9ff', '#0066ff'],
+      });
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.6 },
+        colors: ['#9933ff', '#ffffff'],
+      });
+    } else if (amount >= 14900) {
+      // Mid tier - crown shower
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#a855f7', '#7c3aed', '#fbbf24', '#f59e0b'],
+        scalar: 1.1,
+      });
+    } else if (amount >= 9900) {
+      // Star tier - star burst
+      confetti({
+        particleCount: 60,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#fbbf24', '#f59e0b', '#eab308'],
+        shapes: ['star'],
+        scalar: 1.3,
+      });
+    } else if (amount >= 4900) {
+      // Heart tier - love hearts
+      confetti({
+        particleCount: 50,
+        spread: 50,
+        origin: { y: 0.6 },
+        colors: ['#ec4899', '#f472b6', '#db2777', '#be185d'],
+      });
+    } else {
+      // Coffee tier - warm burst
+      confetti({
+        particleCount: 30,
+        spread: 40,
+        origin: { y: 0.6 },
+        colors: ['#f59e0b', '#d97706', '#b45309'],
+      });
+    }
+  };
 
   const handleAmountSelect = (amount: number) => {
     setSelectedAmount(amount);
     setIsCustom(false);
     setCustomAmount('');
+    triggerAmountAnimation(amount);
   };
 
   const handleCustomAmountChange = (value: string) => {
@@ -198,7 +301,8 @@ const Support = () => {
             amount: selectedAmount,
             type: 'donation',
             name: donorName || undefined,
-            message: donorMessage || undefined
+            message: donorMessage || undefined,
+            show_on_wall: showOnWall
           })
         }
       );
@@ -716,8 +820,26 @@ const Support = () => {
                       value={donorMessage}
                       onChange={(e) => setDonorMessage(e.target.value)}
                       rows={2}
-                      className="resize-none bg-background/50"
+                      className="resize-none bg-background/50 mb-4"
                     />
+                    {/* Show on wall toggle */}
+                    <motion.label 
+                      className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-pink-500/10 to-rose-500/10 border border-pink-500/20 cursor-pointer hover:border-pink-500/40 transition-colors"
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={showOnWall}
+                        onChange={(e) => setShowOnWall(e.target.checked)}
+                        className="w-5 h-5 rounded accent-pink-500"
+                      />
+                      <div className="flex-1">
+                        <span className="font-medium text-foreground">Show on Supporters Wall</span>
+                        <p className="text-xs text-muted-foreground mt-0.5">Display your name & message publicly</p>
+                      </div>
+                      <Users className="h-5 w-5 text-pink-500" />
+                    </motion.label>
                   </div>
                 </div>
               </CardContent>
@@ -814,6 +936,86 @@ const Support = () => {
               ))}
             </div>
           </motion.div>
+
+          {/* Supporters Wall */}
+          {wallSupporters.length > 0 && (
+            <motion.div variants={itemVariants} className="mt-16">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                  Our Amazing{' '}
+                  <span className="bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
+                    Supporters
+                  </span>{' '}
+                  🌟
+                </h2>
+                <p className="text-muted-foreground">People who made FileShare Pro possible</p>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {wallSupporters.map((supporter, index) => (
+                  <motion.div
+                    key={supporter.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    whileHover={{ y: -4, scale: 1.02 }}
+                  >
+                    <Card className="h-full overflow-hidden border-border/50 bg-gradient-to-br from-card via-card to-pink-500/5 hover:shadow-lg hover:shadow-pink-500/10 transition-all duration-300">
+                      <CardContent className="p-5 relative">
+                        {/* Premium badge for high donors */}
+                        {supporter.amount >= 49900 && (
+                          <motion.div 
+                            className="absolute top-3 right-3"
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
+                            <Diamond className="h-5 w-5 text-cyan-500" />
+                          </motion.div>
+                        )}
+                        {supporter.amount >= 14900 && supporter.amount < 49900 && (
+                          <Crown className="absolute top-3 right-3 h-5 w-5 text-purple-500" />
+                        )}
+                        
+                        <div className="flex items-start gap-3">
+                          <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${
+                            supporter.amount >= 49900 
+                              ? 'bg-gradient-to-br from-cyan-500 to-blue-500' 
+                              : supporter.amount >= 14900 
+                                ? 'bg-gradient-to-br from-purple-500 to-violet-500'
+                                : supporter.amount >= 9900
+                                  ? 'bg-gradient-to-br from-yellow-500 to-amber-500'
+                                  : 'bg-gradient-to-br from-pink-500 to-rose-500'
+                          } shadow-lg`}>
+                            <Heart className="h-6 w-6 text-white fill-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-foreground truncate">
+                                {supporter.name || 'Anonymous Supporter'}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="secondary" className="text-xs">
+                                ₹{(supporter.amount / 100).toLocaleString()}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(supporter.completed_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                              </span>
+                            </div>
+                            {supporter.message && (
+                              <p className="text-sm text-muted-foreground mt-2 line-clamp-2 italic">
+                                "{supporter.message}"
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
           {/* Trust Footer */}
           <motion.div 

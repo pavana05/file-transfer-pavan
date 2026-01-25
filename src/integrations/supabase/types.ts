@@ -68,6 +68,7 @@ export type Database = {
           razorpay_order_id: string | null
           razorpay_payment_id: string | null
           razorpay_signature: string | null
+          show_on_wall: boolean | null
           status: string
           user_id: string | null
         }
@@ -82,6 +83,7 @@ export type Database = {
           razorpay_order_id?: string | null
           razorpay_payment_id?: string | null
           razorpay_signature?: string | null
+          show_on_wall?: boolean | null
           status?: string
           user_id?: string | null
         }
@@ -96,6 +98,7 @@ export type Database = {
           razorpay_order_id?: string | null
           razorpay_payment_id?: string | null
           razorpay_signature?: string | null
+          show_on_wall?: boolean | null
           status?: string
           user_id?: string | null
         }
