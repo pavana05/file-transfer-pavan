@@ -26,7 +26,11 @@ import {
   Sparkles,
   TrendingUp,
   FileUp,
-  Download
+  Download,
+  Heart,
+  Diamond,
+  Trophy,
+  Star
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import PlanExpirationCountdown from '@/components/PlanExpirationCountdown';
@@ -59,6 +63,7 @@ const Profile = () => {
   const [latestPurchase, setLatestPurchase] = useState<LatestPurchase | null>(null);
   const [loading, setLoading] = useState(true);
   const [fileStats, setFileStats] = useState({ totalFiles: 0, totalDownloads: 0 });
+  const [donationStats, setDonationStats] = useState({ totalDonated: 0, donationCount: 0 });
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -133,6 +138,20 @@ const Profile = () => {
         setFileStats({
           totalFiles: filesData.length,
           totalDownloads: filesData.reduce((sum, f) => sum + (f.download_count || 0), 0)
+        });
+      }
+
+      // Get donation stats
+      const { data: donationsData } = await supabase
+        .from('donations')
+        .select('amount')
+        .eq('user_id', user.id)
+        .eq('status', 'completed');
+
+      if (donationsData) {
+        setDonationStats({
+          totalDonated: donationsData.reduce((sum, d) => sum + (d.amount || 0), 0),
+          donationCount: donationsData.length
         });
       }
     } catch (error) {
@@ -287,6 +306,111 @@ const Profile = () => {
                 expirationDays={latestPurchase.expiration_days}
                 planName={latestPurchase.plan_name}
               />
+            </motion.div>
+          )}
+
+          {/* Supporter Badge - Premium animation for donors */}
+          {donationStats.totalDonated > 0 && (
+            <motion.div variants={itemVariants}>
+              <Card className={`relative overflow-hidden border-pink-500/30 ${
+                donationStats.totalDonated >= 49900 
+                  ? 'bg-gradient-to-br from-card via-cyan-500/5 to-blue-500/10' 
+                  : donationStats.totalDonated >= 14900
+                    ? 'bg-gradient-to-br from-card via-purple-500/5 to-violet-500/10'
+                    : donationStats.totalDonated >= 9900
+                      ? 'bg-gradient-to-br from-card via-yellow-500/5 to-amber-500/10'
+                      : 'bg-gradient-to-br from-card via-pink-500/5 to-rose-500/10'
+              }`}>
+                {/* Animated glow for high donors */}
+                {donationStats.totalDonated >= 49900 && (
+                  <>
+                    <motion.div 
+                      className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-cyan-500/20 to-transparent rounded-full blur-3xl"
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    />
+                    <motion.div 
+                      className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-500/20 to-transparent rounded-full blur-3xl"
+                      animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3] }}
+                      transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+                    />
+                  </>
+                )}
+                
+                <CardHeader className="relative">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <motion.div 
+                        className={`p-4 rounded-2xl shadow-lg ${
+                          donationStats.totalDonated >= 49900 
+                            ? 'bg-gradient-to-br from-cyan-500 to-blue-500' 
+                            : donationStats.totalDonated >= 14900
+                              ? 'bg-gradient-to-br from-purple-500 to-violet-500'
+                              : donationStats.totalDonated >= 9900
+                                ? 'bg-gradient-to-br from-yellow-500 to-amber-500'
+                                : 'bg-gradient-to-br from-pink-500 to-rose-500'
+                        }`}
+                        animate={donationStats.totalDonated >= 49900 ? { 
+                          rotate: [0, 5, -5, 0],
+                          scale: [1, 1.05, 1]
+                        } : {}}
+                        transition={{ duration: 3, repeat: Infinity }}
+                      >
+                        {donationStats.totalDonated >= 49900 ? (
+                          <Diamond className="w-8 h-8 text-white" />
+                        ) : donationStats.totalDonated >= 14900 ? (
+                          <Crown className="w-8 h-8 text-white" />
+                        ) : donationStats.totalDonated >= 9900 ? (
+                          <Star className="w-8 h-8 text-white fill-white" />
+                        ) : (
+                          <Heart className="w-8 h-8 text-white fill-white" />
+                        )}
+                      </motion.div>
+                      <div>
+                        <CardTitle className="text-2xl flex items-center gap-2">
+                          {donationStats.totalDonated >= 49900 ? 'Diamond Supporter' 
+                            : donationStats.totalDonated >= 14900 ? 'Premium Supporter'
+                            : donationStats.totalDonated >= 9900 ? 'Star Supporter'
+                            : 'Valued Supporter'}
+                          {donationStats.totalDonated >= 49900 && (
+                            <motion.span
+                              animate={{ rotate: [0, 360] }}
+                              transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+                            >
+                              ✨
+                            </motion.span>
+                          )}
+                        </CardTitle>
+                        <CardDescription className="text-base">
+                          Thank you for supporting FileShare Pro!
+                        </CardDescription>
+                      </div>
+                    </div>
+                    <Badge className={`px-4 py-2 ${
+                      donationStats.totalDonated >= 49900 
+                        ? 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20' 
+                        : donationStats.totalDonated >= 14900
+                          ? 'bg-purple-500/10 text-purple-500 border-purple-500/20'
+                          : 'bg-pink-500/10 text-pink-500 border-pink-500/20'
+                    }`}>
+                      <Heart className="w-4 h-4 mr-2 fill-current" />
+                      ₹{(donationStats.totalDonated / 100).toLocaleString()} donated
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="relative">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Trophy className="w-4 h-4" />
+                      {donationStats.donationCount} contribution{donationStats.donationCount !== 1 ? 's' : ''}
+                    </span>
+                    <Link to="/support" className="text-pink-500 hover:underline flex items-center gap-1">
+                      <Heart className="w-4 h-4" />
+                      Support again
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           )}
 

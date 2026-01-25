@@ -135,6 +135,21 @@ interface UserRecord {
   roles: string[];
 }
 
+interface DonationRecord {
+  id: string;
+  user_id: string | null;
+  email: string;
+  name: string | null;
+  amount: number;
+  message: string | null;
+  status: string;
+  show_on_wall: boolean | null;
+  razorpay_payment_id: string | null;
+  razorpay_order_id: string | null;
+  created_at: string;
+  completed_at: string | null;
+}
+
 type PaymentEmailType = 'confirmation' | 'reminder' | 'expiring' | 'custom';
 
 interface PaymentEmailTemplate {
@@ -174,6 +189,7 @@ const AdminDashboard = () => {
   const [files, setFiles] = useState<FileRecord[]>([]);
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
   const [users, setUsers] = useState<UserRecord[]>([]);
+  const [donations, setDonations] = useState<DonationRecord[]>([]);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [planDistribution, setPlanDistribution] = useState<{name: string; value: number}[]>([]);
   const [stats, setStats] = useState<Stats>({
@@ -280,7 +296,16 @@ const AdminDashboard = () => {
       setFiles(filesData || []);
       setContacts(contactsData || []);
 
-      // Load user roles
+      // Load donations
+      const { data: donationsData, error: donationsError } = await supabase
+        .from('donations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (donationsError) {
+        console.error('Error loading donations:', donationsError);
+      }
+      setDonations(donationsData || []);
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
         .select('*');
@@ -1249,6 +1274,10 @@ const AdminDashboard = () => {
                   <Settings className="h-4 w-4" />
                   <span className="hidden sm:inline">Settings</span>
                 </TabsTrigger>
+                <TabsTrigger value="donations" className="gap-2">
+                  <Heart className="h-4 w-4" />
+                  <span className="hidden sm:inline">Donations</span>
+                </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
@@ -1900,6 +1929,116 @@ const AdminDashboard = () => {
                             <TableRow>
                               <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                                 No contact submissions found
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Donations Tab */}
+              <TabsContent value="donations" className="space-y-6">
+                <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                  <CardHeader>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          <Heart className="h-5 w-5 text-pink-500" />
+                          Donation Management
+                        </CardTitle>
+                        <CardDescription>View and manage all donations from the support page</CardDescription>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-success">
+                            {formatCurrency(donations.filter(d => d.status === 'completed').reduce((sum, d) => sum + d.amount, 0))}
+                          </p>
+                          <p className="text-xs text-muted-foreground">Total Donations</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="rounded-lg border border-border/50 overflow-hidden overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/30">
+                            <TableHead>Donor</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Message</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Show on Wall</TableHead>
+                            <TableHead>Date</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {donations.map((donation) => (
+                            <TableRow key={donation.id} className="hover:bg-muted/20">
+                              <TableCell>
+                                <div className="flex items-center gap-3">
+                                  <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${
+                                    donation.amount >= 49900 
+                                      ? 'bg-gradient-to-br from-cyan-500 to-blue-500' 
+                                      : donation.amount >= 14900 
+                                        ? 'bg-gradient-to-br from-purple-500 to-violet-500'
+                                        : donation.amount >= 9900
+                                          ? 'bg-gradient-to-br from-yellow-500 to-amber-500'
+                                          : 'bg-gradient-to-br from-pink-500 to-rose-500'
+                                  }`}>
+                                    <Heart className="h-5 w-5 text-white fill-white" />
+                                  </div>
+                                  <div>
+                                    <p className="font-medium">{donation.name || 'Anonymous'}</p>
+                                    <p className="text-xs text-muted-foreground">{donation.email}</p>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <span className="font-bold text-lg">{formatCurrency(donation.amount)}</span>
+                              </TableCell>
+                              <TableCell>
+                                <p className="text-sm text-muted-foreground max-w-[200px] truncate">
+                                  {donation.message || '—'}
+                                </p>
+                              </TableCell>
+                              <TableCell>
+                                {donation.status === 'completed' ? (
+                                  <Badge className="bg-success/10 text-success border-success/20">
+                                    <CheckCircle className="h-3 w-3 mr-1" />
+                                    Completed
+                                  </Badge>
+                                ) : (
+                                  <Badge className="bg-warning/10 text-warning border-warning/20">
+                                    <Clock className="h-3 w-3 mr-1" />
+                                    Pending
+                                  </Badge>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {donation.show_on_wall ? (
+                                  <Badge className="bg-pink-500/10 text-pink-500 border-pink-500/20">
+                                    <Users className="h-3 w-3 mr-1" />
+                                    Public
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="secondary">
+                                    Private
+                                  </Badge>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">
+                                {format(new Date(donation.created_at), 'MMM dd, yyyy')}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                          {donations.length === 0 && (
+                            <TableRow>
+                              <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                                <Heart className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                                <p>No donations received yet</p>
                               </TableCell>
                             </TableRow>
                           )}

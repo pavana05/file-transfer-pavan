@@ -172,6 +172,7 @@ serve(async (req: Request) => {
           amount: body.amount,
           razorpay_order_id: order.id,
           message: body.message || null,
+          show_on_wall: body.show_on_wall || false,
           status: 'pending'
         });
 
