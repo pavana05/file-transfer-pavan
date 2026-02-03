@@ -5,11 +5,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, ArrowLeft, Crown, Zap, Shield, Star, Sparkles, Lock, CreditCard, Gift, ChevronRight, Users, FileUp, Clock } from 'lucide-react';
+import { Check, ArrowLeft, Crown, Zap, Shield, Star, Sparkles, Lock, CreditCard, Gift, ChevronRight, Users, FileUp, Clock, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { RazorpayCheckout } from '@/components/payments/RazorpayCheckout';
 import { PurchaseConfirmationDialog } from '@/components/payments/PurchaseConfirmationDialog';
 import { PaymentSuccessDialog } from '@/components/payments/PaymentSuccessDialog';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { motion } from 'framer-motion';
 
 interface PremiumPlan {
@@ -134,7 +135,6 @@ const Pricing = () => {
   };
 
   const formatPrice = (priceInPaise: number) => {
-    // Convert paise to rupees (divide by 100)
     const priceInRupees = priceInPaise / 100;
     return `₹${priceInRupees.toLocaleString('en-IN')}`;
   };
@@ -184,83 +184,86 @@ const Pricing = () => {
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-tl from-accent/10 via-primary/5 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '2s' }} />
         <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-gradient-to-r from-primary/5 to-transparent rounded-full blur-3xl" />
-        
-        {/* Grid Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.03)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.03)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
       {/* Header */}
       <header className="relative border-b border-border/40 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
           <Link 
             to="/" 
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-all duration-300 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
-            <span className="text-sm font-medium">Back to Home</span>
+            <span className="text-sm font-medium hidden sm:inline">Back to Home</span>
           </Link>
-          {user ? (
-            <Badge 
-              variant="secondary" 
-              className="bg-gradient-to-r from-primary/10 to-accent/10 text-primary border border-primary/20 px-4 py-1.5"
-            >
-              {userPlan ? `${userPlan} Plan` : 'Free Plan'}
-            </Badge>
-          ) : (
-            <Link to="/auth">
-              <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-lg shadow-primary/25">
-                Get Started
-              </Button>
-            </Link>
-          )}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {user ? (
+              <Badge 
+                variant="secondary" 
+                className="bg-gradient-to-r from-primary/10 to-accent/10 text-primary border border-primary/20 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm"
+              >
+                {userPlan ? `${userPlan} Plan` : 'Free Plan'}
+              </Badge>
+            ) : (
+              <Link to="/auth">
+                <Button size="sm" className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-lg shadow-primary/25">
+                  Get Started
+                </Button>
+              </Link>
+            )}
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="relative container mx-auto px-4 py-16 md:py-24">
+      <main className="relative container mx-auto px-4 py-8 sm:py-12 md:py-16 lg:py-24">
         <motion.div 
           variants={containerVariants} 
           initial="hidden" 
           animate="visible"
-          className="space-y-16"
+          className="space-y-10 sm:space-y-12 lg:space-y-16"
         >
           {/* Hero Section */}
           <motion.div variants={itemVariants} className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 mb-8">
+            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 mb-6 sm:mb-8">
               <Gift className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Special Launch Offer</span>
+              <span className="text-xs sm:text-sm font-semibold text-primary">Special Launch Offer</span>
               <Sparkles className="w-4 h-4 text-primary animate-pulse" />
             </div>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight tracking-tight">
-              <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-                Choose Your
-              </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-4 sm:mb-6 leading-tight tracking-tight">
+              <span className="text-foreground">Choose Your</span>
               <br />
               <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
                 Perfect Plan
               </span>
             </h1>
             
-            <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-4">
               Unlock powerful features for seamless file sharing.
               <span className="text-foreground font-medium"> One-time payment, lifetime access.</span>
             </p>
           </motion.div>
 
           {/* Stats Row */}
-          <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <motion.div variants={itemVariants} className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
             {[
               { icon: Users, value: '10K+', label: 'Active Users' },
               { icon: FileUp, value: '1M+', label: 'Files Shared' },
               { icon: Shield, value: '99.9%', label: 'Uptime' },
               { icon: Clock, value: '24/7', label: 'Support' },
             ].map((stat, i) => (
-              <div key={i} className="text-center p-4 rounded-2xl bg-card/50 border border-border/50 backdrop-blur-sm">
-                <stat.icon className="w-5 h-5 text-primary mx-auto mb-2" />
-                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
-              </div>
+              <motion.div 
+                key={i} 
+                whileHover={{ scale: 1.05 }}
+                className="text-center p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-card/50 border border-border/50 backdrop-blur-sm"
+              >
+                <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mx-auto mb-1 sm:mb-2" />
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">{stat.label}</p>
+              </motion.div>
             ))}
           </motion.div>
 
@@ -269,17 +272,17 @@ const Pricing = () => {
             <Card className="relative border-border/50 bg-gradient-to-br from-card via-card to-muted/20 overflow-hidden group hover:shadow-xl hover:shadow-primary/5 transition-all duration-500">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
-              <CardHeader className="text-center pb-6 relative">
-                <div className="flex items-center justify-center gap-3 mb-3">
-                  <div className="p-3 rounded-2xl bg-muted border border-border/50">
-                    <Shield className="w-6 h-6 text-muted-foreground" />
+              <CardHeader className="text-center pb-4 sm:pb-6 relative">
+                <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                  <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-muted border border-border/50">
+                    <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
                   </div>
-                  <CardTitle className="text-2xl">Free Forever</CardTitle>
+                  <CardTitle className="text-xl sm:text-2xl text-foreground">Free Forever</CardTitle>
                 </div>
-                <CardDescription className="text-base">Great for personal use and getting started</CardDescription>
+                <CardDescription className="text-sm sm:text-base text-muted-foreground">Great for personal use and getting started</CardDescription>
               </CardHeader>
               
-              <CardContent className="flex flex-wrap justify-center gap-3 pb-8 relative">
+              <CardContent className="flex flex-wrap justify-center gap-2 sm:gap-3 pb-6 sm:pb-8 relative px-4">
                 {[
                   { icon: Check, text: '1GB per file' },
                   { icon: Check, text: '7-day expiration' },
@@ -288,9 +291,9 @@ const Pricing = () => {
                 ].map((item, i) => (
                   <span 
                     key={i} 
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-muted/50 border border-border/30 text-sm text-foreground"
+                    className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-muted/50 border border-border/30 text-xs sm:text-sm text-foreground"
                   >
-                    <item.icon className="w-4 h-4 text-success" />
+                    <item.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-success" />
                     {item.text}
                   </span>
                 ))}
@@ -299,168 +302,163 @@ const Pricing = () => {
           </motion.div>
 
           {/* Premium Plans */}
-          <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
             {plans.map((plan, index) => {
               const isPopular = index === 1 || plan.slug === 'business';
               
               return (
-                <Card 
-                  key={plan.id} 
-                  className={`relative overflow-hidden transition-all duration-500 group ${
-                    isPopular 
-                      ? 'border-primary shadow-2xl shadow-primary/20 scale-[1.02] md:scale-105' 
-                      : 'border-border/50 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10'
-                  } ${userPlan === plan.name ? 'ring-2 ring-success ring-offset-2 ring-offset-background' : ''}`}
+                <motion.div
+                  key={plan.id}
+                  whileHover={{ y: -8 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {/* Background gradient */}
-                  <div className={`absolute inset-0 transition-opacity duration-500 ${
-                    isPopular 
-                      ? 'bg-gradient-to-br from-primary/10 via-primary/5 to-accent/5' 
-                      : 'bg-gradient-to-br from-muted/50 via-transparent to-transparent opacity-0 group-hover:opacity-100'
-                  }`} />
-                  
-                  {/* Popular badge */}
-                  {isPopular && (
-                    <div className="absolute -top-px -right-px">
-                      <div className="relative">
-                        <div className="bg-gradient-to-r from-primary to-accent text-primary-foreground text-xs font-bold px-5 py-2 rounded-bl-2xl rounded-tr-lg flex items-center gap-2 shadow-lg">
-                          <Star className="w-3.5 h-3.5 fill-current" />
-                          Most Popular
+                  <Card 
+                    className={`relative overflow-hidden transition-all duration-500 h-full ${
+                      isPopular 
+                        ? 'border-primary shadow-2xl shadow-primary/20' 
+                        : 'border-border/50 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10'
+                    } ${userPlan === plan.name ? 'ring-2 ring-success ring-offset-2 ring-offset-background' : ''}`}
+                  >
+                    {/* Background gradient */}
+                    <div className={`absolute inset-0 transition-opacity duration-500 ${
+                      isPopular 
+                        ? 'bg-gradient-to-br from-primary/10 via-primary/5 to-accent/5' 
+                        : 'bg-gradient-to-br from-muted/50 via-transparent to-transparent'
+                    }`} />
+                    
+                    {/* Popular badge */}
+                    {isPopular && (
+                      <div className="absolute -top-px -right-px">
+                        <div className="relative">
+                          <div className="bg-gradient-to-r from-primary to-accent text-primary-foreground text-[10px] sm:text-xs font-bold px-3 sm:px-5 py-1.5 sm:py-2 rounded-bl-xl sm:rounded-bl-2xl rounded-tr-lg flex items-center gap-1.5 sm:gap-2 shadow-lg">
+                            <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" />
+                            Most Popular
+                          </div>
+                          <div className="absolute inset-0 bg-primary/50 blur-lg -z-10" />
                         </div>
-                        <div className="absolute inset-0 bg-primary/50 blur-lg -z-10" />
                       </div>
-                    </div>
-                  )}
-                  
-                  <CardHeader className="text-center pb-8 relative pt-8">
-                    <div className="flex items-center justify-center mb-6">
-                      <div className={`p-5 rounded-3xl transition-all duration-300 group-hover:scale-110 ${
-                        isPopular 
-                          ? 'bg-gradient-to-br from-primary/20 to-accent/10 text-primary shadow-xl shadow-primary/25' 
-                          : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
-                      }`}>
-                        {getPlanIcon(plan.slug)}
-                      </div>
-                    </div>
-                    
-                    <CardTitle className="text-3xl mb-2">{plan.name}</CardTitle>
-                    
-                    <div className="mt-6 space-y-2">
-                      <div className="flex items-baseline justify-center gap-1">
-                        <span className={`text-5xl md:text-6xl font-black tracking-tight ${
-                          isPopular ? 'bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent' : 'text-foreground'
-                        }`}>
-                          {formatPrice(plan.price_inr)}
-                        </span>
-                      </div>
-                      <Badge 
-                        className={`${
-                          isPopular 
-                            ? 'bg-gradient-to-r from-primary/10 to-accent/10 text-primary border-primary/20' 
-                            : 'bg-muted text-muted-foreground border-border/50'
-                        }`}
-                      >
-                        One-time payment
-                      </Badge>
-                    </div>
-                    
-                    <CardDescription className="mt-6 text-base flex items-center justify-center gap-4">
-                      <span className="flex items-center gap-1.5">
-                        <FileUp className="w-4 h-4 text-primary" />
-                        {formatFileSize(plan.file_size_limit)}
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Clock className="w-4 h-4 text-primary" />
-                        {plan.expiration_days ? `${plan.expiration_days} days` : 'Unlimited'}
-                      </span>
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4 pb-8 relative">
-                    {plan.features.map((feature, i) => (
-                      <div 
-                        key={i} 
-                        className="flex items-center gap-3 group/item"
-                      >
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                          isPopular 
-                            ? 'bg-success/10 text-success' 
-                            : 'bg-muted text-muted-foreground group-hover/item:bg-success/10 group-hover/item:text-success'
-                        }`}>
-                          <Check className="w-4 h-4" />
-                        </div>
-                        <span className="text-sm md:text-base text-foreground">{feature}</span>
-                      </div>
-                    ))}
-                  </CardContent>
-
-                  <CardFooter className="pt-0 pb-8 relative">
-                    {userPlan === plan.name ? (
-                      <Button 
-                        className="w-full h-14 text-lg font-bold bg-success/10 text-success border border-success/20 hover:bg-success/20" 
-                        disabled
-                      >
-                        <Check className="w-5 h-5 mr-2" />
-                        Current Plan
-                      </Button>
-                    ) : (
-                      <Button 
-                        className={`w-full h-14 text-lg font-bold transition-all duration-300 ${
-                          isPopular 
-                            ? 'bg-gradient-to-r from-primary via-primary to-accent hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-1' 
-                            : 'border-2 border-primary/50 bg-transparent text-primary hover:bg-primary hover:text-primary-foreground'
-                        }`}
-                        variant={isPopular ? 'default' : 'outline'}
-                        onClick={() => handleSelectPlan(plan)}
-                      >
-                        Get {plan.name}
-                        <ChevronRight className="w-5 h-5 ml-2" />
-                      </Button>
                     )}
-                  </CardFooter>
-                </Card>
+                    
+                    <CardHeader className="text-center pb-6 sm:pb-8 relative pt-6 sm:pt-8">
+                      <div className="flex items-center justify-center mb-4 sm:mb-6">
+                        <div className={`p-4 sm:p-5 rounded-2xl sm:rounded-3xl transition-all duration-300 ${
+                          isPopular 
+                            ? 'bg-gradient-to-br from-primary/20 to-accent/10 text-primary shadow-xl shadow-primary/25' 
+                            : 'bg-muted text-muted-foreground'
+                        }`}>
+                          {getPlanIcon(plan.slug)}
+                        </div>
+                      </div>
+                      
+                      <CardTitle className="text-2xl sm:text-3xl mb-2 text-foreground">{plan.name}</CardTitle>
+                      
+                      <div className="mt-4 sm:mt-6 space-y-2">
+                        <div className="flex items-baseline justify-center gap-1">
+                          <span className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${
+                            isPopular ? 'bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent' : 'text-foreground'
+                          }`}>
+                            {formatPrice(plan.price_inr)}
+                          </span>
+                        </div>
+                        <Badge 
+                          className={`${
+                            isPopular 
+                              ? 'bg-gradient-to-r from-primary/10 to-accent/10 text-primary border-primary/20' 
+                              : 'bg-muted text-muted-foreground border-border/50'
+                          }`}
+                        >
+                          One-time payment
+                        </Badge>
+                      </div>
+                      
+                      <CardDescription className="mt-4 sm:mt-6 text-sm sm:text-base flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-muted-foreground">
+                        <span className="flex items-center gap-1.5">
+                          <FileUp className="w-4 h-4 text-primary" />
+                          {formatFileSize(plan.file_size_limit)}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Clock className="w-4 h-4 text-primary" />
+                          {plan.expiration_days ? `${plan.expiration_days} days` : 'Unlimited'}
+                        </span>
+                      </CardDescription>
+                    </CardHeader>
+
+                    <CardContent className="space-y-3 sm:space-y-4 pb-6 sm:pb-8 relative px-4 sm:px-6">
+                      {plan.features.map((feature, i) => (
+                        <div key={i} className="flex items-center gap-2 sm:gap-3 group/item">
+                          <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                            isPopular 
+                              ? 'bg-success/10 text-success' 
+                              : 'bg-muted text-muted-foreground group-hover/item:bg-success/10 group-hover/item:text-success'
+                          }`}>
+                            <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          </div>
+                          <span className="text-xs sm:text-sm md:text-base text-foreground">{feature}</span>
+                        </div>
+                      ))}
+                    </CardContent>
+
+                    <CardFooter className="pt-0 pb-6 sm:pb-8 relative px-4 sm:px-6">
+                      {userPlan === plan.name ? (
+                        <Button 
+                          className="w-full h-12 sm:h-14 text-sm sm:text-lg font-bold bg-success/10 text-success border border-success/20 hover:bg-success/20" 
+                          disabled
+                        >
+                          <Check className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                          Current Plan
+                        </Button>
+                      ) : (
+                        <Button 
+                          className={`w-full h-12 sm:h-14 text-sm sm:text-lg font-bold transition-all duration-300 ${
+                            isPopular 
+                              ? 'bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40' 
+                              : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg'
+                          }`}
+                          onClick={() => handleSelectPlan(plan)}
+                        >
+                          Get {plan.name}
+                          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                        </Button>
+                      )}
+                    </CardFooter>
+                  </Card>
+                </motion.div>
               );
             })}
           </motion.div>
 
-          {/* Trust Indicators */}
+          {/* Support Link */}
           <motion.div variants={itemVariants} className="text-center">
-            <p className="text-sm text-muted-foreground mb-8 font-medium">Secure payment powered by</p>
-            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-              {[
-                { icon: Shield, text: 'Razorpay', primary: true },
-                { icon: Lock, text: '256-bit SSL' },
-                { icon: CreditCard, text: 'PCI Compliant' },
-                { icon: Check, text: '100% Secure' }
-              ].map((item, i) => (
-                <div 
-                  key={i}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-300 ${
-                    item.primary 
-                      ? 'bg-gradient-to-r from-primary/10 to-accent/10 text-primary border border-primary/20' 
-                      : 'bg-muted/50 text-muted-foreground border border-border/50 hover:border-primary/20 hover:text-foreground'
-                  }`}
-                >
-                  <item.icon className="w-4 h-4" />
-                  <span className="text-sm font-medium">{item.text}</span>
-                </div>
-              ))}
-            </div>
+            <Link to="/support">
+              <Button variant="ghost" size="lg" className="gap-2 text-muted-foreground hover:text-primary">
+                <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500" />
+                <span className="text-sm sm:text-base">Support FileShare Pro</span>
+              </Button>
+            </Link>
           </motion.div>
 
-          {/* FAQ Teaser */}
-          <motion.div variants={itemVariants} className="text-center pb-8">
-            <Card className="max-w-xl mx-auto p-6 bg-gradient-to-br from-muted/50 to-transparent border-border/50">
-              <p className="text-muted-foreground">
-                Have questions? <Link to="/#faq" className="text-primary hover:underline font-semibold">Check our FAQ</Link>
-              </p>
-            </Card>
+          {/* Trust Badges */}
+          <motion.div variants={itemVariants} className="text-center">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-muted-foreground">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-success" />
+                <span>Secure Payments</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <span>SSL Encrypted</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-warning" />
+                <span>Razorpay Protected</span>
+              </div>
+            </div>
           </motion.div>
         </motion.div>
       </main>
 
-      {/* Purchase Confirmation Dialog */}
-      {selectedPlan && (
+      {/* Dialogs */}
+      {selectedPlan && showConfirmation && (
         <PurchaseConfirmationDialog
           plan={selectedPlan}
           open={showConfirmation}
@@ -469,27 +467,22 @@ const Pricing = () => {
         />
       )}
 
-      {/* Razorpay Checkout Modal */}
       {selectedPlan && showCheckout && (
         <RazorpayCheckout
           plan={selectedPlan}
           onSuccess={handlePaymentSuccess}
           onError={handlePaymentError}
-          onClose={() => {
-            setShowCheckout(false);
-            setSelectedPlan(null);
-          }}
+          onClose={() => { setShowCheckout(false); setSelectedPlan(null); }}
         />
       )}
 
-      {/* Payment Success Dialog */}
       {purchasedPlan && (
         <PaymentSuccessDialog
           plan={purchasedPlan}
           open={!!purchasedPlan}
-          onClose={handleSuccessDialogClose}
           orderId={paymentDetails.orderId}
           paymentId={paymentDetails.paymentId}
+          onClose={handleSuccessDialogClose}
         />
       )}
     </div>
