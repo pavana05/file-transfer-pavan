@@ -34,6 +34,12 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { FileAnalytics } from '@/components/dashboard/FileAnalytics';
 import { FileListSkeleton } from '@/components/dashboard/FileListSkeleton';
+import { 
+  DashboardFullSkeleton,
+  DashboardStatsSkeleton,
+  DashboardAnalyticsSkeleton,
+  DashboardSearchSkeleton
+} from '@/components/dashboard/DashboardPageSkeleton';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -190,6 +196,11 @@ const Dashboard = () => {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
   };
+
+  // Show full page skeleton during auth loading
+  if (authLoading) {
+    return <DashboardFullSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
