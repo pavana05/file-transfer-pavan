@@ -59,7 +59,7 @@ export const PurchaseConfirmationDialog = ({
 
   return (
     <AlertDialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
-      <AlertDialogContent className="max-w-md p-0 overflow-hidden border-0 bg-card">
+      <AlertDialogContent className="max-w-md p-0 overflow-hidden border-0 bg-card max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 border-b border-border/50">
           <div className="absolute inset-0 overflow-hidden">
