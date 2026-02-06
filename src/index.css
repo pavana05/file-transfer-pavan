@@ -21,6 +21,12 @@ All colors MUST be HSL.
     --primary-foreground: 0 0% 100%;
     --primary-glow: 217 85% 60%;
     --primary-dark: 217 80% 35%;
+    
+    /* Pricing Red Theme */
+    --pricing-primary: 0 84% 60%;
+    --pricing-primary-foreground: 0 0% 100%;
+    --pricing-glow: 0 85% 68%;
+    --pricing-dark: 0 80% 45%;
 
     --secondary: 240 25% 97%;
     --secondary-foreground: 240 18% 8%;
@@ -260,5 +266,71 @@ All colors MUST be HSL.
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Smooth Scroll & Hover Animations */
+@layer utilities {
+  /* Smooth scrolling for all */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+  
+  /* Premium hover lift effect */
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px hsl(var(--primary) / 0.15);
+  }
+  
+  /* Hover glow effect */
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+  
+  .hover-glow:hover {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.3);
+  }
+  
+  /* Card hover scale */
+  .hover-scale-sm {
+    @apply transition-transform duration-300;
+  }
+  
+  .hover-scale-sm:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Link underline animation */
+  .link-underline {
+    @apply relative inline-block;
+  }
+  
+  .link-underline::after {
+    content: '';
+    @apply absolute left-0 bottom-0 w-full h-0.5 bg-primary origin-left scale-x-0 transition-transform duration-300;
+  }
+  
+  .link-underline:hover::after {
+    @apply scale-x-100;
+  }
+  
+  /* Button shine effect */
+  .btn-shine {
+    @apply relative overflow-hidden;
+  }
+  
+  .btn-shine::before {
+    content: '';
+    @apply absolute inset-0 -translate-x-full;
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.2), transparent);
+    transition: transform 0.5s ease;
+  }
+  
+  .btn-shine:hover::before {
+    @apply translate-x-full;
   }
 }
