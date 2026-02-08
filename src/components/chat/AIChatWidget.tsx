@@ -209,21 +209,34 @@ export const AIChatWidget = () => {
 
   return (
     <>
-      {/* Floating Chat Button */}
-      <AnimatePresence>
+      {/* Floating Chat Button with enhanced animation */}
+      <AnimatePresence mode="wait">
         {!isOpen && (
           <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
+            initial={{ scale: 0, opacity: 0, rotate: -180 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            exit={{ scale: 0, opacity: 0, rotate: 180 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
             className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50"
           >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-accent rounded-full blur-xl opacity-40 animate-pulse" />
+            <motion.div 
+              whileHover={{ scale: 1.1 }} 
+              whileTap={{ scale: 0.9 }} 
+              className="relative"
+            >
+              {/* Animated glow ring */}
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-r from-primary via-primary-glow to-accent rounded-full blur-xl"
+                animate={{ 
+                  opacity: [0.4, 0.7, 0.4],
+                  scale: [1, 1.2, 1]
+                }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
               <Button
                 onClick={() => setIsOpen(true)}
                 size="lg"
-                className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-2xl bg-gradient-to-br from-primary via-primary to-primary/80 hover:from-primary/90 hover:via-primary/90 hover:to-primary/70 transition-all duration-300 border border-white/20"
+                className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-2xl bg-gradient-to-br from-primary via-primary to-primary-glow hover:from-primary/90 hover:via-primary/90 hover:to-primary-glow/90 transition-all duration-300 border border-primary-foreground/20"
               >
                 <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7 text-primary-foreground" />
                 <span className="sr-only">Open chat</span>
@@ -232,28 +245,33 @@ export const AIChatWidget = () => {
                 className="absolute -top-0.5 -right-0.5 flex h-4 w-4 sm:h-5 sm:w-5"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.3, type: "spring", stiffness: 400 }}
               >
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-4 w-4 sm:h-5 sm:w-5 bg-emerald-500 border-2 border-background" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
+                <span className="relative inline-flex rounded-full h-4 w-4 sm:h-5 sm:w-5 bg-success border-2 border-background" />
               </motion.span>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Chat Window */}
-      <AnimatePresence>
+      {/* Chat Window with enhanced open/close animation */}
+      <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: 100, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            exit={{ opacity: 0, y: 100, scale: 0.8 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 300, 
+              damping: 30,
+              mass: 0.8
+            }}
             className={cn(
               "fixed z-50 flex flex-col",
-              "bg-gradient-to-b from-card via-card to-card/95 backdrop-blur-xl",
-              "border border-border/50 shadow-2xl overflow-hidden",
+              "bg-gradient-to-b from-card via-card to-card/98 backdrop-blur-xl",
+              "border border-border/50 shadow-2xl shadow-primary/10 overflow-hidden",
               isFullscreen 
                 ? "inset-2 sm:inset-4 rounded-2xl sm:rounded-3xl" 
                 : "bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-[400px] max-w-[400px] rounded-2xl sm:rounded-3xl"
@@ -263,11 +281,16 @@ export const AIChatWidget = () => {
               height: isFullscreen ? 'calc(100vh - 2rem)' : isMinimized ? 'auto' : 'min(600px, calc(100vh - 6rem))'
             }}
           >
-            {/* Premium Header */}
-            <div className="relative overflow-hidden flex-shrink-0">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-accent opacity-95" />
+            {/* Premium Header with animated gradient */}
+            <motion.div 
+              className="relative overflow-hidden flex-shrink-0"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary-glow" />
               <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-foreground/10 to-transparent"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               />
@@ -327,7 +350,7 @@ export const AIChatWidget = () => {
                   </Button>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Messages Area */}
             <AnimatePresence>
