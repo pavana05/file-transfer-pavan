@@ -71,6 +71,7 @@ import {
   exportFilesToCSV, exportFilesToExcel 
 } from '@/lib/export-utils';
 import { downloadInvoice } from '@/lib/invoice-generator';
+import { AdminFullSkeleton } from '@/components/skeletons/AdminSkeleton';
 
 interface Payment {
   id: string;
@@ -930,15 +931,8 @@ const AdminDashboard = () => {
     }
   };
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <RefreshCw className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-muted-foreground">Verifying access...</p>
-        </div>
-      </div>
-    );
+  if (authLoading || loading) {
+    return <AdminFullSkeleton />;
   }
 
   // Show access denied if not admin
