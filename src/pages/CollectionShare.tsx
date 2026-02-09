@@ -1,20 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Download, ArrowLeft, Share2, Folder, Archive, FileIcon, Clock, Eye, Shield, Sparkles, AlertTriangle } from 'lucide-react';
+import { Download, ArrowLeft, Share2, Folder, Archive, FileIcon, Clock, Eye, Shield, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Progress } from '@/components/ui/progress';
 import { formatFileSize } from '@/lib/file-utils';
 import { UploadService } from '@/services/uploadService';
 import { FileCollection, DatabaseFile } from '@/types/upload';
 import { useToast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
 
 interface FileWithAvailability extends DatabaseFile {
   isAvailable?: boolean;
   checkingAvailability?: boolean;
 }
+
+const CollectionShareSkeleton = () => (
+  <div className="min-h-screen bg-background">
+    <div className="container mx-auto px-4 py-8 sm:py-12 max-w-3xl">
+      <Skeleton className="h-4 w-28 mb-6" />
+      <Skeleton className="h-10 w-64 mb-2" />
+      <Skeleton className="h-5 w-48 mb-8" />
+      <Card className="p-6 border-border/50">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          {[1,2,3,4].map(i => <Skeleton key={i} className="h-20 rounded-xl" />)}
+        </div>
+        <div className="flex gap-3">
+          <Skeleton className="flex-1 h-12 rounded-xl" />
+          <Skeleton className="flex-1 h-12 rounded-xl" />
+        </div>
+      </Card>
+      <div className="mt-6 space-y-3">
+        {[1,2,3].map(i => <Skeleton key={i} className="h-20 rounded-xl" />)}
+      </div>
+    </div>
+  </div>
+);
 
 const CollectionShare = () => {
   const { token } = useParams<{ token: string }>();
@@ -31,20 +55,16 @@ const CollectionShare = () => {
       setLoading(false);
       return;
     }
-
     loadCollectionInfo();
   }, [token]);
 
   const loadCollectionInfo = async () => {
     try {
       const collectionData = await UploadService.getCollectionFiles(token!);
-      
-      // Check availability of each file
       const filesWithAvailability = await Promise.all(
         collectionData.files.map(async (file) => {
           try {
             const url = await UploadService.getFileUrl(file.storage_path);
-            // Try to fetch headers to check if file exists
             const response = await fetch(url, { method: 'HEAD' });
             return { ...file, isAvailable: response.ok, checkingAvailability: false };
           } catch {
@@ -52,7 +72,6 @@ const CollectionShare = () => {
           }
         })
       );
-      
       setCollection({ ...collectionData, files: filesWithAvailability });
     } catch (err) {
       setError('Collection not found or link has expired');
@@ -62,96 +81,51 @@ const CollectionShare = () => {
   };
 
   const handleDownloadFile = async (file: FileWithAvailability) => {
-    // Check if file is available
     if (file.isAvailable === false) {
-      toast({
-        title: "File unavailable",
-        description: "This file is no longer available for download.",
-        variant: "destructive"
-      });
+      toast({ title: "File unavailable", description: "This file is no longer available for download.", variant: "destructive" });
       return;
     }
-    
     try {
       const url = await UploadService.getFileUrl(file.storage_path);
       await UploadService.incrementDownloadCount(file.share_token);
-      
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch file');
-      
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
-      
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.download = file.original_name;
       link.setAttribute('download', file.original_name);
-      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(downloadUrl);
-
-      toast({
-        title: "Download completed",
-        description: `${file.original_name} has been downloaded.`,
-      });
+      toast({ title: "Download completed", description: `${file.original_name} has been downloaded.` });
     } catch (err) {
-      toast({
-        title: "Download failed",
-        description: "Unable to download the file. Please try again.",
-        variant: "destructive"
-      });
+      toast({ title: "Download failed", description: "Unable to download the file. Please try again.", variant: "destructive" });
     }
   };
 
   const handleDownloadAll = async () => {
     if (!collection) return;
-
     setDownloading(true);
     setDownloadProgress(0);
-
     try {
       await UploadService.incrementCollectionDownloadCount(collection.share_token);
-      
-      // Only download available files
       const availableFiles = collection.files.filter((f: FileWithAvailability) => f.isAvailable !== false);
-      
       if (availableFiles.length === 0) {
-        toast({
-          title: "No files available",
-          description: "None of the files in this collection are available for download.",
-          variant: "destructive"
-        });
+        toast({ title: "No files available", description: "None of the files in this collection are available for download.", variant: "destructive" });
         setDownloading(false);
         return;
       }
-      
-      const downloadPromises = availableFiles.map(async (file: FileWithAvailability, index: number) => {
-        await handleDownloadFile(file);
-        setDownloadProgress(((index + 1) / availableFiles.length) * 100);
-      });
-
-      for (let i = 0; i < downloadPromises.length; i += 3) {
-        const batch = downloadPromises.slice(i, i + 3);
-        await Promise.all(batch);
+      for (let i = 0; i < availableFiles.length; i++) {
+        await handleDownloadFile(availableFiles[i]);
+        setDownloadProgress(((i + 1) / availableFiles.length) * 100);
       }
-
-      setCollection(prev => prev ? { 
-        ...prev, 
-        download_count: prev.download_count + 1 
-      } : null);
-
-      toast({
-        title: "All files downloaded",
-        description: `Successfully downloaded ${collection.files.length} files.`,
-      });
+      setCollection(prev => prev ? { ...prev, download_count: prev.download_count + 1 } : null);
+      toast({ title: "All files downloaded", description: `Successfully downloaded ${availableFiles.length} files.` });
     } catch (err) {
-      toast({
-        title: "Download failed",
-        description: "Unable to download all files. Please try again.",
-        variant: "destructive"
-      });
+      toast({ title: "Download failed", description: "Unable to download all files. Please try again.", variant: "destructive" });
     } finally {
       setDownloading(false);
       setDownloadProgress(0);
@@ -160,72 +134,7 @@ const CollectionShare = () => {
 
   const copyShareLink = () => {
     navigator.clipboard.writeText(window.location.href);
-    toast({
-      title: "Link copied!",
-      description: "Collection share link copied to clipboard.",
-    });
-  };
-
-  // Component for file preview with image thumbnails and availability
-  const FilePreview: React.FC<{ file: FileWithAvailability }> = ({ file }) => {
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
-    const [imageError, setImageError] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-      if (file.file_type.startsWith('image/') && file.isAvailable !== false) {
-        setLoading(true);
-        UploadService.getFileUrl(file.storage_path)
-          .then(url => {
-            setImageUrl(url);
-            setLoading(false);
-          })
-          .catch(() => {
-            setImageError(true);
-            setLoading(false);
-          });
-      }
-    }, [file]);
-
-    // Show unavailable state
-    if (file.isAvailable === false) {
-      return (
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0 ring-2 ring-destructive/20 shadow-md">
-          <AlertTriangle className="w-6 h-6 text-destructive/60" />
-        </div>
-      );
-    }
-
-    // Show loading state
-    if (loading) {
-      return (
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 ring-2 ring-primary/10 shadow-md animate-pulse">
-          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-        </div>
-      );
-    }
-
-    if (file.file_type.startsWith('image/') && imageUrl && !imageError) {
-      return (
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden bg-muted flex-shrink-0 ring-2 ring-primary/10 shadow-md">
-          <img 
-            src={imageUrl} 
-            alt={file.original_name}
-            className="w-full h-full object-cover animate-fade-in"
-            onError={() => setImageError(true)}
-          />
-        </div>
-      );
-    }
-
-    // Fallback icon for non-images or failed loads
-    return (
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 ring-2 ring-primary/10 shadow-md">
-        <span className="text-xl sm:text-2xl">
-          {getFileIcon(file.file_type)}
-        </span>
-      </div>
-    );
+    toast({ title: "Link copied!", description: "Collection share link copied to clipboard." });
   };
 
   const getFileIcon = (fileType: string) => {
@@ -235,277 +144,241 @@ const CollectionShare = () => {
     if (fileType.includes('pdf')) return '📄';
     if (fileType.includes('word') || fileType.includes('document')) return '📝';
     if (fileType.includes('sheet') || fileType.includes('excel')) return '📊';
-    if (fileType.includes('presentation') || fileType.includes('powerpoint')) return '📈';
     if (fileType.includes('zip') || fileType.includes('rar') || fileType.includes('tar')) return '📦';
-    if (fileType.includes('javascript') || fileType.includes('typescript')) return '🟨';
-    if (fileType.includes('html')) return '🌐';
-    if (fileType.includes('css')) return '🎨';
-    if (fileType.includes('json')) return '📋';
-    if (fileType.includes('python')) return '🐍';
-    if (fileType.includes('java')) return '☕';
     return '📄';
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-          <p className="text-muted-foreground animate-pulse">Loading collection...</p>
+  const FilePreviewThumb: React.FC<{ file: FileWithAvailability }> = ({ file }) => {
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [imageError, setImageError] = useState(false);
+
+    useEffect(() => {
+      if (file.file_type.startsWith('image/') && file.isAvailable !== false) {
+        UploadService.getFileUrl(file.storage_path)
+          .then(url => setImageUrl(url))
+          .catch(() => setImageError(true));
+      }
+    }, [file]);
+
+    if (file.isAvailable === false) {
+      return (
+        <div className="w-12 h-12 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
+          <AlertTriangle className="w-5 h-5 text-destructive/60" />
         </div>
+      );
+    }
+
+    if (file.file_type.startsWith('image/') && imageUrl && !imageError) {
+      return (
+        <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0 border border-border/40">
+          <img src={imageUrl} alt={file.original_name} className="w-full h-full object-cover" onError={() => setImageError(true)} />
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-12 h-12 rounded-lg bg-primary/5 flex items-center justify-center flex-shrink-0 border border-border/40">
+        <span className="text-lg">{getFileIcon(file.file_type)}</span>
       </div>
     );
-  }
+  };
+
+  if (loading) return <CollectionShareSkeleton />;
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-destructive/5 flex items-center justify-center p-4">
-        <Card className="p-8 sm:p-10 text-center max-w-md w-full border-destructive/20 shadow-2xl">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-destructive/10 flex items-center justify-center">
-            <Folder className="w-10 h-10 text-destructive/60" />
-          </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-3">Collection Not Found</h1>
-          <p className="text-muted-foreground mb-8">{error}</p>
-          <Link to="/">
-            <Button size="lg" className="w-full sm:w-auto gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Upload
-            </Button>
-          </Link>
-        </Card>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <Card className="p-8 sm:p-10 text-center max-w-md w-full border-border/50">
+            <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-destructive/10 flex items-center justify-center">
+              <Folder className="w-8 h-8 text-destructive" />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Collection Not Found</h1>
+            <p className="text-muted-foreground mb-6 text-sm">{error}</p>
+            <Link to="/">
+              <Button size="lg" className="gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Back to Upload
+              </Button>
+            </Link>
+          </Card>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Decorative elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-background">
+      {/* Subtle background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/3 rounded-full blur-3xl" />
       </div>
 
-      {/* Theme Toggle */}
       <div className="fixed top-4 right-4 z-50">
         <ThemeToggle />
       </div>
       
-      <div className="container relative mx-auto px-4 py-8 sm:py-12 max-w-4xl">
+      <div className="container relative mx-auto px-4 py-8 sm:py-12 max-w-3xl">
         {/* Header */}
-        <div className="mb-8 sm:mb-10">
-          <Link 
-            to="/" 
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors mb-6 group"
-          >
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <Link to="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors mb-5 group">
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Upload
           </Link>
           
-          <div className="flex items-start gap-4">
-            <div className="hidden sm:flex w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/80 items-center justify-center shadow-lg shadow-primary/25">
-              <Folder className="w-8 h-8 text-primary-foreground" />
+          <div className="flex items-start gap-3">
+            <div className="hidden sm:flex w-12 h-12 rounded-xl bg-primary/10 items-center justify-center flex-shrink-0">
+              <Folder className="w-6 h-6 text-primary" />
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-xs font-medium text-primary uppercase tracking-wider">Shared Collection</span>
-              </div>
-              <h1 className="text-2xl sm:text-4xl font-bold text-foreground break-words leading-tight">
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground break-words leading-tight">
                 {collection?.collection_name}
               </h1>
-              <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+              <p className="text-muted-foreground mt-1 text-sm">
                 {collection?.description || 'A curated collection of shared files'}
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Collection Stats Card */}
-        <Card className="p-5 sm:p-8 mb-6 border-primary/10 shadow-xl bg-card/80 backdrop-blur-sm">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            <div className="text-center p-4 rounded-xl bg-primary/5 border border-primary/10">
-              <div className="text-2xl sm:text-3xl font-bold text-primary">{collection?.files.length}</div>
-              <div className="text-xs sm:text-sm text-muted-foreground mt-1">Files</div>
-            </div>
-            <div className="text-center p-4 rounded-xl bg-secondary/50 border border-border">
-              <div className="text-2xl sm:text-3xl font-bold text-foreground">{formatFileSize(collection?.collection_size || 0)}</div>
-              <div className="text-xs sm:text-sm text-muted-foreground mt-1">Total Size</div>
-            </div>
-            <div className="text-center p-4 rounded-xl bg-secondary/50 border border-border">
-              <div className="flex items-center justify-center gap-1">
-                <Download className="w-5 h-5 text-muted-foreground" />
-                <span className="text-2xl sm:text-3xl font-bold text-foreground">{collection?.download_count}</span>
+        {/* Stats & Actions Card */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Card className="p-5 sm:p-6 mb-6 border-border/50 bg-card/90 backdrop-blur-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+              <div className="text-center p-3 rounded-xl bg-primary/5 border border-primary/10">
+                <div className="text-xl sm:text-2xl font-bold text-primary">{collection?.files.length}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">Files</div>
               </div>
-              <div className="text-xs sm:text-sm text-muted-foreground mt-1">Downloads</div>
-            </div>
-            <div className="text-center p-4 rounded-xl bg-secondary/50 border border-border">
-              <div className="flex items-center justify-center gap-1">
-                <Clock className="w-5 h-5 text-muted-foreground" />
+              <div className="text-center p-3 rounded-xl bg-muted/50 border border-border/50">
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{formatFileSize(collection?.collection_size || 0)}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">Total Size</div>
               </div>
-              <div className="text-xs sm:text-sm text-muted-foreground mt-1">
-                {new Date(collection?.created_date || '').toLocaleDateString()}
+              <div className="text-center p-3 rounded-xl bg-muted/50 border border-border/50">
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{collection?.download_count}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">Downloads</div>
+              </div>
+              <div className="text-center p-3 rounded-xl bg-muted/50 border border-border/50">
+                <div className="text-xs sm:text-sm font-semibold text-foreground">
+                  {new Date(collection?.created_date || '').toLocaleDateString()}
+                </div>
+                <div className="text-xs text-muted-foreground mt-0.5">Created</div>
               </div>
             </div>
-          </div>
 
-          {/* Download Progress */}
-          {downloading && (
-            <div className="mb-6 p-4 rounded-xl bg-primary/5 border border-primary/20">
-              <div className="flex justify-between text-sm text-foreground mb-3">
-                <span className="font-medium">Downloading files...</span>
-                <span className="font-bold text-primary">{downloadProgress.toFixed(0)}%</span>
+            {downloading && (
+              <div className="mb-5 p-3 rounded-xl bg-primary/5 border border-primary/10">
+                <div className="flex justify-between text-sm text-foreground mb-2">
+                  <span className="font-medium">Downloading...</span>
+                  <span className="font-semibold text-primary">{downloadProgress.toFixed(0)}%</span>
+                </div>
+                <Progress value={downloadProgress} className="h-1.5" />
               </div>
-              <Progress value={downloadProgress} className="h-2" />
-            </div>
-          )}
+            )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button 
-              onClick={handleDownloadAll} 
-              disabled={downloading || !collection?.files.length}
-              size="lg"
-              className="flex-1 gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all"
-            >
-              <Archive className="w-5 h-5" />
-              {downloading ? 'Downloading...' : 'Download All Files'}
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              onClick={copyShareLink}
-              size="lg"
-              className="flex-1 gap-2 border-2 hover:bg-primary/5"
-            >
-              <Share2 className="w-5 h-5" />
-              Copy Share Link
-            </Button>
-          </div>
-        </Card>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button 
+                onClick={handleDownloadAll} 
+                disabled={downloading || !collection?.files.length}
+                size="lg"
+                className="flex-1 h-11 gap-2 shadow-sm"
+              >
+                <Archive className="w-4 h-4" />
+                {downloading ? 'Downloading...' : 'Download All'}
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={copyShareLink}
+                size="lg"
+                className="flex-1 h-11 gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                Copy Link
+              </Button>
+            </div>
+          </Card>
+        </motion.div>
 
         {/* Files List */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <FileIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-lg sm:text-xl font-bold text-foreground">Files in Collection</h3>
-              <p className="text-xs text-muted-foreground">{collection?.files.length} items ready to download</p>
-            </div>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <div className="flex items-center gap-2 mb-4">
+            <FileIcon className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">Files ({collection?.files.length})</h3>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {collection?.files.map((file: FileWithAvailability, index: number) => (
-              <Card 
-                key={file.id} 
-                className={`p-4 sm:p-5 transition-all duration-300 group bg-card/80 backdrop-blur-sm ${
-                  file.isAvailable === false 
-                    ? 'opacity-60 border-destructive/20' 
-                    : 'hover:shadow-lg hover:border-primary/20'
-                }`}
-                style={{ animationDelay: `${index * 50}ms` }}
+              <motion.div
+                key={file.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 * index }}
               >
-                <div className="flex items-center gap-4">
-                  <FilePreview file={file} />
-                  <div className="flex-1 min-w-0">
-                    <h4 className={`font-semibold truncate text-sm sm:text-base transition-colors ${
-                      file.isAvailable === false 
-                        ? 'text-muted-foreground line-through' 
-                        : 'text-foreground group-hover:text-primary'
-                    }`}>
-                      {file.original_name}
-                    </h4>
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
-                      {file.isAvailable === false ? (
-                        <Badge variant="destructive" className="text-xs font-medium">
-                          <AlertTriangle className="w-3 h-3 mr-1" />
-                          Unavailable
-                        </Badge>
-                      ) : (
-                        <>
-                          <Badge variant="secondary" className="text-xs font-medium">
-                            {formatFileSize(file.file_size)}
-                          </Badge>
-                          <Badge variant="outline" className="text-xs hidden sm:inline-flex">
-                            {file.file_type.split('/')[1]?.toUpperCase() || file.file_type}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
-                            {file.download_count} downloads
-                          </span>
-                        </>
-                      )}
+                <Card className={`p-3 sm:p-4 transition-all duration-200 bg-card/80 border-border/40 ${
+                  file.isAvailable === false ? 'opacity-50' : 'hover:border-primary/20 hover:shadow-sm'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    <FilePreviewThumb file={file} />
+                    <div className="flex-1 min-w-0">
+                      <h4 className={`font-medium truncate text-sm ${
+                        file.isAvailable === false ? 'text-muted-foreground line-through' : 'text-foreground'
+                      }`}>
+                        {file.original_name}
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
+                        {file.isAvailable === false ? (
+                          <Badge variant="destructive" className="text-[10px] h-5">Unavailable</Badge>
+                        ) : (
+                          <>
+                            <span className="text-[11px] text-muted-foreground">{formatFileSize(file.file_size)}</span>
+                            <span className="text-[11px] text-muted-foreground">•</span>
+                            <span className="text-[11px] text-muted-foreground">{file.file_type.split('/')[1]?.toUpperCase() || file.file_type}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDownloadFile(file)}
+                      disabled={file.isAvailable === false}
+                      className="flex-shrink-0 h-9 gap-1.5 text-xs"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Download</span>
+                    </Button>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDownloadFile(file)}
-                    disabled={file.isAvailable === false}
-                    className={`flex-shrink-0 gap-2 border-2 transition-all ${
-                      file.isAvailable === false 
-                        ? 'opacity-50 cursor-not-allowed' 
-                        : 'hover:bg-primary hover:text-primary-foreground hover:border-primary'
-                    }`}
-                  >
-                    <Download className="w-4 h-4" />
-                    <span className="hidden sm:inline">
-                      {file.isAvailable === false ? 'Unavailable' : 'Download'}
-                    </span>
-                  </Button>
-                </div>
-              </Card>
+                </Card>
+              </motion.div>
             ))}
 
             {!collection?.files.length && (
-              <Card className="p-10 text-center border-dashed border-2">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-                  <FileIcon className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <p className="text-muted-foreground">No files in this collection</p>
+              <Card className="p-8 text-center border-dashed border-2">
+                <FileIcon className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">No files in this collection</p>
               </Card>
             )}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Info Card */}
-        <Card className="p-5 sm:p-6 border-primary/10 bg-gradient-to-br from-primary/5 to-transparent">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <Shield className="w-5 h-5 text-primary" />
+        {/* Security Info */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+          <Card className="mt-6 p-5 border-border/50">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Shield className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground text-sm mb-2">Secure Sharing</h3>
+                <ul className="text-xs text-muted-foreground space-y-1.5">
+                  <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-primary" />Files are securely stored and scanned</li>
+                  <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-primary" />Download counts are tracked</li>
+                  <li className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-primary" />Share this link with trusted people</li>
+                </ul>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-foreground mb-3">About This Collection</h3>
-              <ul className="text-sm text-muted-foreground space-y-2">
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  Download individual files or the entire collection at once
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  Files are securely stored and scanned for safety
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  Share this link with anyone you trust
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  Download counts are tracked for each file
-                </li>
-              </ul>
-            </div>
-          </div>
-        </Card>
-
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-xs text-muted-foreground">
-            Powered by secure file sharing technology
-          </p>
-        </div>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );

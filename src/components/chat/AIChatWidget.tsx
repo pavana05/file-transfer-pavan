@@ -202,124 +202,86 @@ export const AIChatWidget = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Hide on admin page
   if (isAdminPage) {
     return null;
   }
 
   return (
     <>
-      {/* Floating Chat Button with enhanced animation */}
+      {/* Floating Chat Button */}
       <AnimatePresence mode="wait">
         {!isOpen && (
           <motion.div
-            initial={{ scale: 0, opacity: 0, rotate: -180 }}
-            animate={{ scale: 1, opacity: 1, rotate: 0 }}
-            exit={{ scale: 0, opacity: 0, rotate: 180 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50"
           >
             <motion.div 
-              whileHover={{ scale: 1.1 }} 
-              whileTap={{ scale: 0.9 }} 
+              whileHover={{ scale: 1.08 }} 
+              whileTap={{ scale: 0.92 }} 
               className="relative"
             >
-              {/* Animated glow ring */}
+              {/* Subtle pulse ring */}
               <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-primary via-primary-glow to-accent rounded-full blur-xl"
+                className="absolute -inset-1.5 bg-primary/20 rounded-full"
                 animate={{ 
-                  opacity: [0.4, 0.7, 0.4],
-                  scale: [1, 1.2, 1]
+                  opacity: [0.3, 0.6, 0.3],
+                  scale: [1, 1.15, 1]
                 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
               />
               <Button
                 onClick={() => setIsOpen(true)}
                 size="lg"
-                className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-2xl bg-gradient-to-br from-primary via-primary to-primary-glow hover:from-primary/90 hover:via-primary/90 hover:to-primary-glow/90 transition-all duration-300 border border-primary-foreground/20"
+                className="relative h-14 w-14 rounded-full shadow-xl bg-primary hover:bg-primary/90 transition-all duration-200 border border-primary-foreground/10"
               >
-                <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7 text-primary-foreground" />
+                <MessageCircle className="h-6 w-6 text-primary-foreground" />
                 <span className="sr-only">Open chat</span>
               </Button>
-              <motion.span 
-                className="absolute -top-0.5 -right-0.5 flex h-4 w-4 sm:h-5 sm:w-5"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring", stiffness: 400 }}
-              >
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
-                <span className="relative inline-flex rounded-full h-4 w-4 sm:h-5 sm:w-5 bg-success border-2 border-background" />
-              </motion.span>
+              <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-background" />
+              </span>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Chat Window with enhanced open/close animation */}
+      {/* Chat Window */}
       <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 100, scale: 0.8 }}
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 100, scale: 0.8 }}
-            transition={{ 
-              type: "spring", 
-              stiffness: 300, 
-              damping: 30,
-              mass: 0.8
-            }}
+            exit={{ opacity: 0, y: 40, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 350, damping: 30 }}
             className={cn(
-              "fixed z-50 flex flex-col",
-              "bg-gradient-to-b from-card via-card to-card/98 backdrop-blur-xl",
-              "border border-border/50 shadow-2xl shadow-primary/10 overflow-hidden",
+              "fixed z-50 flex flex-col bg-card backdrop-blur-xl border border-border/60 shadow-2xl overflow-hidden",
               isFullscreen 
-                ? "inset-2 sm:inset-4 rounded-2xl sm:rounded-3xl" 
-                : "bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-[400px] max-w-[400px] rounded-2xl sm:rounded-3xl"
+                ? "inset-2 sm:inset-4 rounded-2xl" 
+                : "bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-[380px] max-w-[400px] rounded-2xl"
             )}
             style={{ 
-              maxHeight: isFullscreen ? 'calc(100vh - 2rem)' : isMinimized ? 'auto' : 'min(600px, calc(100vh - 6rem))',
-              height: isFullscreen ? 'calc(100vh - 2rem)' : isMinimized ? 'auto' : 'min(600px, calc(100vh - 6rem))'
+              maxHeight: isFullscreen ? 'calc(100vh - 2rem)' : isMinimized ? 'auto' : 'min(560px, calc(100vh - 6rem))',
+              height: isFullscreen ? 'calc(100vh - 2rem)' : isMinimized ? 'auto' : 'min(560px, calc(100vh - 6rem))'
             }}
           >
-            {/* Premium Header with animated gradient */}
-            <motion.div 
-              className="relative overflow-hidden flex-shrink-0"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary-glow" />
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-foreground/10 to-transparent"
-                animate={{ x: ['-100%', '100%'] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              />
-              
-              <div className="relative p-3 sm:p-4 flex items-center justify-between">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <motion.div className="relative" whileHover={{ scale: 1.05 }}>
-                    <div className="absolute inset-0 bg-white/30 rounded-full blur-lg" />
-                    <div className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ring-2 ring-white/30">
-                      <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                    </div>
-                    <motion.div 
-                      className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-emerald-400 rounded-full border-2 border-white/50"
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                  </motion.div>
-                  
+            {/* Header */}
+            <div className="relative flex-shrink-0 bg-primary">
+              <div className="p-3 sm:p-3.5 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative h-9 w-9 rounded-full bg-primary-foreground/15 flex items-center justify-center">
+                    <Bot className="h-5 w-5 text-primary-foreground" />
+                    <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 bg-emerald-400 rounded-full border-[1.5px] border-primary" />
+                  </div>
                   <div>
-                    <h3 className="font-bold text-white flex items-center gap-1.5 text-sm sm:text-base">
+                    <h3 className="font-semibold text-primary-foreground text-sm flex items-center gap-1.5">
                       FileShare AI
-                      <motion.div animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}>
-                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-300" />
-                      </motion.div>
+                      <Sparkles className="h-3 w-3 text-amber-300" />
                     </h3>
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-pulse" />
-                      <p className="text-[10px] sm:text-xs text-white/80 font-medium">Online • Powered by Gemini</p>
-                    </div>
+                    <p className="text-[10px] text-primary-foreground/70">Online • Powered by Gemini</p>
                   </div>
                 </div>
                 
@@ -328,29 +290,29 @@ export const AIChatWidget = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsFullscreen(!isFullscreen)}
-                    className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10 rounded-lg hidden sm:flex"
+                    className="h-7 w-7 text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded-lg hidden sm:flex"
                   >
-                    <Maximize2 className="h-4 w-4" />
+                    <Maximize2 className="h-3.5 w-3.5" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsMinimized(!isMinimized)}
-                    className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10 rounded-lg"
+                    className="h-7 w-7 text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded-lg"
                   >
-                    <Minimize2 className="h-4 w-4" />
+                    <Minimize2 className="h-3.5 w-3.5" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => { setIsOpen(false); setIsFullscreen(false); }}
-                    className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/10 rounded-lg"
+                    className="h-7 w-7 text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded-lg"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Messages Area */}
             <AnimatePresence>
@@ -361,53 +323,49 @@ export const AIChatWidget = () => {
                   exit={{ height: 0, opacity: 0 }}
                   className="flex flex-col flex-1 overflow-hidden min-h-0"
                 >
-                  {/* Messages container with proper scrolling */}
                   <div 
                     ref={scrollContainerRef}
                     onScroll={handleScroll}
-                    className="flex-1 overflow-y-auto overscroll-contain px-3 sm:px-4 py-3 sm:py-4"
+                    className="flex-1 overflow-y-auto overscroll-contain px-3 py-3"
                     style={{ WebkitOverflowScrolling: 'touch' }}
                   >
-                    <div className="space-y-3 sm:space-y-4">
+                    <div className="space-y-3">
                       {messages.map((message, index) => (
                         <motion.div
                           key={message.id}
-                          initial={{ opacity: 0, y: 10 }}
+                          initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.02 }}
+                          transition={{ delay: index * 0.02, duration: 0.2 }}
                           className={cn(
                             "flex gap-2",
                             message.role === 'user' ? 'justify-end' : 'justify-start'
                           )}
                         >
                           {message.role === 'assistant' && (
-                            <motion.div 
-                              className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center shrink-0 border border-primary/20 shadow-sm"
-                              whileHover={{ scale: 1.1 }}
-                            >
-                              <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
-                            </motion.div>
+                            <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                              <Bot className="h-3.5 w-3.5 text-primary" />
+                            </div>
                           )}
                           
-                          <div className="flex flex-col gap-1 max-w-[85%] sm:max-w-[80%]">
+                          <div className="flex flex-col gap-0.5 max-w-[82%]">
                             <div
                               className={cn(
-                                "rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 text-sm shadow-sm",
+                                "rounded-2xl px-3 py-2 text-[13px] leading-relaxed",
                                 message.role === 'user'
-                                  ? 'bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-br-md'
-                                  : 'bg-muted/80 text-foreground rounded-bl-md border border-border/50'
+                                  ? 'bg-primary text-primary-foreground rounded-br-sm'
+                                  : 'bg-muted/60 text-foreground rounded-bl-sm border border-border/40'
                               )}
                             >
                               {message.role === 'assistant' ? (
-                                <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:my-1 [&>ul]:my-1 [&>ol]:my-1 [&>p:last-child]:mb-0 [&>p:first-child]:mt-0">
+                                <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:my-0.5 [&>ul]:my-0.5 [&>ol]:my-0.5 [&>p:last-child]:mb-0 [&>p:first-child]:mt-0">
                                   <ReactMarkdown>{message.content || '...'}</ReactMarkdown>
                                 </div>
                               ) : (
-                                <p className="whitespace-pre-wrap leading-relaxed text-sm">{message.content}</p>
+                                <p className="whitespace-pre-wrap">{message.content}</p>
                               )}
                             </div>
                             <span className={cn(
-                              "text-[9px] sm:text-[10px] text-muted-foreground/60 px-1",
+                              "text-[9px] text-muted-foreground/50 px-1",
                               message.role === 'user' ? 'text-right' : 'text-left'
                             )}>
                               {formatTime(message.timestamp)}
@@ -415,12 +373,9 @@ export const AIChatWidget = () => {
                           </div>
                           
                           {message.role === 'user' && (
-                            <motion.div 
-                              className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-gradient-to-br from-secondary to-secondary/80 flex items-center justify-center shrink-0 border border-border/50 shadow-sm"
-                              whileHover={{ scale: 1.1 }}
-                            >
-                              <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
-                            </motion.div>
+                            <div className="h-7 w-7 rounded-full bg-secondary flex items-center justify-center shrink-0 mt-0.5">
+                              <User className="h-3.5 w-3.5 text-muted-foreground" />
+                            </div>
                           )}
                         </motion.div>
                       ))}
@@ -428,18 +383,18 @@ export const AIChatWidget = () => {
                       {/* Typing Indicator */}
                       {isLoading && messages[messages.length - 1]?.role === 'user' && (
                         <motion.div
-                          initial={{ opacity: 0, y: 10 }}
+                          initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="flex gap-2"
                         >
-                          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-primary/20">
-                            <Bot className="h-4 w-4 text-primary" />
+                          <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Bot className="h-3.5 w-3.5 text-primary" />
                           </div>
-                          <div className="bg-muted/80 rounded-2xl rounded-bl-md px-4 py-3 border border-border/50">
-                            <div className="flex gap-1.5">
-                              <motion.span className="h-2 w-2 bg-primary/60 rounded-full" animate={{ y: [0, -4, 0] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0 }} />
-                              <motion.span className="h-2 w-2 bg-primary/60 rounded-full" animate={{ y: [0, -4, 0] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.15 }} />
-                              <motion.span className="h-2 w-2 bg-primary/60 rounded-full" animate={{ y: [0, -4, 0] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.3 }} />
+                          <div className="bg-muted/60 rounded-2xl rounded-bl-sm px-4 py-2.5 border border-border/40">
+                            <div className="flex gap-1">
+                              <motion.span className="h-1.5 w-1.5 bg-primary/50 rounded-full" animate={{ y: [0, -3, 0] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0 }} />
+                              <motion.span className="h-1.5 w-1.5 bg-primary/50 rounded-full" animate={{ y: [0, -3, 0] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.15 }} />
+                              <motion.span className="h-1.5 w-1.5 bg-primary/50 rounded-full" animate={{ y: [0, -3, 0] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.3 }} />
                             </div>
                           </div>
                         </motion.div>
@@ -449,70 +404,64 @@ export const AIChatWidget = () => {
                     </div>
                   </div>
 
-                  {/* Scroll to bottom button */}
+                  {/* Scroll to bottom */}
                   <AnimatePresence>
                     {showScrollButton && (
                       <motion.button
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
                         onClick={scrollToBottom}
-                        className="absolute bottom-32 left-1/2 -translate-x-1/2 h-8 w-8 rounded-full bg-primary shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
+                        className="absolute bottom-28 left-1/2 -translate-x-1/2 h-7 w-7 rounded-full bg-primary/90 shadow-md flex items-center justify-center hover:bg-primary transition-colors"
                       >
-                        <ChevronDown className="h-4 w-4 text-primary-foreground" />
+                        <ChevronDown className="h-3.5 w-3.5 text-primary-foreground" />
                       </motion.button>
                     )}
                   </AnimatePresence>
 
                   {/* Quick Replies */}
-                  <div className="flex-shrink-0 px-3 sm:px-4 py-2 sm:py-3 border-t border-border/30 bg-muted/20">
-                    <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground/60 font-semibold mb-2">Quick Actions</p>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  <div className="flex-shrink-0 px-3 py-2 border-t border-border/30">
+                    <p className="text-[9px] uppercase tracking-wider text-muted-foreground/50 font-medium mb-1.5">Quick Actions</p>
+                    <div className="flex flex-wrap gap-1">
                       {quickReplies.slice(0, isFullscreen ? 6 : 4).map((reply) => (
-                        <motion.button
+                        <button
                           key={reply.text}
                           onClick={() => handleSend(reply.text)}
                           disabled={isLoading}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="flex items-center gap-1 text-[10px] sm:text-xs px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-lg bg-background hover:bg-primary/5 text-foreground border border-border/60 hover:border-primary/40 transition-all disabled:opacity-50 shadow-sm"
+                          className="flex items-center gap-1 text-[10px] px-2 py-1.5 rounded-md bg-muted/40 hover:bg-muted/70 text-foreground border border-border/40 hover:border-primary/30 transition-all disabled:opacity-50"
                         >
-                          <reply.icon className={cn("h-3 w-3", reply.color)} />
-                          <span className="truncate max-w-[100px] sm:max-w-[120px]">{reply.text}</span>
-                        </motion.button>
+                          <reply.icon className={cn("h-2.5 w-2.5", reply.color)} />
+                          <span className="truncate max-w-[100px]">{reply.text}</span>
+                        </button>
                       ))}
                     </div>
                   </div>
 
                   {/* Input Area */}
-                  <div className="flex-shrink-0 p-3 sm:p-4 border-t border-border/30 bg-gradient-to-t from-muted/30 to-transparent">
+                  <div className="flex-shrink-0 p-3 border-t border-border/30 bg-muted/10">
                     <div className="flex gap-2">
-                      <div className="flex-1 relative">
-                        <Input
-                          ref={inputRef}
-                          value={input}
-                          onChange={(e) => setInput(e.target.value)}
-                          onKeyPress={handleKeyPress}
-                          placeholder="Ask me anything..."
-                          disabled={isLoading}
-                          className="w-full h-10 sm:h-11 pl-3 sm:pl-4 pr-3 sm:pr-4 bg-background/80 border-border/50 rounded-xl focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary/50 text-sm transition-all"
-                        />
-                      </div>
-                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button
-                          onClick={() => handleSend()}
-                          disabled={!input.trim() || isLoading}
-                          size="icon"
-                          className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-gradient-to-br from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 shadow-lg shadow-primary/20 transition-all"
-                        >
-                          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                        </Button>
-                      </motion.div>
+                      <Input
+                        ref={inputRef}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Ask me anything..."
+                        disabled={isLoading}
+                        className="flex-1 h-10 text-sm bg-background border-border/50 rounded-xl focus-visible:ring-1 focus-visible:ring-primary/30"
+                      />
+                      <Button
+                        onClick={() => handleSend()}
+                        disabled={!input.trim() || isLoading}
+                        size="icon"
+                        className="h-10 w-10 rounded-xl bg-primary hover:bg-primary/90 shadow-sm transition-all"
+                      >
+                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                      </Button>
                     </div>
                     
-                    <div className="flex items-center justify-center gap-2 mt-2 sm:mt-3">
-                      <div className="h-1 w-1 bg-emerald-500 rounded-full animate-pulse" />
-                      <p className="text-[9px] sm:text-[10px] text-muted-foreground/60 font-medium">
+                    <div className="flex items-center justify-center gap-1.5 mt-2">
+                      <div className="h-1 w-1 bg-emerald-500 rounded-full" />
+                      <p className="text-[9px] text-muted-foreground/50">
                         Secured & Encrypted • Powered by FileShare AI
                       </p>
                     </div>
