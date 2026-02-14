@@ -72,6 +72,9 @@ import {
 } from '@/lib/export-utils';
 import { downloadInvoice } from '@/lib/invoice-generator';
 import { AdminFullSkeleton } from '@/components/skeletons/AdminSkeleton';
+import { SystemHealthMonitor } from '@/components/admin/SystemHealthMonitor';
+import { ActivityFeed } from '@/components/admin/ActivityFeed';
+import { UserGrowthChart } from '@/components/admin/UserGrowthChart';
 
 interface Payment {
   id: string;
@@ -967,12 +970,25 @@ const AdminDashboard = () => {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+    hidden: { opacity: 0, y: 24, scale: 0.97 },
+    visible: { 
+      opacity: 1, y: 0, scale: 1,
+      transition: { type: 'spring' as const, stiffness: 260, damping: 20 }
+    }
+  };
+
+  const cardHoverVariants = {
+    rest: { scale: 1, y: 0 },
+    hover: { scale: 1.02, y: -4, transition: { type: 'spring' as const, stiffness: 400, damping: 15 } }
+  };
+
+  const shimmerVariants = {
+    initial: { x: '-100%' },
+    animate: { x: '100%', transition: { repeat: Infinity, duration: 3, ease: 'linear' as const } }
   };
 
   return (
@@ -1036,89 +1052,106 @@ const AdminDashboard = () => {
           {/* Stats Grid */}
           <motion.div variants={itemVariants} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {/* Total Users */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-primary/30 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-4">
+            <motion.div whileHover={{ scale: 1.03, y: -4 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-primary/30 transition-all hover:shadow-lg">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500" />
+              <div className="absolute inset-0 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              </div>
+              <CardContent className="p-4 relative">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <p className="text-xs font-medium text-muted-foreground">Total Users</p>
                     <p className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</p>
                   </div>
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <motion.div 
+                    className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center"
+                    whileHover={{ rotate: 12, scale: 1.1 }}
+                  >
                     <Users className="h-5 w-5 text-primary" />
-                  </div>
+                  </motion.div>
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
 
             {/* Premium Users */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-amber-500/30 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-4">
+            <motion.div whileHover={{ scale: 1.03, y: -4 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-warning/30 transition-all hover:shadow-lg">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-warning/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500" />
+              <CardContent className="p-4 relative">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <p className="text-xs font-medium text-muted-foreground">Premium Users</p>
                     <p className="text-2xl font-bold">{stats.premiumUsers.toLocaleString()}</p>
                   </div>
-                  <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Crown className="h-5 w-5 text-amber-500" />
-                  </div>
+                  <motion.div className="h-10 w-10 rounded-xl bg-warning/10 flex items-center justify-center" whileHover={{ rotate: 12, scale: 1.1 }}>
+                    <Crown className="h-5 w-5 text-warning" />
+                  </motion.div>
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
 
             {/* Total Revenue */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-success/30 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-success/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-4">
+            <motion.div whileHover={{ scale: 1.03, y: -4 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-success/30 transition-all hover:shadow-lg">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-success/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500" />
+              <CardContent className="p-4 relative">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <p className="text-xs font-medium text-muted-foreground">Total Revenue</p>
                     <p className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</p>
                   </div>
-                  <div className="h-10 w-10 rounded-xl bg-success/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <motion.div className="h-10 w-10 rounded-xl bg-success/10 flex items-center justify-center" whileHover={{ rotate: 12, scale: 1.1 }}>
                     <IndianRupee className="h-5 w-5 text-success" />
-                  </div>
+                  </motion.div>
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
 
             {/* Total Files */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-warning/30 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-warning/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-4">
+            <motion.div whileHover={{ scale: 1.03, y: -4 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-warning/30 transition-all hover:shadow-lg">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-warning/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500" />
+              <CardContent className="p-4 relative">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <p className="text-xs font-medium text-muted-foreground">Total Files</p>
                     <p className="text-2xl font-bold">{stats.totalFiles.toLocaleString()}</p>
                   </div>
-                  <div className="h-10 w-10 rounded-xl bg-warning/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <motion.div className="h-10 w-10 rounded-xl bg-warning/10 flex items-center justify-center" whileHover={{ rotate: 12, scale: 1.1 }}>
                     <FileUp className="h-5 w-5 text-warning" />
-                  </div>
+                  </motion.div>
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
 
             {/* Total Storage */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-purple-500/30 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-4">
+            <motion.div whileHover={{ scale: 1.03, y: -4 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-primary/30 transition-all hover:shadow-lg">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500" />
+              <CardContent className="p-4 relative">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <p className="text-xs font-medium text-muted-foreground">Storage Used</p>
                     <p className="text-2xl font-bold">{formatFileSize(stats.totalStorage)}</p>
                   </div>
-                  <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <HardDrive className="h-5 w-5 text-purple-500" />
-                  </div>
+                  <motion.div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center" whileHover={{ rotate: 12, scale: 1.1 }}>
+                    <HardDrive className="h-5 w-5 text-primary" />
+                  </motion.div>
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
 
             {/* Contact Messages */}
-            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-blue-500/30 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <CardContent className="p-4">
+            <motion.div whileHover={{ scale: 1.03, y: -4 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
+            <Card className="relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm group hover:border-primary/30 transition-all hover:shadow-lg">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500" />
+              <CardContent className="p-4 relative">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <p className="text-xs font-medium text-muted-foreground">Messages</p>
@@ -1127,12 +1160,13 @@ const AdminDashboard = () => {
                       <p className="text-xs text-warning font-medium">{stats.pendingContacts} pending</p>
                     )}
                   </div>
-                  <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <MessageSquare className="h-5 w-5 text-blue-500" />
-                  </div>
+                  <motion.div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center" whileHover={{ rotate: 12, scale: 1.1 }}>
+                    <MessageSquare className="h-5 w-5 text-primary" />
+                  </motion.div>
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
           </motion.div>
 
           {/* Charts Section */}
@@ -1411,6 +1445,27 @@ const AdminDashboard = () => {
                     </div>
                   </CardContent>
                 </Card>
+                {/* New Feature Components */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <SystemHealthMonitor 
+                    totalStorage={stats.totalStorage} 
+                    totalFiles={stats.totalFiles} 
+                    totalUsers={stats.totalUsers}
+                  />
+                  <ActivityFeed 
+                    files={files} 
+                    payments={payments} 
+                    contacts={contacts} 
+                    donations={donations}
+                  />
+                </div>
+
+                <UserGrowthChart 
+                  files={files} 
+                  payments={payments} 
+                  totalUsers={stats.totalUsers} 
+                  premiumUsers={stats.premiumUsers}
+                />
               </TabsContent>
 
               {/* Users Tab */}
