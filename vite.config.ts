@@ -133,8 +133,6 @@ export default defineConfig(({ mode }) => ({
           'vendor-ui': ['lucide-react', 'sonner', 'next-themes'],
           'vendor-motion': ['framer-motion'],
           'vendor-query': ['@tanstack/react-query'],
-          'vendor-charts': ['recharts'],
-          'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-dropzone': ['react-dropzone'],
           'vendor-qr': ['qrcode'],
         },
