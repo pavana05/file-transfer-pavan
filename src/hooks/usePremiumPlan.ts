@@ -11,7 +11,7 @@ interface PremiumPlan {
 
 const FREE_PLAN: PremiumPlan = {
   plan_name: 'Free',
-  file_size_limit: 1 * 1024 * 1024 * 1024, // 1GB in bytes
+  file_size_limit: 10 * 1024 * 1024 * 1024, // 10GB in bytes
   expiration_days: 7,
   features: []
 };
