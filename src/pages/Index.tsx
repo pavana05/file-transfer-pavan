@@ -151,7 +151,7 @@ const Index = () => {
             {/* Mobile Navigation - Theme Toggle & Menu Button */}
             <div className="flex md:hidden items-center gap-2">
               <ThemeToggle />
-              <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(true)} className="h-10 w-10 p-0">
+              <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(true)} className="h-10 w-10 p-0" aria-label="Open menu">
                 <Menu className="h-5 w-5" />
               </Button>
             </div>
