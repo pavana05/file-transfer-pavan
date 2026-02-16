@@ -326,7 +326,7 @@ const Profile = () => {
                         </div>
                       ) : (
                         <>
-                          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{userName}</h1>
+                          <div className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">{userName}</div>
                           <button
                             onClick={() => { setEditNameValue(displayName); setIsEditingName(true); }}
                             className="p-1.5 rounded-lg hover:bg-muted transition-colors"
@@ -515,10 +515,10 @@ const Profile = () => {
                   <>
                     <Separator className="my-6" />
                     <div>
-                      <h4 className="text-sm font-semibold mb-4 flex items-center gap-2 text-foreground">
+                      <div className="text-sm font-semibold mb-4 flex items-center gap-2 text-foreground">
                         <Sparkles className="w-4 h-4 text-primary" />
                         Premium Features
-                      </h4>
+                      </div>
                       <div className="grid sm:grid-cols-2 gap-3">
                         {premiumPlan.features.map((feature, i) => (
                           <div key={i} className="flex items-center gap-3 p-3 bg-emerald-500/5 rounded-xl border border-emerald-500/10">
@@ -600,7 +600,7 @@ const Profile = () => {
                       <action.icon className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground">{action.title}</h3>
+                      <div className="text-base font-semibold text-foreground leading-tight">{action.title}</div>
                       <p className="text-sm text-muted-foreground">{action.desc}</p>
                     </div>
                   </CardContent>
