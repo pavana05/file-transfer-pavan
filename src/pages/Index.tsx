@@ -316,6 +316,7 @@ const Index = () => {
         </ScrollReveal>
 
         {/* Clean Statistics Section */}
+        <div className="cv-auto">
         <ScrollReveal direction="up" delay={150}>
           <div className="mb-16 sm:mb-24 md:mb-36 relative z-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
@@ -349,15 +350,19 @@ const Index = () => {
             </div>
           </div>
         </ScrollReveal>
+        </div>
 
         {/* Testimonials Section */}
+        <div className="cv-auto">
         <ScrollReveal direction="up" delay={100}>
           <Suspense fallback={<div className="h-32" />}>
             <TestimonialsSection />
           </Suspense>
         </ScrollReveal>
+        </div>
 
         {/* Clean Modern Features Grid */}
+        <div className="cv-auto">
         <ScrollReveal direction="up" delay={100}>
           <div className="mb-28 sm:mb-36 relative z-10">
             <div className="text-center mb-16 max-w-4xl mx-auto">
@@ -461,15 +466,19 @@ const Index = () => {
           </div>
         </div>
         </ScrollReveal>
+        </div>
 
         {/* Trust Indicators Section */}
+        <div className="cv-auto">
         <ScrollReveal direction="up" delay={100}>
           <Suspense fallback={<div className="h-32" />}>
             <TrustIndicators />
           </Suspense>
         </ScrollReveal>
+        </div>
 
         {/* Premium P2P Sharing Section */}
+        <div className="cv-auto">
         <ScrollReveal direction="up" delay={100}>
           <div className="mb-24 sm:mb-32 relative z-10">
             <Card className="border border-primary/40 overflow-hidden shadow-premium bg-gradient-to-br from-card to-card/70 backdrop-blur-2xl group hover:shadow-hover hover:border-primary/60 transition-all duration-500">
@@ -521,15 +530,19 @@ const Index = () => {
             </Card>
           </div>
         </ScrollReveal>
+        </div>
 
         {/* FAQ Section */}
+        <div className="cv-auto">
         <ScrollReveal direction="up" delay={100}>
           <Suspense fallback={<div className="h-32" />}>
             <FAQSection />
           </Suspense>
         </ScrollReveal>
+        </div>
 
         {/* Premium CTA Section */}
+        <div className="cv-auto">
         <ScrollReveal direction="up" delay={100}>
           <div className="text-center max-w-5xl mx-auto relative z-10">
           <Card className="bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/40 overflow-hidden shadow-premium backdrop-blur-2xl group hover:shadow-hover transition-all duration-500">
@@ -573,6 +586,7 @@ const Index = () => {
           </Card>
         </div>
         </ScrollReveal>
+        </div>
       </main>
 
       {/* Footer */}

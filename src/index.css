@@ -333,4 +333,10 @@ All colors MUST be HSL.
   .btn-shine:hover::before {
     @apply translate-x-full;
   }
+
+  /* Defer rendering of off-screen sections to reduce Style & Layout cost */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
 }
