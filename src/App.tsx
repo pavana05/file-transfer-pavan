@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,22 +10,26 @@ import { AuthGuard } from "@/components/AuthGuard";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "@/components/animations/PageTransition";
-import { AIChatWidget } from "@/components/chat/AIChatWidget";
+
+// Eagerly load the landing page for LCP
 import Index from "./pages/Index";
-import FileShare from "./pages/FileShare";
-import CollectionShare from "./pages/CollectionShare";
-import PinAccess from "./pages/PinAccess";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import ScanQR from "./pages/ScanQR";
-import Install from "./pages/Install";
-import Pricing from "./pages/Pricing";
-import Profile from "./pages/Profile";
-import PaymentHistory from "./pages/PaymentHistory";
-import Contact from "./pages/Contact";
-import AdminDashboard from "./pages/AdminDashboard";
-import Support from "./pages/Support";
-import NotFound from "./pages/NotFound";
+
+// Lazy load all other routes
+const AIChatWidget = lazy(() => import("@/components/chat/AIChatWidget").then(m => ({ default: m.AIChatWidget })));
+const FileShare = lazy(() => import("./pages/FileShare"));
+const CollectionShare = lazy(() => import("./pages/CollectionShare"));
+const PinAccess = lazy(() => import("./pages/PinAccess"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const ScanQR = lazy(() => import("./pages/ScanQR"));
+const Install = lazy(() => import("./pages/Install"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Profile = lazy(() => import("./pages/Profile"));
+const PaymentHistory = lazy(() => import("./pages/PaymentHistory"));
+const Contact = lazy(() => import("./pages/Contact"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const Support = lazy(() => import("./pages/Support"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,52 +45,54 @@ const AnimatedRoutes = () => {
   
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
-        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-        <Route path="/share/:token" element={<PageTransition><FileShare /></PageTransition>} />
-        <Route path="/collection/:token" element={<PageTransition><CollectionShare /></PageTransition>} />
-        <Route path="/pin" element={<PageTransition><PinAccess /></PageTransition>} />
-        <Route path="/scan" element={<PageTransition><ScanQR /></PageTransition>} />
-        <Route path="/install" element={<PageTransition><Install /></PageTransition>} />
-        <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
-        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
-        <Route 
-          path="/dashboard" 
-          element={
-            <AuthGuard>
-              <PageTransition><Dashboard /></PageTransition>
-            </AuthGuard>
-          } 
-        />
-        <Route 
-          path="/profile" 
-          element={
-            <AuthGuard>
-              <PageTransition><Profile /></PageTransition>
-            </AuthGuard>
-          } 
-        />
-        <Route 
-          path="/payment-history" 
-          element={
-            <AuthGuard>
-              <PageTransition><PaymentHistory /></PageTransition>
-            </AuthGuard>
-          } 
-        />
-        <Route 
-          path="/admin" 
-          element={
-            <AuthGuard>
-              <PageTransition><AdminDashboard /></PageTransition>
-            </AuthGuard>
-          } 
-        />
-        <Route path="/support" element={<PageTransition><Support /></PageTransition>} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-      </Routes>
+      <Suspense fallback={<div className="min-h-screen" />}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+          <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+          <Route path="/share/:token" element={<PageTransition><FileShare /></PageTransition>} />
+          <Route path="/collection/:token" element={<PageTransition><CollectionShare /></PageTransition>} />
+          <Route path="/pin" element={<PageTransition><PinAccess /></PageTransition>} />
+          <Route path="/scan" element={<PageTransition><ScanQR /></PageTransition>} />
+          <Route path="/install" element={<PageTransition><Install /></PageTransition>} />
+          <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
+          <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <AuthGuard>
+                <PageTransition><Dashboard /></PageTransition>
+              </AuthGuard>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <AuthGuard>
+                <PageTransition><Profile /></PageTransition>
+              </AuthGuard>
+            } 
+          />
+          <Route 
+            path="/payment-history" 
+            element={
+              <AuthGuard>
+                <PageTransition><PaymentHistory /></PageTransition>
+              </AuthGuard>
+            } 
+          />
+          <Route 
+            path="/admin" 
+            element={
+              <AuthGuard>
+                <PageTransition><AdminDashboard /></PageTransition>
+              </AuthGuard>
+            } 
+          />
+          <Route path="/support" element={<PageTransition><Support /></PageTransition>} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+        </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 };
@@ -102,7 +108,9 @@ const App = () => {
                 <Toaster />
                 <Sonner />
                 <AnimatedRoutes />
-                <AIChatWidget />
+                <Suspense fallback={null}>
+                  <AIChatWidget />
+                </Suspense>
               </BrowserRouter>
             </AuthProvider>
           </TooltipProvider>
