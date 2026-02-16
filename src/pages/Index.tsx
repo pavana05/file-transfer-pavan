@@ -1,4 +1,4 @@
-import { FileUploadManager } from '@/components/upload/FileUploadManager';
+import { lazy, Suspense, useState } from 'react';
 import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,13 +6,15 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
 import { useAuth } from '@/contexts/AuthContext';
-import NearbyShareDialog from '@/components/nearbyShare/NearbyShareDialog';
-import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
-import FAQSection from '@/components/faq/FAQSection';
-import TrustIndicators from '@/components/trust/TrustIndicators';
 import ScrollReveal from '@/components/animations/ScrollReveal';
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { useState } from 'react';
+
+// Lazy load heavy below-the-fold components
+const FileUploadManager = lazy(() => import('@/components/upload/FileUploadManager').then(m => ({ default: m.FileUploadManager })));
+const NearbyShareDialog = lazy(() => import('@/components/nearbyShare/NearbyShareDialog'));
+const TestimonialsSection = lazy(() => import('@/components/testimonials/TestimonialsSection'));
+const FAQSection = lazy(() => import('@/components/faq/FAQSection'));
+const TrustIndicators = lazy(() => import('@/components/trust/TrustIndicators'));
 const Index = () => {
   const {
     user,
@@ -307,7 +309,9 @@ const Index = () => {
             
             <Card className="relative border border-border/40 shadow-premium bg-card/95 backdrop-blur-xl overflow-hidden p-4 sm:p-8 md:p-12 lg:p-16 xl:p-20">
               <div className="relative z-10">
-                <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
+                <Suspense fallback={<div className="h-64 flex items-center justify-center text-muted-foreground">Loading...</div>}>
+                  <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
+                </Suspense>
               </div>
             </Card>
           </div>
@@ -350,7 +354,9 @@ const Index = () => {
 
         {/* Testimonials Section */}
         <ScrollReveal direction="up" delay={100}>
-          <TestimonialsSection />
+          <Suspense fallback={<div className="h-32" />}>
+            <TestimonialsSection />
+          </Suspense>
         </ScrollReveal>
 
         {/* Clean Modern Features Grid */}
@@ -460,7 +466,9 @@ const Index = () => {
 
         {/* Trust Indicators Section */}
         <ScrollReveal direction="up" delay={100}>
-          <TrustIndicators />
+          <Suspense fallback={<div className="h-32" />}>
+            <TrustIndicators />
+          </Suspense>
         </ScrollReveal>
 
         {/* Premium P2P Sharing Section */}
@@ -504,10 +512,12 @@ const Index = () => {
                       </Badge>
                     </div>
                   </div>
-                  <NearbyShareDialog trigger={<Button size="lg" className="gap-3 shadow-premium hover:shadow-glow transition-all duration-300 px-10 py-7 text-lg font-bold">
-                        <Smartphone className="h-6 w-6" />
-                        Try P2P Transfer
-                      </Button>} />
+                  <Suspense fallback={null}>
+                    <NearbyShareDialog trigger={<Button size="lg" className="gap-3 shadow-premium hover:shadow-glow transition-all duration-300 px-10 py-7 text-lg font-bold">
+                          <Smartphone className="h-6 w-6" />
+                          Try P2P Transfer
+                        </Button>} />
+                  </Suspense>
                 </div>
               </div>
             </Card>
@@ -516,7 +526,9 @@ const Index = () => {
 
         {/* FAQ Section */}
         <ScrollReveal direction="up" delay={100}>
-          <FAQSection />
+          <Suspense fallback={<div className="h-32" />}>
+            <FAQSection />
+          </Suspense>
         </ScrollReveal>
 
         {/* Premium CTA Section */}
