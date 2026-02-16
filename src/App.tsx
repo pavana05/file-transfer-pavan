@@ -44,11 +44,11 @@ const AnimatedRoutes = () => {
   const location = useLocation();
   
   return (
-    <AnimatePresence mode="wait">
-      <Suspense fallback={<div className="min-h-screen" />}>
+    <Suspense fallback={<div className="min-h-screen" />}>
+      <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
-          <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+          <Route path="/" element={<Index />} />
           <Route path="/share/:token" element={<PageTransition><FileShare /></PageTransition>} />
           <Route path="/collection/:token" element={<PageTransition><CollectionShare /></PageTransition>} />
           <Route path="/pin" element={<PageTransition><PinAccess /></PageTransition>} />
@@ -92,8 +92,8 @@ const AnimatedRoutes = () => {
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
         </Routes>
-      </Suspense>
-    </AnimatePresence>
+      </AnimatePresence>
+    </Suspense>
   );
 };
 
