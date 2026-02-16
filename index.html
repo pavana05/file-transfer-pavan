@@ -49,7 +49,23 @@
 </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static shell for instant FCP - replaced by React on hydration -->
+      <div style="min-height:100vh;background:hsl(231 25% 9%);color:hsl(226 100% 94%)">
+        <header style="position:sticky;top:0;z-index:50;width:100%;border-bottom:1px solid rgba(255,255,255,0.1);background:rgba(30,30,50,0.8);backdrop-filter:blur(12px)">
+          <div style="max-width:1280px;margin:0 auto;padding:0 1rem;display:flex;height:4rem;align-items:center;gap:0.75rem">
+            <div style="height:2.5rem;width:2.5rem;border-radius:0.75rem;background:linear-gradient(135deg,hsl(239 84% 67%),hsl(270 76% 62%));display:flex;align-items:center;justify-content:center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div><div style="font-size:1.125rem;font-weight:800;letter-spacing:-0.025em">FileShare Pro</div><div style="font-size:0.7rem;color:rgba(200,210,255,0.6)">Enterprise File Sharing</div></div>
+          </div>
+        </header>
+        <main style="max-width:1280px;margin:0 auto;padding:3rem 1rem;text-align:center">
+          <h2 style="font-size:clamp(2.5rem,8vw,5rem);font-weight:900;letter-spacing:-0.03em;line-height:0.95;margin:0">Share Files</h2>
+          <p style="font-size:clamp(1.5rem,5vw,3rem);font-weight:900;margin:0.5rem 0 0;background:linear-gradient(135deg,hsl(239 84% 67%),hsl(270 76% 62%));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Securely</p>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
