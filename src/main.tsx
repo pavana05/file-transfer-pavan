@@ -8,3 +8,15 @@ createRoot(document.getElementById("root")!).render(
     <App />
   </StrictMode>
 );
+
+// Register service worker after page load to avoid render-blocking
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const { registerSW } = await import('virtual:pwa-register');
+      registerSW({ immediate: true });
+    } catch {
+      // PWA registration not available
+    }
+  });
+}

@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => ({
     mode === 'development' &&
     componentTagger(),
     VitePWA({
+      injectRegister: null,
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'manifest.json'],
       manifest: {
