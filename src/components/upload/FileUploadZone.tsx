@@ -210,7 +210,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   };
   return <div className={cn("w-full", className)}>
       <div {...getRootProps()} className={cn("relative border-2 border-dashed rounded-2xl sm:rounded-3xl p-6 sm:p-12 md:p-20 text-center transition-all duration-700 ease-out", "bg-gradient-to-br from-card/98 via-card/95 to-card/98 backdrop-blur-2xl", "border-border/30 hover:border-primary/60 shadow-premium hover:shadow-glow", "group overflow-hidden", !disabled && "cursor-pointer hover:scale-[1.01] sm:hover:scale-[1.02] active:scale-[0.98]", isDragActive && !isDragReject && "border-primary/80 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/10 scale-[1.02] sm:scale-[1.03] shadow-glow ring-2 sm:ring-4 ring-primary/20", isDragReject && "border-destructive/60 bg-destructive/5", disabled && "opacity-50 cursor-not-allowed")}>
-        <input {...getInputProps()} ref={fileInputRef} />
+        <input {...getInputProps()} ref={fileInputRef} aria-label="Upload files" />
         
         {/* Animated Background Gradient */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
@@ -277,7 +277,7 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = ({
             </Button>
             
             <div className="relative w-full sm:w-auto">
-              <input type="file" ref={folderInputRef} onChange={handleFolderUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" {...{
+              <input type="file" ref={folderInputRef} onChange={handleFolderUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" aria-label="Upload folder" {...{
               webkitdirectory: ""
             } as any} multiple disabled={disabled} />
               <Button type="button" variant="outline" onClick={handleFolderClick} disabled={disabled} size="lg" className="relative w-full sm:w-auto px-6 sm:px-8 md:px-10 py-5 sm:py-6 md:py-7 text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl border-2 border-border/50 hover:border-primary/50 bg-card/50 hover:bg-card transition-all duration-500 shadow-card hover:shadow-hover backdrop-blur-sm">
