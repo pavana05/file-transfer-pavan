@@ -7,8 +7,8 @@ interface PageTransitionProps {
 
 const pageVariants = {
   initial: {
-    opacity: 0,
-    transform: 'translateY(20px)',
+    opacity: 1,
+    transform: 'translateY(0px)',
   },
   animate: {
     opacity: 1,
