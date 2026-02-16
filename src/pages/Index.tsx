@@ -249,8 +249,7 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-12 sm:py-16 md:py-24">
         {/* Premium Hero Section with Clean Modern Design */}
-        <ScrollReveal direction="fade" duration={0.8}>
-          <div className="text-center mb-16 sm:mb-24 md:mb-32 space-y-8 sm:space-y-12 md:space-y-16 max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16 sm:mb-24 md:mb-32 space-y-8 sm:space-y-12 md:space-y-16 max-w-7xl mx-auto relative z-10 animate-fade-in">
             
             {/* Premium Trust Badge */}
             <div className="inline-flex items-center gap-2 sm:gap-4 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border/50 shadow-card hover:shadow-lg transition-all duration-500 hover:scale-105">
@@ -301,7 +300,6 @@ const Index = () => {
               </Badge>
             </div>
           </div>
-        </ScrollReveal>
         
         {/* Premium Upload Section with Glass Design */}
         <ScrollReveal direction="up" delay={100}>
