@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -97,6 +97,25 @@ const AnimatedRoutes = () => {
   );
 };
 
+const DeferredAIChatWidget = () => {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(() => setShow(true), { timeout: 3000 });
+      return () => cancelIdleCallback(id);
+    } else {
+      const id = setTimeout(() => setShow(true), 2000);
+      return () => clearTimeout(id);
+    }
+  }, []);
+  if (!show) return null;
+  return (
+    <Suspense fallback={null}>
+      <AIChatWidget />
+    </Suspense>
+  );
+};
+
 const App = () => {
   return (
     <ErrorBoundary>
@@ -108,9 +127,7 @@ const App = () => {
                 <Toaster />
                 <Sonner />
                 <AnimatedRoutes />
-                <Suspense fallback={null}>
-                  <AIChatWidget />
-                </Suspense>
+                <DeferredAIChatWidget />
               </BrowserRouter>
             </AuthProvider>
           </TooltipProvider>
