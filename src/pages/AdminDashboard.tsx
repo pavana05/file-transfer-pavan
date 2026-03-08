@@ -1310,6 +1310,22 @@ const AdminDashboard = () => {
                   <Heart className="h-4 w-4" />
                   <span className="hidden sm:inline">Donations</span>
                 </TabsTrigger>
+                <TabsTrigger value="analytics" className="gap-2">
+                  <Activity className="h-4 w-4" />
+                  <span className="hidden sm:inline">Analytics</span>
+                </TabsTrigger>
+                <TabsTrigger value="audit" className="gap-2">
+                  <Clock className="h-4 w-4" />
+                  <span className="hidden sm:inline">Audit Log</span>
+                </TabsTrigger>
+                <TabsTrigger value="notifications" className="gap-2">
+                  <Mail className="h-4 w-4" />
+                  <span className="hidden sm:inline">Notifications</span>
+                </TabsTrigger>
+                <TabsTrigger value="moderation" className="gap-2 relative">
+                  <Shield className="h-4 w-4" />
+                  <span className="hidden sm:inline">Moderation</span>
+                </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
