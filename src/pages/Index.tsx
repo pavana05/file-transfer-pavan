@@ -1,12 +1,15 @@
 import { lazy, Suspense, useState } from 'react';
-import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart, ArrowRight, Globe, Star } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
+import { AnimatedCounter } from '@/components/ui/animated-counter';
+import { LiveActivityFeed } from '@/components/ui/live-activity-feed';
 import { useAuth } from '@/contexts/AuthContext';
 import ScrollReveal from '@/components/animations/ScrollReveal';
+import { motion } from 'framer-motion';
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 
 // Lazy load heavy below-the-fold components
@@ -87,13 +90,13 @@ const Index = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-primary-glow/8 to-transparent rounded-full blur-[100px] animate-pulse-glow"></div>
       
       {/* Header Navigation with Premium Design */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/30 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60 shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-border/20 bg-background/70 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/50 shadow-[0_1px_3px_hsl(var(--foreground)/0.04)]">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
           <div className="flex h-16 sm:h-18 items-center justify-between gap-3">
             {/* Logo & Branding */}
             <div className="flex items-center gap-3 sm:gap-4 cursor-pointer group flex-shrink-0" onClick={() => window.location.href = '/'}>
-              <div className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-gradient-primary shadow-lg flex items-center justify-center transition-all duration-300 group-hover:shadow-glow group-hover:scale-105">
-                <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
+              <div className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-gradient-primary shadow-lg flex items-center justify-center transition-all duration-500 group-hover:shadow-[0_0_24px_hsl(var(--primary)/0.4)] group-hover:scale-110">
+                <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground transition-transform duration-500 group-hover:rotate-[-8deg]" />
               </div>
               <div className="hidden xs:block min-w-0">
                 <h1 className="text-base sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
@@ -320,33 +323,28 @@ const Index = () => {
         <ScrollReveal direction="up" delay={150}>
           <div className="mb-16 sm:mb-24 md:mb-36 relative z-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
-              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
-                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-primary bg-clip-text text-transparent mb-1 sm:mb-2">10M+</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Files Shared</div>
-                </div>
-              </Card>
-              
-              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
-                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-success bg-clip-text text-transparent mb-1 sm:mb-2">50K+</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Active Users</div>
-                </div>
-              </Card>
-              
-              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
-                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-warning mb-1 sm:mb-2">50TB+</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Data Transferred</div>
-                </div>
-              </Card>
-              
-              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
-                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-primary-glow mb-1 sm:mb-2">99.9%</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Uptime</div>
-                </div>
-              </Card>
+              {[
+                { value: 10, suffix: 'M+', label: 'Files Shared', gradient: 'from-primary to-primary-glow' },
+                { value: 50, suffix: 'K+', label: 'Active Users', gradient: 'from-success to-emerald-400' },
+                { value: 50, suffix: 'TB+', label: 'Data Transferred', gradient: 'from-warning to-amber-400' },
+                { value: 99.9, suffix: '%', label: 'Uptime', gradient: 'from-primary-glow to-blue-400', decimals: 1 },
+              ].map((stat, i) => (
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm group hover:border-primary/30 transition-all duration-500">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
+                      <div className={`text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent mb-1 sm:mb-2`}>
+                        <AnimatedCounter end={stat.value} suffix={stat.suffix} duration={2.5} decimals={stat.decimals || 0} />
+                      </div>
+                      <div className="text-xs sm:text-sm text-muted-foreground font-medium">{stat.label}</div>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           </div>
         </ScrollReveal>
@@ -380,89 +378,35 @@ const Index = () => {
             </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
-                  <Shield className="h-7 w-7 text-primary" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  Military-Grade Security
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  AES-256 encryption with password protection, expiration dates, and download limits for complete control.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-success/10 flex items-center justify-center mb-6 border border-success/20">
-                  <Zap className="h-7 w-7 text-success" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  Instant Uploads
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Lightning-fast uploads with resume support. Share files instantly without waiting.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-warning/10 flex items-center justify-center mb-6 border border-warning/20">
-                  <KeyRound className="h-7 w-7 text-warning" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  PIN Protection
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Share files with unique PIN codes. Track access attempts and maintain complete control.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
-                  <Users className="h-7 w-7 text-primary" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  Instant Sharing
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Generate shareable links instantly. No email required. Share with anyone, anywhere.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-success/10 flex items-center justify-center mb-6 border border-success/20">
-                  <Clock className="h-7 w-7 text-success" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  Time-Limited Access
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Set custom expiration dates and download limits. Your files, your rules, your timeline.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-warning/10 flex items-center justify-center mb-6 border border-warning/20">
-                  <Smartphone className="h-7 w-7 text-warning" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  QR Code Sharing
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Generate instant QR codes for quick mobile access. Perfect for in-person sharing.
-                </p>
-              </div>
-            </Card>
+            {[
+              { icon: Shield, color: 'primary', title: 'Military-Grade Security', desc: 'AES-256 encryption with password protection, expiration dates, and download limits for complete control.' },
+              { icon: Zap, color: 'success', title: 'Instant Uploads', desc: 'Lightning-fast uploads with resume support. Share files instantly without waiting.' },
+              { icon: KeyRound, color: 'warning', title: 'PIN Protection', desc: 'Share files with unique PIN codes. Track access attempts and maintain complete control.' },
+              { icon: Users, color: 'primary', title: 'Instant Sharing', desc: 'Generate shareable links instantly. No email required. Share with anyone, anywhere.' },
+              { icon: Clock, color: 'success', title: 'Time-Limited Access', desc: 'Set custom expiration dates and download limits. Your files, your rules, your timeline.' },
+              { icon: Smartphone, color: 'warning', title: 'QR Code Sharing', desc: 'Generate instant QR codes for quick mobile access. Perfect for in-person sharing.' },
+            ].map((feature, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ y: -6 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm group hover:border-primary/30 transition-all duration-500 h-full">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="p-8 relative z-10">
+                    <div className={`h-14 w-14 rounded-2xl bg-${feature.color}/10 flex items-center justify-center mb-6 border border-${feature.color}/20 transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_24px_hsl(var(--${feature.color})/0.2)]`}>
+                      <feature.icon className={`h-7 w-7 text-${feature.color} transition-transform duration-500 group-hover:scale-110`} />
+                    </div>
+                    <div className="text-xl font-bold mb-3 text-foreground">
+                      {feature.title}
+                    </div>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {feature.desc}
+                    </p>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
         </ScrollReveal>
@@ -520,9 +464,10 @@ const Index = () => {
                     </div>
                   </div>
                   <Suspense fallback={null}>
-                    <NearbyShareDialog trigger={<Button size="lg" className="gap-3 shadow-premium hover:shadow-glow transition-all duration-300 px-10 py-7 text-lg font-bold">
+                    <NearbyShareDialog trigger={<Button variant="premium" size="lg" className="gap-3 px-10 py-7 text-lg font-bold">
                           <Smartphone className="h-6 w-6" />
                           Try P2P Transfer
+                          <ArrowRight className="h-5 w-5" />
                         </Button>} />
                   </Suspense>
                 </div>
@@ -567,18 +512,20 @@ const Index = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5 justify-center pt-8">
-                {!user && <Button size="lg" onClick={() => window.location.href = '/auth'} className="gap-3 px-10 py-7 text-lg font-bold shadow-premium hover:shadow-glow transition-all duration-300 hover:scale-105">
+                {!user && <Button variant="premium" size="lg" onClick={() => window.location.href = '/auth'} className="gap-3 px-10 py-7 text-lg font-bold">
                     <User className="h-6 w-6" />
                     Create Free Account
+                    <ArrowRight className="h-5 w-5" />
                   </Button>}
-                {user && <Button size="lg" onClick={() => window.location.href = '/dashboard'} className="gap-3 px-10 py-7 text-lg font-bold shadow-premium hover:shadow-glow transition-all duration-300 hover:scale-105">
+                {user && <Button variant="premium" size="lg" onClick={() => window.location.href = '/dashboard'} className="gap-3 px-10 py-7 text-lg font-bold">
                     <User className="h-6 w-6" />
                     Go to Dashboard
+                    <ArrowRight className="h-5 w-5" />
                   </Button>}
                 <Button size="lg" variant="outline" onClick={() => window.scrollTo({
                   top: 0,
                   behavior: 'smooth'
-                })} className="px-10 py-7 text-lg font-bold border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:scale-105">
+                })} className="px-10 py-7 text-lg font-bold">
                   Start Uploading
                 </Button>
               </div>
@@ -589,32 +536,81 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border/40 bg-background/95 backdrop-blur mt-20 sm:mt-24 relative z-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-xl bg-gradient-primary shadow-lg flex items-center justify-center">
-                <Upload className="h-5 w-5 text-primary-foreground" />
+      {/* Premium Footer */}
+      <footer className="border-t border-border/20 bg-background/80 backdrop-blur-xl mt-20 sm:mt-24 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            {/* Brand */}
+            <div className="md:col-span-1 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-2xl bg-gradient-primary shadow-lg flex items-center justify-center">
+                  <Upload className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div>
+                  <p className="text-base font-bold text-foreground">FileShare Pro</p>
+                  <p className="text-xs text-muted-foreground">Enterprise File Sharing</p>
+                </div>
               </div>
-              <div>
-                <p className="text-base font-bold">FileShare Pro</p>
-                <p className="text-sm text-muted-foreground">Secure File Sharing Platform</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                The most secure and fastest way to share files across the globe. Trusted by millions.
+              </p>
+              <div className="flex items-center gap-1">
+                {[1,2,3,4,5].map(i => (
+                  <Star key={i} className="h-4 w-4 text-warning fill-warning" />
+                ))}
+                <span className="text-xs text-muted-foreground ml-2">4.9/5 rating</span>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/support'} className="text-sm text-pink-500 hover:text-pink-600 transition-colors">
-                <Heart className="h-4 w-4 mr-2 fill-pink-500" />
-                Support Us ❤️
+
+            {/* Product links */}
+            <div className="space-y-4">
+              <p className="text-sm font-semibold text-foreground">Product</p>
+              <div className="flex flex-col gap-2.5">
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Upload Files</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/pin'}>PIN Access</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/scan'}>QR Scanner</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/pricing'}>Pricing</Button>
+              </div>
+            </div>
+
+            {/* Company links */}
+            <div className="space-y-4">
+              <p className="text-sm font-semibold text-foreground">Company</p>
+              <div className="flex flex-col gap-2.5">
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/contact'}>Contact</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/support'}>Support Us</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.open('https://pavan-05.framer.ai/', '_blank')}>About Developer</Button>
+              </div>
+            </div>
+
+            {/* Security */}
+            <div className="space-y-4">
+              <p className="text-sm font-semibold text-foreground">Security</p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Shield className="h-4 w-4 text-success" />
+                  AES-256 Encryption
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Lock className="h-4 w-4 text-success" />
+                  Password Protection
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Globe className="h-4 w-4 text-success" />
+                  Global CDN
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="border-t border-border/20 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground">© 2026 FileShare Pro. All rights reserved.</p>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => window.open('https://pavan-05.framer.ai/', '_blank')} className="text-xs text-muted-foreground hover:text-primary">
+                <Sparkles className="h-3 w-3 mr-1" />
+                Made with ❤️ by PAVAN A
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/contact'} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Contact Support
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => window.open('https://pavan-05.framer.ai/', '_blank')} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                <Sparkles className="h-4 w-4 mr-2" />
-                Made with ❤️ by PAVAN A      
-              </Button>
-              <p className="text-sm text-muted-foreground">© 2026 FileShare Pro. All rights reserved.</p>
             </div>
           </div>
         </div>
@@ -622,6 +618,9 @@ const Index = () => {
 
       {/* Scroll to Top Button */}
       <ScrollToTop />
+
+      {/* Live Activity Feed */}
+      <LiveActivityFeed />
     </div>;
 };
 export default Index;
