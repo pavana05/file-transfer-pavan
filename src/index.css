@@ -151,8 +151,8 @@ All colors MUST be HSL.
     --gradient-upload: linear-gradient(135deg, hsl(var(--upload-zone)) 0%, hsl(0 0% 10%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(152 76% 52%) 0%, hsl(160 82% 58%) 100%);
     --gradient-glass: linear-gradient(135deg, hsl(var(--background) / 0.98) 0%, hsl(var(--background) / 0.85) 100%);
-    --gradient-mesh: radial-gradient(at 30% 15%, hsl(0 0% 100% / 0.04) 0px, transparent 50%),
-                     radial-gradient(at 75% 5%, hsl(0 0% 100% / 0.03) 0px, transparent 50%),
+    --gradient-mesh: radial-gradient(at 30% 15%, hsl(160 84% 44% / 0.06) 0px, transparent 50%),
+                     radial-gradient(at 75% 5%, hsl(160 84% 44% / 0.04) 0px, transparent 50%),
                      radial-gradient(at 10% 60%, hsl(0 0% 100% / 0.03) 0px, transparent 50%),
                      radial-gradient(at 65% 85%, hsl(152 76% 52% / 0.04) 0px, transparent 50%);
     --gradient-border: linear-gradient(135deg, hsl(var(--border)) 0%, hsl(var(--border) / 0.25) 100%);
