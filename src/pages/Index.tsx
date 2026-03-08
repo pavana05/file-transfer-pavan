@@ -341,22 +341,12 @@ const Index = () => {
             </div>
           </div>
         
-        {/* Premium Upload Section with Glass Design */}
-        <ScrollReveal direction="up" delay={100}>
-          <div id="upload-section" className="mb-16 sm:mb-24 md:mb-36 scroll-mt-20 relative z-10 opacity-100">
-            
-            {/* Animated gradient border wrapper */}
-            <div className="relative rounded-2xl p-[2px] bg-gradient-to-r from-primary via-primary-glow to-primary bg-[length:200%_auto] animate-gradient-x shadow-premium">
-              <Card className="relative border-0 shadow-none bg-card/98 backdrop-blur-xl overflow-hidden p-4 sm:p-8 md:p-12 lg:p-16 xl:p-20 rounded-[calc(1rem-2px)]">
-              <div className="relative z-10">
-                <Suspense fallback={<div className="h-64 flex items-center justify-center text-muted-foreground">Loading...</div>}>
-                  <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
-                </Suspense>
-              </div>
-            </Card>
-            </div>
-          </div>
-        </ScrollReveal>
+        {/* Upload Section */}
+        <div id="upload-section" className="mb-16 sm:mb-24 md:mb-36 scroll-mt-20 relative z-10">
+          <Suspense fallback={<div className="h-64 flex items-center justify-center text-muted-foreground">Loading...</div>}>
+            <FileUploadManager config={uploadConfig} callbacks={uploadCallbacks} />
+          </Suspense>
+        </div>
 
         {/* Clean Statistics Section */}
         <div className="cv-auto">
