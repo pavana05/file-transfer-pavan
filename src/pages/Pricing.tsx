@@ -14,6 +14,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Variants } from 'framer-motion';
+import { FeatureComparison } from '@/components/pricing/FeatureComparison';
 
 interface PremiumPlan {
   id: string;
