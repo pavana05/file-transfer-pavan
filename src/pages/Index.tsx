@@ -592,6 +592,7 @@ const Index = () => {
               <div className="flex flex-col gap-2.5">
                 <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/contact'}>Contact</Button>
                 <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/support'}>Support Us</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/donors'}>Donor Wall</Button>
                 <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.open('https://pavan-05.framer.ai/', '_blank')}>About Developer</Button>
               </div>
             </div>

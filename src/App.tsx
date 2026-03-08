@@ -92,6 +92,7 @@ const AnimatedRoutes = () => {
             } 
           />
           <Route path="/support" element={<PageTransition><Support /></PageTransition>} />
+          <Route path="/donors" element={<PageTransition><DonorWall /></PageTransition>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
         </Routes>
