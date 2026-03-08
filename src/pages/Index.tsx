@@ -18,6 +18,7 @@ const NearbyShareDialog = lazy(() => import('@/components/nearbyShare/NearbyShar
 const TestimonialsSection = lazy(() => import('@/components/testimonials/TestimonialsSection'));
 const FAQSection = lazy(() => import('@/components/faq/FAQSection'));
 const TrustIndicators = lazy(() => import('@/components/trust/TrustIndicators'));
+const HowItWorks = lazy(() => import('@/components/landing/HowItWorks').then(m => ({ default: m.HowItWorks })));
 const Index = () => {
   const {
     user,
