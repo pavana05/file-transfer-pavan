@@ -18,6 +18,7 @@ const NearbyShareDialog = lazy(() => import('@/components/nearbyShare/NearbyShar
 const TestimonialsSection = lazy(() => import('@/components/testimonials/TestimonialsSection'));
 const FAQSection = lazy(() => import('@/components/faq/FAQSection'));
 const TrustIndicators = lazy(() => import('@/components/trust/TrustIndicators'));
+const HowItWorks = lazy(() => import('@/components/landing/HowItWorks').then(m => ({ default: m.HowItWorks })));
 const Index = () => {
   const {
     user,
@@ -353,6 +354,15 @@ const Index = () => {
         </ScrollReveal>
         </div>
 
+        {/* How It Works Section */}
+        <div className="cv-auto">
+        <ScrollReveal direction="up" delay={100}>
+          <Suspense fallback={<div className="h-32" />}>
+            <HowItWorks />
+          </Suspense>
+        </ScrollReveal>
+        </div>
+
         {/* Testimonials Section */}
         <div className="cv-auto">
         <ScrollReveal direction="up" delay={100}>
@@ -582,6 +592,7 @@ const Index = () => {
               <div className="flex flex-col gap-2.5">
                 <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/contact'}>Contact</Button>
                 <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/support'}>Support Us</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/donors'}>Donor Wall</Button>
                 <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.open('https://pavan-05.framer.ai/', '_blank')}>About Developer</Button>
               </div>
             </div>
