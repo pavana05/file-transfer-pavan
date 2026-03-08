@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react';
-import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart, ArrowRight, Globe, Star } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart, ArrowRight, Globe, Star, HelpCircle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -111,6 +111,18 @@ const Index = () => {
             
             {/* Desktop Navigation Actions */}
             <nav className="hidden md:flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
+                <span className="text-sm font-medium">How It Works</span>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' })} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
+                <span className="text-sm font-medium">Testimonials</span>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' })} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
+                <span className="text-sm font-medium">FAQ</span>
+              </Button>
+              
+              <div className="h-6 w-px bg-border mx-1"></div>
+              
               <Button variant="ghost" size="sm" onClick={() => window.location.href = '/pricing'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
                 <Crown className="h-4 w-4" />
                 <span className="text-sm font-medium">Pricing</span>
@@ -183,6 +195,30 @@ const Index = () => {
           </DrawerHeader>
           
           <nav className="flex flex-col p-6 gap-3">
+            <Button variant="ghost" size="lg" onClick={() => {
+            document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base">
+              <ArrowRight className="h-5 w-5" />
+              How It Works
+            </Button>
+            <Button variant="ghost" size="lg" onClick={() => {
+            document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' });
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base">
+              <Star className="h-5 w-5" />
+              Testimonials
+            </Button>
+            <Button variant="ghost" size="lg" onClick={() => {
+            document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base">
+              <HelpCircle className="h-5 w-5" />
+              FAQ
+            </Button>
+            
+            <div className="h-px bg-border my-2"></div>
+            
             <Button variant="ghost" size="lg" onClick={() => {
             window.location.href = '/pricing';
             setMobileMenuOpen(false);
@@ -355,7 +391,7 @@ const Index = () => {
         </div>
 
         {/* How It Works Section */}
-        <div className="cv-auto">
+        <div id="how-it-works" className="cv-auto scroll-mt-20">
         <ScrollReveal direction="up" delay={100}>
           <Suspense fallback={<div className="h-32" />}>
             <HowItWorks />
@@ -364,7 +400,7 @@ const Index = () => {
         </div>
 
         {/* Testimonials Section */}
-        <div className="cv-auto">
+        <div id="testimonials" className="cv-auto scroll-mt-20">
         <ScrollReveal direction="up" delay={100}>
           <Suspense fallback={<div className="h-32" />}>
             <TestimonialsSection />
@@ -491,7 +527,7 @@ const Index = () => {
         </div>
 
         {/* FAQ Section */}
-        <div className="cv-auto">
+        <div id="faq" className="cv-auto scroll-mt-20">
         <ScrollReveal direction="up" delay={100}>
           <Suspense fallback={<div className="h-32" />}>
             <FAQSection />
