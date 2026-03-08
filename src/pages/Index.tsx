@@ -512,18 +512,20 @@ const Index = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5 justify-center pt-8">
-                {!user && <Button size="lg" onClick={() => window.location.href = '/auth'} className="gap-3 px-10 py-7 text-lg font-bold shadow-premium hover:shadow-glow transition-all duration-300 hover:scale-105">
+                {!user && <Button variant="premium" size="lg" onClick={() => window.location.href = '/auth'} className="gap-3 px-10 py-7 text-lg font-bold">
                     <User className="h-6 w-6" />
                     Create Free Account
+                    <ArrowRight className="h-5 w-5" />
                   </Button>}
-                {user && <Button size="lg" onClick={() => window.location.href = '/dashboard'} className="gap-3 px-10 py-7 text-lg font-bold shadow-premium hover:shadow-glow transition-all duration-300 hover:scale-105">
+                {user && <Button variant="premium" size="lg" onClick={() => window.location.href = '/dashboard'} className="gap-3 px-10 py-7 text-lg font-bold">
                     <User className="h-6 w-6" />
                     Go to Dashboard
+                    <ArrowRight className="h-5 w-5" />
                   </Button>}
                 <Button size="lg" variant="outline" onClick={() => window.scrollTo({
                   top: 0,
                   behavior: 'smooth'
-                })} className="px-10 py-7 text-lg font-bold border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:scale-105">
+                })} className="px-10 py-7 text-lg font-bold">
                   Start Uploading
                 </Button>
               </div>
