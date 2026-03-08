@@ -464,9 +464,10 @@ const Index = () => {
                     </div>
                   </div>
                   <Suspense fallback={null}>
-                    <NearbyShareDialog trigger={<Button size="lg" className="gap-3 shadow-premium hover:shadow-glow transition-all duration-300 px-10 py-7 text-lg font-bold">
+                    <NearbyShareDialog trigger={<Button variant="premium" size="lg" className="gap-3 px-10 py-7 text-lg font-bold">
                           <Smartphone className="h-6 w-6" />
                           Try P2P Transfer
+                          <ArrowRight className="h-5 w-5" />
                         </Button>} />
                   </Suspense>
                 </div>
