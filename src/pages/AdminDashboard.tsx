@@ -2118,7 +2118,26 @@ const AdminDashboard = () => {
                 </Card>
               </TabsContent>
 
-              {/* Settings Tab */}
+              {/* User Analytics Tab */}
+              <TabsContent value="analytics" className="space-y-6">
+                <UserAnalytics users={users} totalFiles={stats.totalFiles} totalStorage={stats.totalStorage} />
+              </TabsContent>
+
+              {/* Audit Log Tab */}
+              <TabsContent value="audit" className="space-y-6">
+                <AuditLog />
+              </TabsContent>
+
+              {/* Bulk Notifications Tab */}
+              <TabsContent value="notifications" className="space-y-6">
+                <BulkNotifications users={users} />
+              </TabsContent>
+
+              {/* File Moderation Tab */}
+              <TabsContent value="moderation" className="space-y-6">
+                <FileModeration files={files} />
+              </TabsContent>
+
               <TabsContent value="settings" className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Quick Actions */}
