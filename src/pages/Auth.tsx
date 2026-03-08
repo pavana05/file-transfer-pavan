@@ -372,7 +372,7 @@ export default function Auth() {
       </div>
 
       {/* Split-Screen Professional Layout */}
-      <div className="relative z-10 flex min-h-screen pt-20">
+      <div className="relative z-10 flex flex-col lg:flex-row min-h-screen pt-20">
         {/* Left Panel - Visual Content (Hidden on mobile) */}
         <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center p-12 overflow-y-auto">
           <div className="relative z-10 max-w-lg">
