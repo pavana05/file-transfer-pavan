@@ -196,6 +196,30 @@ const Index = () => {
           
           <nav className="flex flex-col p-6 gap-3">
             <Button variant="ghost" size="lg" onClick={() => {
+            document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base">
+              <ArrowRight className="h-5 w-5" />
+              How It Works
+            </Button>
+            <Button variant="ghost" size="lg" onClick={() => {
+            document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' });
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base">
+              <Star className="h-5 w-5" />
+              Testimonials
+            </Button>
+            <Button variant="ghost" size="lg" onClick={() => {
+            document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+            setMobileMenuOpen(false);
+          }} className="justify-start gap-3 h-12 text-base">
+              <HelpCircle className="h-5 w-5" />
+              FAQ
+            </Button>
+            
+            <div className="h-px bg-border my-2"></div>
+            
+            <Button variant="ghost" size="lg" onClick={() => {
             window.location.href = '/pricing';
             setMobileMenuOpen(false);
           }} className="justify-start gap-3 h-12 text-base">
