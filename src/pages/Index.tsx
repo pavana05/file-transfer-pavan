@@ -378,89 +378,35 @@ const Index = () => {
             </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
-                  <Shield className="h-7 w-7 text-primary" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  Military-Grade Security
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  AES-256 encryption with password protection, expiration dates, and download limits for complete control.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-success/10 flex items-center justify-center mb-6 border border-success/20">
-                  <Zap className="h-7 w-7 text-success" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  Instant Uploads
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Lightning-fast uploads with resume support. Share files instantly without waiting.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-warning/10 flex items-center justify-center mb-6 border border-warning/20">
-                  <KeyRound className="h-7 w-7 text-warning" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  PIN Protection
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Share files with unique PIN codes. Track access attempts and maintain complete control.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
-                  <Users className="h-7 w-7 text-primary" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  Instant Sharing
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Generate shareable links instantly. No email required. Share with anyone, anywhere.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-success/10 flex items-center justify-center mb-6 border border-success/20">
-                  <Clock className="h-7 w-7 text-success" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  Time-Limited Access
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Set custom expiration dates and download limits. Your files, your rules, your timeline.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-              <div className="p-8 relative z-10">
-                <div className="h-14 w-14 rounded-xl bg-warning/10 flex items-center justify-center mb-6 border border-warning/20">
-                  <Smartphone className="h-7 w-7 text-warning" />
-                </div>
-                <h4 className="text-xl font-bold mb-3">
-                  QR Code Sharing
-                </h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Generate instant QR codes for quick mobile access. Perfect for in-person sharing.
-                </p>
-              </div>
-            </Card>
+            {[
+              { icon: Shield, color: 'primary', title: 'Military-Grade Security', desc: 'AES-256 encryption with password protection, expiration dates, and download limits for complete control.' },
+              { icon: Zap, color: 'success', title: 'Instant Uploads', desc: 'Lightning-fast uploads with resume support. Share files instantly without waiting.' },
+              { icon: KeyRound, color: 'warning', title: 'PIN Protection', desc: 'Share files with unique PIN codes. Track access attempts and maintain complete control.' },
+              { icon: Users, color: 'primary', title: 'Instant Sharing', desc: 'Generate shareable links instantly. No email required. Share with anyone, anywhere.' },
+              { icon: Clock, color: 'success', title: 'Time-Limited Access', desc: 'Set custom expiration dates and download limits. Your files, your rules, your timeline.' },
+              { icon: Smartphone, color: 'warning', title: 'QR Code Sharing', desc: 'Generate instant QR codes for quick mobile access. Perfect for in-person sharing.' },
+            ].map((feature, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ y: -6 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm group hover:border-primary/30 transition-all duration-500 h-full">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="p-8 relative z-10">
+                    <div className={`h-14 w-14 rounded-2xl bg-${feature.color}/10 flex items-center justify-center mb-6 border border-${feature.color}/20 transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_24px_hsl(var(--${feature.color})/0.2)]`}>
+                      <feature.icon className={`h-7 w-7 text-${feature.color} transition-transform duration-500 group-hover:scale-110`} />
+                    </div>
+                    <div className="text-xl font-bold mb-3 text-foreground">
+                      {feature.title}
+                    </div>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {feature.desc}
+                    </p>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
         </ScrollReveal>
