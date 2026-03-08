@@ -90,7 +90,7 @@ const Index = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-primary-glow/8 to-transparent rounded-full blur-[100px] animate-pulse-glow"></div>
       
       {/* Header Navigation with Premium Design */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/30 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60 shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-border/20 bg-background/70 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/50 shadow-[0_1px_3px_hsl(var(--foreground)/0.04)]">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
           <div className="flex h-16 sm:h-18 items-center justify-between gap-3">
             {/* Logo & Branding */}
