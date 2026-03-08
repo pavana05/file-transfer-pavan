@@ -130,8 +130,7 @@ const App = () => {
                 <Toaster />
                 <Sonner />
                 <AnimatedRoutes />
-                <KeyboardShortcuts />
-                <DeferredAIChatWidget />
+                <CommandPalette />
                 <DeferredAIChatWidget />
               </BrowserRouter>
             </AuthProvider>
