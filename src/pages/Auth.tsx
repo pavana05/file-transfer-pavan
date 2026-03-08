@@ -485,7 +485,7 @@ export default function Auth() {
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.1),transparent_50%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(var(--accent)/0.08),transparent_50%)]" />
               
-              <CardContent className="relative z-10 p-8 sm:p-10">
+              <CardContent className="relative z-10 p-6 sm:p-8">
                 {showForgotPassword ? (
                   <ForgotPasswordForm />
                 ) : (
