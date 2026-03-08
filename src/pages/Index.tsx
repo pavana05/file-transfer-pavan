@@ -354,6 +354,15 @@ const Index = () => {
         </ScrollReveal>
         </div>
 
+        {/* How It Works Section */}
+        <div className="cv-auto">
+        <ScrollReveal direction="up" delay={100}>
+          <Suspense fallback={<div className="h-32" />}>
+            <HowItWorks />
+          </Suspense>
+        </ScrollReveal>
+        </div>
+
         {/* Testimonials Section */}
         <div className="cv-auto">
         <ScrollReveal direction="up" delay={100}>
