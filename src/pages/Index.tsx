@@ -491,7 +491,7 @@ const Index = () => {
         </div>
 
         {/* FAQ Section */}
-        <div className="cv-auto">
+        <div id="faq" className="cv-auto scroll-mt-20">
         <ScrollReveal direction="up" delay={100}>
           <Suspense fallback={<div className="h-32" />}>
             <FAQSection />
