@@ -11,7 +11,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
-import { KeyboardShortcuts } from "@/components/ui/keyboard-shortcuts";
+import { CommandPalette } from "@/components/ui/command-palette";
 
 // Eagerly load the landing page for LCP
 import Index from "./pages/Index";
