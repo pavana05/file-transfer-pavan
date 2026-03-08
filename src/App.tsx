@@ -126,9 +126,12 @@ const App = () => {
           <TooltipProvider delayDuration={0}>
             <AuthProvider>
               <BrowserRouter>
+                <ScrollProgress />
                 <Toaster />
                 <Sonner />
                 <AnimatedRoutes />
+                <KeyboardShortcuts />
+                <DeferredAIChatWidget />
                 <DeferredAIChatWidget />
               </BrowserRouter>
             </AuthProvider>
