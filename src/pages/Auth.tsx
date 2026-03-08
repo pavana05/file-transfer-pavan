@@ -460,7 +460,7 @@ export default function Auth() {
         <div className="w-full lg:w-1/2 flex items-start lg:items-center justify-center p-6 sm:p-8 lg:p-12 overflow-y-auto">
           <div className="w-full max-w-md">
             {/* Mobile Header */}
-            <div className="text-center mb-10 lg:hidden animate-fade-in">
+            <div className="text-center mb-6 lg:hidden animate-fade-in">
               <div className="flex justify-center mb-6">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/70 rounded-3xl shadow-2xl shadow-primary/30 animate-pulse" style={{ animationDuration: '3s' }} />
