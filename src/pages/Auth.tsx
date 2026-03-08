@@ -372,9 +372,9 @@ export default function Auth() {
       </div>
 
       {/* Split-Screen Professional Layout */}
-      <div className="relative z-10 flex min-h-screen pt-20">
+      <div className="relative z-10 flex flex-col lg:flex-row min-h-screen pt-20">
         {/* Left Panel - Visual Content (Hidden on mobile) */}
-        <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center p-12">
+        <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center p-12 overflow-y-auto">
           <div className="relative z-10 max-w-lg">
             {/* Animated Hero Icon */}
             <div className="flex justify-center mb-12 animate-fade-in">
@@ -457,10 +457,10 @@ export default function Auth() {
         </div>
 
         {/* Right Panel - Auth Forms */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
+        <div className="w-full lg:w-1/2 flex items-start lg:items-center justify-center p-6 sm:p-8 lg:p-12 overflow-y-auto">
           <div className="w-full max-w-md">
             {/* Mobile Header */}
-            <div className="text-center mb-10 lg:hidden animate-fade-in">
+            <div className="text-center mb-6 lg:hidden animate-fade-in">
               <div className="flex justify-center mb-6">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/70 rounded-3xl shadow-2xl shadow-primary/30 animate-pulse" style={{ animationDuration: '3s' }} />
@@ -485,13 +485,13 @@ export default function Auth() {
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.1),transparent_50%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(var(--accent)/0.08),transparent_50%)]" />
               
-              <CardContent className="relative z-10 p-8 sm:p-10">
+              <CardContent className="relative z-10 p-6 sm:p-8">
                 {showForgotPassword ? (
                   <ForgotPasswordForm />
                 ) : (
                   <>
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                      <TabsList className="grid w-full grid-cols-2 mb-8 bg-muted/40 backdrop-blur-sm p-2 rounded-2xl border-2 border-border/40 shadow-inner">
+                      <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/40 backdrop-blur-sm p-2 rounded-2xl border-2 border-border/40 shadow-inner">
                         <TabsTrigger 
                           value="signin" 
                           className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:via-primary data-[state=active]:to-primary-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 transition-all duration-300 rounded-xl h-12 font-bold text-sm"
