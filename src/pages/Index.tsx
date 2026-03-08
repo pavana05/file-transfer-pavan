@@ -317,6 +317,7 @@ const Index = () => {
                 </Suspense>
               </div>
             </Card>
+            </div>
           </div>
         </ScrollReveal>
 
