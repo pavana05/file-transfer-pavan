@@ -75,6 +75,10 @@ import { AdminFullSkeleton } from '@/components/skeletons/AdminSkeleton';
 import { SystemHealthMonitor } from '@/components/admin/SystemHealthMonitor';
 import { ActivityFeed } from '@/components/admin/ActivityFeed';
 import { UserGrowthChart } from '@/components/admin/UserGrowthChart';
+import { AuditLog } from '@/components/admin/AuditLog';
+import { UserAnalytics } from '@/components/admin/UserAnalytics';
+import { BulkNotifications } from '@/components/admin/BulkNotifications';
+import { FileModeration } from '@/components/admin/FileModeration';
 
 interface Payment {
   id: string;
@@ -1306,6 +1310,22 @@ const AdminDashboard = () => {
                   <Heart className="h-4 w-4" />
                   <span className="hidden sm:inline">Donations</span>
                 </TabsTrigger>
+                <TabsTrigger value="analytics" className="gap-2">
+                  <Activity className="h-4 w-4" />
+                  <span className="hidden sm:inline">Analytics</span>
+                </TabsTrigger>
+                <TabsTrigger value="audit" className="gap-2">
+                  <Clock className="h-4 w-4" />
+                  <span className="hidden sm:inline">Audit Log</span>
+                </TabsTrigger>
+                <TabsTrigger value="notifications" className="gap-2">
+                  <Mail className="h-4 w-4" />
+                  <span className="hidden sm:inline">Notifications</span>
+                </TabsTrigger>
+                <TabsTrigger value="moderation" className="gap-2 relative">
+                  <Shield className="h-4 w-4" />
+                  <span className="hidden sm:inline">Moderation</span>
+                </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
@@ -2098,7 +2118,26 @@ const AdminDashboard = () => {
                 </Card>
               </TabsContent>
 
-              {/* Settings Tab */}
+              {/* User Analytics Tab */}
+              <TabsContent value="analytics" className="space-y-6">
+                <UserAnalytics users={users} totalFiles={stats.totalFiles} totalStorage={stats.totalStorage} />
+              </TabsContent>
+
+              {/* Audit Log Tab */}
+              <TabsContent value="audit" className="space-y-6">
+                <AuditLog />
+              </TabsContent>
+
+              {/* Bulk Notifications Tab */}
+              <TabsContent value="notifications" className="space-y-6">
+                <BulkNotifications users={users} />
+              </TabsContent>
+
+              {/* File Moderation Tab */}
+              <TabsContent value="moderation" className="space-y-6">
+                <FileModeration files={files} />
+              </TabsContent>
+
               <TabsContent value="settings" className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Quick Actions */}
