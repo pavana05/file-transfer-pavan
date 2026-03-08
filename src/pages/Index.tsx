@@ -95,8 +95,8 @@ const Index = () => {
           <div className="flex h-16 sm:h-18 items-center justify-between gap-3">
             {/* Logo & Branding */}
             <div className="flex items-center gap-3 sm:gap-4 cursor-pointer group flex-shrink-0" onClick={() => window.location.href = '/'}>
-              <div className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-gradient-primary shadow-lg flex items-center justify-center transition-all duration-300 group-hover:shadow-glow group-hover:scale-105">
-                <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
+              <div className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-gradient-primary shadow-lg flex items-center justify-center transition-all duration-500 group-hover:shadow-[0_0_24px_hsl(var(--primary)/0.4)] group-hover:scale-110">
+                <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground transition-transform duration-500 group-hover:rotate-[-8deg]" />
               </div>
               <div className="hidden xs:block min-w-0">
                 <h1 className="text-base sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
