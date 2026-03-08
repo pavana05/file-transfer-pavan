@@ -536,32 +536,81 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border/40 bg-background/95 backdrop-blur mt-20 sm:mt-24 relative z-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-xl bg-gradient-primary shadow-lg flex items-center justify-center">
-                <Upload className="h-5 w-5 text-primary-foreground" />
+      {/* Premium Footer */}
+      <footer className="border-t border-border/20 bg-background/80 backdrop-blur-xl mt-20 sm:mt-24 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            {/* Brand */}
+            <div className="md:col-span-1 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-2xl bg-gradient-primary shadow-lg flex items-center justify-center">
+                  <Upload className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div>
+                  <p className="text-base font-bold text-foreground">FileShare Pro</p>
+                  <p className="text-xs text-muted-foreground">Enterprise File Sharing</p>
+                </div>
               </div>
-              <div>
-                <p className="text-base font-bold">FileShare Pro</p>
-                <p className="text-sm text-muted-foreground">Secure File Sharing Platform</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                The most secure and fastest way to share files across the globe. Trusted by millions.
+              </p>
+              <div className="flex items-center gap-1">
+                {[1,2,3,4,5].map(i => (
+                  <Star key={i} className="h-4 w-4 text-warning fill-warning" />
+                ))}
+                <span className="text-xs text-muted-foreground ml-2">4.9/5 rating</span>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/support'} className="text-sm text-pink-500 hover:text-pink-600 transition-colors">
-                <Heart className="h-4 w-4 mr-2 fill-pink-500" />
-                Support Us ❤️
+
+            {/* Product links */}
+            <div className="space-y-4">
+              <p className="text-sm font-semibold text-foreground">Product</p>
+              <div className="flex flex-col gap-2.5">
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Upload Files</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/pin'}>PIN Access</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/scan'}>QR Scanner</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/pricing'}>Pricing</Button>
+              </div>
+            </div>
+
+            {/* Company links */}
+            <div className="space-y-4">
+              <p className="text-sm font-semibold text-foreground">Company</p>
+              <div className="flex flex-col gap-2.5">
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/contact'}>Contact</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.location.href = '/support'}>Support Us</Button>
+                <Button variant="link" size="sm" className="justify-start p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => window.open('https://pavan-05.framer.ai/', '_blank')}>About Developer</Button>
+              </div>
+            </div>
+
+            {/* Security */}
+            <div className="space-y-4">
+              <p className="text-sm font-semibold text-foreground">Security</p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Shield className="h-4 w-4 text-success" />
+                  AES-256 Encryption
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Lock className="h-4 w-4 text-success" />
+                  Password Protection
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Globe className="h-4 w-4 text-success" />
+                  Global CDN
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="border-t border-border/20 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground">© 2026 FileShare Pro. All rights reserved.</p>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => window.open('https://pavan-05.framer.ai/', '_blank')} className="text-xs text-muted-foreground hover:text-primary">
+                <Sparkles className="h-3 w-3 mr-1" />
+                Made with ❤️ by PAVAN A
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => window.location.href = '/contact'} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Contact Support
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => window.open('https://pavan-05.framer.ai/', '_blank')} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                <Sparkles className="h-4 w-4 mr-2" />
-                Made with ❤️ by PAVAN A      
-              </Button>
-              <p className="text-sm text-muted-foreground">© 2026 FileShare Pro. All rights reserved.</p>
             </div>
           </div>
         </div>
@@ -569,6 +618,9 @@ const Index = () => {
 
       {/* Scroll to Top Button */}
       <ScrollToTop />
+
+      {/* Live Activity Feed */}
+      <LiveActivityFeed />
     </div>;
 };
 export default Index;
