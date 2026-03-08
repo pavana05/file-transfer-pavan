@@ -486,6 +486,11 @@ const Pricing = () => {
             })}
           </motion.div>
 
+          {/* Feature Comparison Table */}
+          <motion.div variants={itemVariants}>
+            <FeatureComparison plans={plans} />
+          </motion.div>
+
           {/* Money Back Guarantee */}
           <motion.div variants={itemVariants} className="max-w-2xl mx-auto">
             <div className="relative p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/25 text-center shadow-xl shadow-primary/5">
