@@ -1,12 +1,15 @@
 import { lazy, Suspense, useState } from 'react';
-import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart, ArrowRight, Globe, Star } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
+import { AnimatedCounter } from '@/components/ui/animated-counter';
+import { LiveActivityFeed } from '@/components/ui/live-activity-feed';
 import { useAuth } from '@/contexts/AuthContext';
 import ScrollReveal from '@/components/animations/ScrollReveal';
+import { motion } from 'framer-motion';
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 
 // Lazy load heavy below-the-fold components
