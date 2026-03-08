@@ -457,7 +457,7 @@ export default function Auth() {
         </div>
 
         {/* Right Panel - Auth Forms */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
+        <div className="w-full lg:w-1/2 flex items-start lg:items-center justify-center p-6 sm:p-8 lg:p-12 overflow-y-auto">
           <div className="w-full max-w-md">
             {/* Mobile Header */}
             <div className="text-center mb-10 lg:hidden animate-fade-in">
