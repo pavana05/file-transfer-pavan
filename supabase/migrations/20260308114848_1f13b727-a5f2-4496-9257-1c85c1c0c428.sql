@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Users can view files via share token" ON public.uploaded_files;
