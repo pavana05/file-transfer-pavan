@@ -111,6 +111,18 @@ const Index = () => {
             
             {/* Desktop Navigation Actions */}
             <nav className="hidden md:flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
+                <span className="text-sm font-medium">How It Works</span>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' })} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
+                <span className="text-sm font-medium">Testimonials</span>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' })} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
+                <span className="text-sm font-medium">FAQ</span>
+              </Button>
+              
+              <div className="h-6 w-px bg-border mx-1"></div>
+              
               <Button variant="ghost" size="sm" onClick={() => window.location.href = '/pricing'} className="gap-2 h-10 px-4 hover:bg-primary/10 hover:text-primary transition-all">
                 <Crown className="h-4 w-4" />
                 <span className="text-sm font-medium">Pricing</span>
