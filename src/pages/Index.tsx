@@ -323,33 +323,28 @@ const Index = () => {
         <ScrollReveal direction="up" delay={150}>
           <div className="mb-16 sm:mb-24 md:mb-36 relative z-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
-              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
-                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-primary bg-clip-text text-transparent mb-1 sm:mb-2">10M+</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Files Shared</div>
-                </div>
-              </Card>
-              
-              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
-                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-success bg-clip-text text-transparent mb-1 sm:mb-2">50K+</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Active Users</div>
-                </div>
-              </Card>
-              
-              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
-                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-warning mb-1 sm:mb-2">50TB+</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Data Transferred</div>
-                </div>
-              </Card>
-              
-              <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm">
-                <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
-                  <div className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-primary-glow mb-1 sm:mb-2">99.9%</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">Uptime</div>
-                </div>
-              </Card>
+              {[
+                { value: 10, suffix: 'M+', label: 'Files Shared', gradient: 'from-primary to-primary-glow' },
+                { value: 50, suffix: 'K+', label: 'Active Users', gradient: 'from-success to-emerald-400' },
+                { value: 50, suffix: 'TB+', label: 'Data Transferred', gradient: 'from-warning to-amber-400' },
+                { value: 99.9, suffix: '%', label: 'Uptime', gradient: 'from-primary-glow to-blue-400', decimals: 1 },
+              ].map((stat, i) => (
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <Card className="relative overflow-hidden border border-border/30 bg-card/95 backdrop-blur-sm group hover:border-primary/30 transition-all duration-500">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="p-4 sm:p-6 md:p-8 text-center relative z-10">
+                      <div className={`text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent mb-1 sm:mb-2`}>
+                        <AnimatedCounter end={stat.value} suffix={stat.suffix} duration={2.5} decimals={stat.decimals || 0} />
+                      </div>
+                      <div className="text-xs sm:text-sm text-muted-foreground font-medium">{stat.label}</div>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           </div>
         </ScrollReveal>
