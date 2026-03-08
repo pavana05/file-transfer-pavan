@@ -75,6 +75,10 @@ import { AdminFullSkeleton } from '@/components/skeletons/AdminSkeleton';
 import { SystemHealthMonitor } from '@/components/admin/SystemHealthMonitor';
 import { ActivityFeed } from '@/components/admin/ActivityFeed';
 import { UserGrowthChart } from '@/components/admin/UserGrowthChart';
+import { AuditLog } from '@/components/admin/AuditLog';
+import { UserAnalytics } from '@/components/admin/UserAnalytics';
+import { BulkNotifications } from '@/components/admin/BulkNotifications';
+import { FileModeration } from '@/components/admin/FileModeration';
 
 interface Payment {
   id: string;
