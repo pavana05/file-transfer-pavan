@@ -10,6 +10,8 @@ import { AuthGuard } from "@/components/AuthGuard";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "@/components/animations/PageTransition";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { KeyboardShortcuts } from "@/components/ui/keyboard-shortcuts";
 
 // Eagerly load the landing page for LCP
 import Index from "./pages/Index";
@@ -124,9 +126,12 @@ const App = () => {
           <TooltipProvider delayDuration={0}>
             <AuthProvider>
               <BrowserRouter>
+                <ScrollProgress />
                 <Toaster />
                 <Sonner />
                 <AnimatedRoutes />
+                <KeyboardShortcuts />
+                <DeferredAIChatWidget />
                 <DeferredAIChatWidget />
               </BrowserRouter>
             </AuthProvider>
