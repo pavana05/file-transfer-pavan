@@ -8,19 +8,19 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 22% 99%;
-    --foreground: 240 18% 8%;
+    --background: 0 0% 99%;
+    --foreground: 0 0% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 18% 8%;
+    --card-foreground: 0 0% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 18% 8%;
+    --popover-foreground: 0 0% 9%;
 
-    --primary: 217 91% 45%;
+    --primary: 0 0% 15%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 217 85% 60%;
-    --primary-dark: 217 80% 35%;
+    --primary-glow: 0 0% 25%;
+    --primary-dark: 0 0% 10%;
     
     /* Pricing Red Theme */
     --pricing-primary: 0 84% 60%;
@@ -28,14 +28,14 @@ All colors MUST be HSL.
     --pricing-glow: 0 85% 68%;
     --pricing-dark: 0 80% 45%;
 
-    --secondary: 240 25% 97%;
-    --secondary-foreground: 240 18% 8%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 240 20% 97%;
-    --muted-foreground: 240 10% 45%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 217 100% 98%;
-    --accent-foreground: 217 80% 25%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 15%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -46,64 +46,57 @@ All colors MUST be HSL.
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
 
-    --border: 240 15% 92%;
-    --input: 240 15% 95%;
-    --ring: 224 76.3265% 48.0392%;
+    --border: 0 0% 90%;
+    --input: 0 0% 94%;
+    --ring: 0 0% 15%;
 
     /* Upload specific tokens */
-    --upload-zone: 217 100% 99%;
-    --upload-zone-hover: 217 100% 97%;
-    --upload-zone-active: 217 95% 95%;
-    --upload-progress: 217 91% 45%;
+    --upload-zone: 0 0% 99%;
+    --upload-zone-hover: 0 0% 97%;
+    --upload-zone-active: 0 0% 95%;
+    --upload-progress: 0 0% 15%;
     --upload-success: 152 76% 48%;
     --upload-error: 0 84% 60%;
 
     /* Premium Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 45%) 0%, hsl(217 85% 60%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(217 91% 45%) 0%, hsl(210 85% 50%) 40%, hsl(220 80% 55%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 15%) 0%, hsl(0 0% 25%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 12%) 0%, hsl(0 0% 22%) 40%, hsl(0 0% 30%) 100%);
     --gradient-secondary: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--secondary)) 100%);
-    --gradient-upload: linear-gradient(135deg, hsl(var(--upload-zone)) 0%, hsl(217 100% 97%) 100%);
+    --gradient-upload: linear-gradient(135deg, hsl(var(--upload-zone)) 0%, hsl(0 0% 97%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(152 76% 48%) 0%, hsl(160 82% 55%) 100%);
     --gradient-glass: linear-gradient(135deg, hsl(var(--background) / 0.98) 0%, hsl(var(--background) / 0.92) 100%);
-    --gradient-mesh: radial-gradient(at 30% 15%, hsl(217 91% 45% / 0.08) 0px, transparent 50%),
-                     radial-gradient(at 75% 5%, hsl(210 85% 50% / 0.06) 0px, transparent 50%),
-                     radial-gradient(at 10% 60%, hsl(220 80% 55% / 0.05) 0px, transparent 50%),
-                     radial-gradient(at 65% 85%, hsl(152 76% 48% / 0.04) 0px, transparent 50%);
+    --gradient-mesh: radial-gradient(at 30% 15%, hsl(0 0% 15% / 0.06) 0px, transparent 50%),
+                     radial-gradient(at 75% 5%, hsl(0 0% 20% / 0.04) 0px, transparent 50%),
+                     radial-gradient(at 10% 60%, hsl(0 0% 25% / 0.04) 0px, transparent 50%),
+                     radial-gradient(at 65% 85%, hsl(152 76% 48% / 0.03) 0px, transparent 50%);
     --gradient-border: linear-gradient(135deg, hsl(var(--border)) 0%, hsl(var(--border) / 0.2) 100%);
-    --gradient-shimmer: linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.15) 50%, transparent 100%);
+    --gradient-shimmer: linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.1) 50%, transparent 100%);
 
     /* Premium Shadows */
-    --shadow-sm: 0 1px 3px 0 hsl(240 22% 15% / 0.04), 0 1px 2px -1px hsl(240 22% 15% / 0.02);
-    --shadow-md: 0 4px 8px -2px hsl(240 22% 15% / 0.06), 0 2px 4px -2px hsl(240 22% 15% / 0.04);
-    --shadow-lg: 0 12px 20px -4px hsl(240 22% 15% / 0.08), 0 4px 8px -4px hsl(240 22% 15% / 0.05);
-    --shadow-xl: 0 20px 32px -6px hsl(240 22% 15% / 0.10), 0 8px 16px -6px hsl(240 22% 15% / 0.06);
-    --shadow-2xl: 0 28px 56px -12px hsl(240 22% 15% / 0.16);
-    --shadow-upload: 0 24px 48px -12px hsl(217 91% 45% / 0.20), 0 0 0 1px hsl(217 91% 45% / 0.05);
-    --shadow-card: 0 2px 12px -2px hsl(240 22% 15% / 0.05), 0 1px 4px -1px hsl(240 22% 15% / 0.03);
-    --shadow-hover: 0 28px 56px -10px hsl(217 91% 45% / 0.25), 0 0 0 1px hsl(217 91% 45% / 0.08);
-    --shadow-glow: 0 0 80px hsl(217 91% 45% / 0.35), 0 0 40px hsl(217 91% 45% / 0.20);
-    --shadow-premium: 0 40px 80px -16px hsl(240 22% 15% / 0.15), 0 0 100px hsl(217 91% 45% / 0.10);
-    --shadow-glass: 0 16px 48px hsl(240 22% 15% / 0.08), 0 0 1px hsl(240 22% 15% / 0.08);
-    --shadow-inner: inset 0 2px 8px 0 hsl(240 22% 15% / 0.04);
+    --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.04), 0 1px 2px -1px hsl(0 0% 0% / 0.02);
+    --shadow-md: 0 4px 8px -2px hsl(0 0% 0% / 0.06), 0 2px 4px -2px hsl(0 0% 0% / 0.04);
+    --shadow-lg: 0 12px 20px -4px hsl(0 0% 0% / 0.08), 0 4px 8px -4px hsl(0 0% 0% / 0.05);
+    --shadow-xl: 0 20px 32px -6px hsl(0 0% 0% / 0.10), 0 8px 16px -6px hsl(0 0% 0% / 0.06);
+    --shadow-2xl: 0 28px 56px -12px hsl(0 0% 0% / 0.16);
+    --shadow-upload: 0 24px 48px -12px hsl(0 0% 0% / 0.15), 0 0 0 1px hsl(0 0% 0% / 0.05);
+    --shadow-card: 0 2px 12px -2px hsl(0 0% 0% / 0.05), 0 1px 4px -1px hsl(0 0% 0% / 0.03);
+    --shadow-hover: 0 28px 56px -10px hsl(0 0% 0% / 0.18), 0 0 0 1px hsl(0 0% 0% / 0.06);
+    --shadow-glow: 0 0 80px hsl(0 0% 0% / 0.15), 0 0 40px hsl(0 0% 0% / 0.08);
+    --shadow-premium: 0 40px 80px -16px hsl(0 0% 0% / 0.12), 0 0 100px hsl(0 0% 0% / 0.06);
+    --shadow-glass: 0 16px 48px hsl(0 0% 0% / 0.06), 0 0 1px hsl(0 0% 0% / 0.06);
+    --shadow-inner: inset 0 2px 8px 0 hsl(0 0% 0% / 0.04);
     --shadow-border: inset 0 0 0 1px hsl(var(--border) / 0.12);
 
     --radius: 0.875rem;
 
     --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-foreground: 0 0% 26%;
+    --sidebar-primary: 0 0% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 91%;
+    --sidebar-ring: 0 0% 15%;
   }
 
   .dark {
