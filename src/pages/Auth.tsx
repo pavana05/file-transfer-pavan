@@ -374,7 +374,7 @@ export default function Auth() {
       {/* Split-Screen Professional Layout */}
       <div className="relative z-10 flex min-h-screen pt-20">
         {/* Left Panel - Visual Content (Hidden on mobile) */}
-        <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center p-12">
+        <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center p-12 overflow-y-auto">
           <div className="relative z-10 max-w-lg">
             {/* Animated Hero Icon */}
             <div className="flex justify-center mb-12 animate-fade-in">
