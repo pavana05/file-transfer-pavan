@@ -491,7 +491,7 @@ export default function Auth() {
                 ) : (
                   <>
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                      <TabsList className="grid w-full grid-cols-2 mb-8 bg-muted/40 backdrop-blur-sm p-2 rounded-2xl border-2 border-border/40 shadow-inner">
+                      <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/40 backdrop-blur-sm p-2 rounded-2xl border-2 border-border/40 shadow-inner">
                         <TabsTrigger 
                           value="signin" 
                           className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:via-primary data-[state=active]:to-primary-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 transition-all duration-300 rounded-xl h-12 font-bold text-sm"
