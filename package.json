@@ -71,7 +71,7 @@
     "tailwindcss-animate": "^1.0.7",
     "terser": "^5.46.0",
     "vaul": "^0.9.3",
-    "vite-plugin-pwa": "^1.1.0",
+    "vite-plugin-pwa": "0.19.8",
     "workbox-window": "^7.4.0",
     "zod": "^3.23.8"
   },
