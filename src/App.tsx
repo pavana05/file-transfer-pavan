@@ -31,6 +31,7 @@ const PaymentHistory = lazy(() => import("./pages/PaymentHistory"));
 const Contact = lazy(() => import("./pages/Contact"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const Support = lazy(() => import("./pages/Support"));
+const DonorWall = lazy(() => import("./pages/DonorWall"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
