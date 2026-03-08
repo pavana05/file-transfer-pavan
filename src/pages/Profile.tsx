@@ -357,10 +357,10 @@ const Profile = () => {
           {/* ── Stats Grid ── */}
           <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: FileUp, label: 'Files Uploaded', value: fileStats.totalFiles, gradient: 'from-blue-500/10 to-indigo-500/10', iconColor: 'text-blue-500' },
-              { icon: Download, label: 'Total Downloads', value: fileStats.totalDownloads, gradient: 'from-emerald-500/10 to-green-500/10', iconColor: 'text-emerald-500' },
-              { icon: HardDrive, label: 'Storage Limit', value: premiumPlan ? formatFileSize(premiumPlan.file_size_limit) : '10GB', gradient: 'from-amber-500/10 to-orange-500/10', iconColor: 'text-amber-500' },
-              { icon: Trophy, label: 'Donations', value: donationStats.donationCount, gradient: 'from-pink-500/10 to-rose-500/10', iconColor: 'text-pink-500' },
+              { icon: FileUp, label: 'Files Uploaded', value: fileStats.totalFiles, gradient: 'from-primary/10 to-primary/5', iconColor: 'text-primary' },
+              { icon: Download, label: 'Total Downloads', value: fileStats.totalDownloads, gradient: 'from-success/10 to-success/5', iconColor: 'text-success' },
+              { icon: HardDrive, label: 'Storage Limit', value: premiumPlan ? formatFileSize(premiumPlan.file_size_limit) : '10GB', gradient: 'from-warning/10 to-warning/5', iconColor: 'text-warning' },
+              { icon: Trophy, label: 'Donations', value: donationStats.donationCount, gradient: 'from-accent/10 to-accent/5', iconColor: 'text-accent-foreground' },
             ].map((stat, i) => (
               <Card key={i} className="border-border/50 bg-card/60 backdrop-blur-sm hover:border-primary/30 transition-all group">
                 <CardContent className="p-4">
