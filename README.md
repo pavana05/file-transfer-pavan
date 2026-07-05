@@ -1,73 +1,295 @@
-# Welcome to your Lovable project
+<div align="center">
 
-## Project info
+# 🚀 File Transfer Pavan
 
-**URL**: https://file-transfer-pavan.lovable.app/
+### ⚡ Secure • Fast • Smart • Modern File Sharing Platform
 
-## How can I edit this code?
+<p align="center">
+Share files instantly with a beautiful, secure and feature-rich web application built using modern web technologies.
+</p>
 
-There are several ways of editing your application.
+<p align="center">
 
-**Use Lovable**
+![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-5-purple?style=for-the-badge&logo=vite)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-06B6D4?style=for-the-badge&logo=tailwindcss)
+![Supabase](https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=for-the-badge&logo=supabase)
+![PWA](https://img.shields.io/badge/PWA-Enabled-5A0FC8?style=for-the-badge)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/673a16ab-cb50-4453-b2fd-eabb2e035c39) and start prompting.
+</p>
 
-Changes made via Lovable will be committed automatically to this repo.
+<p align="center">
 
-**Use your preferred IDE**
+⭐ Star this repository if you find it useful!
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+</p>
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+</div>
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 📖 Overview
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+**File Transfer Pavan** is a modern cloud-based file sharing platform designed for secure, fast and seamless file transfers.
 
-# Step 3: Install the necessary dependencies.
-npm i
+Whether you're sharing documents, images, videos or large files, the platform provides an intuitive interface with modern UI, real-time capabilities, analytics, QR sharing, AI-powered features and much more.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+---
+
+# ✨ Features
+
+## 📂 File Management
+
+- 📤 Upload files
+- 📥 Download files
+- 📁 Organize files
+- 🔍 Search files instantly
+- 🗂️ File categorization
+- 📄 Preview supported files
+
+---
+
+## 🔗 Smart Sharing
+
+- 🔗 Share using secure links
+- 📱 QR Code sharing
+- 👥 Easy collaboration
+- ⚡ Instant sharing
+- 📋 Copy link with one click
+
+---
+
+## 🔐 Security
+
+- 🔒 Secure authentication
+- 🛡️ Protected file access
+- 🚨 Security alerts
+- 🔑 User authorization
+- 👤 Role-based access
+- ☁️ Secure cloud storage
+
+---
+
+## 🤖 Smart Features
+
+- 🤖 AI Chat Assistant
+- 📊 File Analytics
+- 📈 User Analytics
+- 📉 Dashboard Insights
+- 🔔 Notifications
+- ⚙️ Smart management tools
+
+---
+
+## 👨‍💼 Admin Features
+
+- 👥 User Management
+- 📊 Analytics Dashboard
+- 📝 Audit Logs
+- 📢 Bulk Notifications
+- 📂 File Moderation
+- ❤️ System Health Monitor
+
+---
+
+## ⚡ Modern Experience
+
+- 🌙 Dark Mode
+- 📱 Fully Responsive
+- 💻 Desktop Friendly
+- 📲 Mobile Friendly
+- ⚡ Lightning Fast
+- 🎨 Beautiful UI
+- ✨ Smooth Animations
+- 🔄 Real-Time Updates
+- 📦 Progressive Web App (PWA)
+
+---
+
+# 🛠 Tech Stack
+
+| Technology | Usage |
+|------------|-------|
+| ⚛ React 18 | Frontend |
+| 🟦 TypeScript | Type Safety |
+| ⚡ Vite | Build Tool |
+| 🎨 Tailwind CSS | Styling |
+| 🧩 shadcn/ui | UI Components |
+| 🟢 Supabase | Backend & Database |
+| 🔥 React Query | Data Fetching |
+| 🎬 Framer Motion | Animations |
+| 📊 Recharts | Analytics |
+| 📄 React PDF | PDF Support |
+| 📷 QR Code | QR Sharing |
+
+---
+
+# 📂 Project Structure
+
+```
+src/
+│
+├── components/
+├── pages/
+├── hooks/
+├── integrations/
+├── lib/
+├── utils/
+├── styles/
+└── assets/
+```
+
+---
+
+# 🚀 Getting Started
+
+## Clone Repository
+
+```bash
+git clone https://github.com/pavana05/file-transfer-pavan.git
+```
+
+Move into the project
+
+```bash
+cd file-transfer-pavan
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Run development server
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Build project
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run build
+```
 
-**Use GitHub Codespaces**
+Preview production build
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+npm run preview
+```
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+# 📱 Screenshots
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+> Add screenshots here
 
-## How can I deploy this project?
+```
+📷 Home Page
 
-Simply open [Lovable](https://lovable.dev/projects/673a16ab-cb50-4453-b2fd-eabb2e035c39) and click on Share -> Publish.
+📷 Dashboard
 
-## Can I connect a custom domain to my Lovable project?
+📷 Upload Page
 
-Yes, you can!
+📷 Analytics
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+📷 QR Sharing
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
+
+# 🌟 Highlights
+
+- ⚡ Fast Performance
+- 🔐 Secure Authentication
+- ☁️ Cloud Storage
+- 🤖 AI Features
+- 📊 Analytics Dashboard
+- 📱 QR Sharing
+- 🎨 Modern UI
+- 📈 User Insights
+- 🔄 Real-Time Collaboration
+- 📦 Progressive Web App
+
+---
+
+# 💡 Future Improvements
+
+- 🌍 Multi-language Support
+- 📹 Video Streaming
+- 📂 Folder Sharing
+- 📡 Offline Synchronization
+- 📤 Drag & Drop Everywhere
+- 📱 Native Mobile App
+- 🔔 Push Notifications
+- 🤝 Team Workspaces
+
+---
+
+# 🤝 Contributing
+
+Contributions are always welcome!
+
+1. Fork this repository
+
+2. Create a feature branch
+
+```bash
+git checkout -b feature-name
+```
+
+3. Commit your changes
+
+```bash
+git commit -m "Added new feature"
+```
+
+4. Push to GitHub
+
+```bash
+git push origin feature-name
+```
+
+5. Open a Pull Request 🚀
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+# 👨‍💻 Author
+
+### Pavan
+
+🌐 GitHub
+
+https://github.com/pavana05
+
+---
+
+# ⭐ Support
+
+If this project helped you,
+
+🌟 Star the repository
+
+🍴 Fork the repository
+
+🛠️ Contribute to the project
+
+Share it with others ❤️
+
+---
+
+<div align="center">
+
+## 🚀 Built with ❤️ using React, TypeScript, Vite & Supabase
+
+### ⭐ Don't forget to Star this Repository ⭐
+
+</div>
