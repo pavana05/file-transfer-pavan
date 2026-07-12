@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from 'react';
-import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart, ArrowRight, Globe, Star, HelpCircle } from 'lucide-react';
+import { Upload, Shield, Zap, Users, Smartphone, KeyRound, LogOut, User, Sparkles, Lock, Clock, ScanLine, Menu, X, Crown, Heart, ArrowRight, Globe, Star, HelpCircle, CheckCircle2, FileArchive } from 'lucide-react';
+import heroCloud from '@/assets/hero-3d-cloud.png';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -288,58 +289,151 @@ const Index = () => {
       
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-12 sm:py-16 md:py-24">
-        {/* Premium Hero Section with Clean Modern Design */}
-          <div className="text-center mb-16 sm:mb-24 md:mb-32 space-y-8 sm:space-y-12 md:space-y-16 max-w-7xl mx-auto relative z-10 animate-fade-in">
-            
-            {/* Premium Trust Badge */}
-            <div className="inline-flex items-center gap-2 sm:gap-4 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border/50 shadow-card hover:shadow-lg transition-all duration-500 hover:scale-105">
-              <span className="relative flex h-2 w-2 sm:h-3 sm:w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 sm:h-3 sm:w-3 bg-success"></span>
-              </span>
-              <span className="text-xs sm:text-sm font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                <span className="hidden xs:inline">🔐 Bank-Level Security • ⚡ Instant Transfer • 🌐 Global CDN</span>
-                <span className="xs:hidden">🔐 Secure • ⚡ Fast • 🌐 Global</span>
-              </span>
-            </div>
-            
-            {/* Premium Headline with Clean Typography */}
-            <h2 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight px-2 leading-[0.95]">
-              <span className="block bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/70">
-                Share Files
-              </span>
-              <span className="block mt-2 sm:mt-3 bg-clip-text text-transparent bg-gradient-hero animate-gradient-x bg-[length:200%_auto] text-3xl xs:text-4xl sm:text-5xl md:text-6xl">
-                Securely
-              </span>
-            </h2>
-            
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-5xl mx-auto px-4 leading-relaxed font-medium">
-              Enterprise-grade file sharing with{' '}
-              <span className="font-extrabold text-foreground">end-to-end encryption</span>.
-              <span className="block mt-2 sm:mt-3 text-sm sm:text-base md:text-lg">
-                No signup • Up to <span className="text-primary font-black text-lg sm:text-xl md:text-2xl">1GB</span> • Auto-delete
-              </span>
-            </p>
+        {/* Premium Split Hero Section */}
+        <section className="relative mb-16 sm:mb-24 md:mb-32 z-10">
+          {/* Ambient gradient orbs */}
+          <div className="pointer-events-none absolute -top-20 -left-20 w-[420px] h-[420px] rounded-full bg-primary/20 blur-[120px] opacity-70" aria-hidden />
+          <div className="pointer-events-none absolute top-40 -right-24 w-[460px] h-[460px] rounded-full bg-primary-glow/20 blur-[130px] opacity-60" aria-hidden />
 
-            {/* Clean Feature Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4 pt-4 sm:pt-6 px-2">
-              <Badge variant="secondary" className="text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 shadow-card hover:shadow-hover transition-all duration-500 hover:scale-105 border border-border/40 backdrop-blur-sm bg-card/80">
-                <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 mr-1.5 sm:mr-2 text-primary" />
-                <span className="hidden xs:inline">Military-Grade Encryption</span>
-                <span className="xs:hidden">Encrypted</span>
-              </Badge>
-              <Badge variant="secondary" className="text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 shadow-card hover:shadow-hover transition-all duration-500 hover:scale-105 border border-border/40 backdrop-blur-sm bg-card/80">
-                <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 mr-1.5 sm:mr-2 text-success" />
-                <span className="hidden xs:inline">Lightning Fast</span>
-                <span className="xs:hidden">Fast</span>
-              </Badge>
-              <Badge variant="secondary" className="text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 shadow-card hover:shadow-hover transition-all duration-500 hover:scale-105 border border-border/40 backdrop-blur-sm bg-card/80">
-                <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 mr-1.5 sm:mr-2 text-warning" />
-                <span className="hidden xs:inline">Password Protected</span>
-                <span className="xs:hidden">Protected</span>
-              </Badge>
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center animate-fade-in">
+            {/* Left: Copy */}
+            <div className="space-y-7 sm:space-y-8 text-left">
+              {/* Trust badge */}
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-card/60 backdrop-blur-xl border border-border/60 shadow-card">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                </span>
+                <span className="text-xs sm:text-sm font-semibold text-foreground/90 tracking-wide">
+                  Trusted by 10,000+ teams worldwide
+                </span>
+              </div>
+
+              {/* Headline */}
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight leading-[0.95]">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary bg-[length:200%_auto] animate-gradient-x">
+                  Share
+                </span>{' '}
+                <span className="text-foreground">Files</span>
+                <span className="block mt-2 text-foreground">Without Limits</span>
+              </h1>
+
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-xl leading-relaxed font-medium">
+                Fast, secure and effortless file sharing for individuals and teams — end-to-end encrypted, no signup required.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                <Button
+                  size="lg"
+                  onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="group h-14 px-7 rounded-full bg-gradient-to-r from-primary to-primary-glow hover:shadow-premium hover:scale-[1.02] transition-all text-base font-bold shadow-glow"
+                >
+                  Start Sharing Now
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="h-14 px-7 rounded-full bg-card/60 backdrop-blur-xl border-border/60 hover:bg-card/80 text-base font-bold"
+                >
+                  Learn More
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Feature row */}
+              <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-4 max-w-lg">
+                {[
+                  { icon: Lock, label: 'End-to-end encrypted', color: 'text-primary', bg: 'bg-primary/10' },
+                  { icon: Zap, label: 'Blazing fast transfer', color: 'text-warning', bg: 'bg-warning/10' },
+                  { icon: Users, label: 'Share with anyone', color: 'text-success', bg: 'bg-success/10' },
+                ].map((f, i) => (
+                  <div key={i} className="flex items-start gap-2.5">
+                    <div className={`h-9 w-9 rounded-xl ${f.bg} flex items-center justify-center flex-shrink-0 border border-border/40`}>
+                      <f.icon className={`h-4.5 w-4.5 ${f.color}`} />
+                    </div>
+                    <span className="text-xs sm:text-sm font-semibold text-foreground/85 leading-tight pt-1">{f.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Social proof */}
+              <div className="flex items-center gap-3 pt-2">
+                <div className="flex -space-x-2.5">
+                  {['from-primary to-primary-glow', 'from-success to-emerald-400', 'from-warning to-amber-400', 'from-pink-500 to-rose-400'].map((g, i) => (
+                    <div key={i} className={`h-9 w-9 rounded-full bg-gradient-to-br ${g} border-2 border-background flex items-center justify-center text-xs font-black text-white shadow-md`}>
+                      {['A','M','J','S'][i]}
+                    </div>
+                  ))}
+                </div>
+                <div className="text-xs sm:text-sm">
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-3.5 w-3.5 fill-warning text-warning" />
+                    ))}
+                  </div>
+                  <span className="text-muted-foreground font-medium">Trusted by 10K+ users worldwide</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: 3D visual + floating upload card */}
+            <div className="relative flex items-center justify-center min-h-[420px] lg:min-h-[560px]">
+              {/* Glow backdrop */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-[85%] h-[85%] rounded-full bg-gradient-to-br from-primary/25 via-primary-glow/15 to-transparent blur-3xl" />
+              </div>
+
+              {/* 3D Cloud illustration */}
+              <motion.img
+                src={heroCloud}
+                alt="Cloud file sharing illustration"
+                width={1024}
+                height={1024}
+                className="relative z-10 w-full max-w-md lg:max-w-lg drop-shadow-[0_25px_50px_hsl(var(--primary)/0.35)]"
+                animate={{ y: [0, -14, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              />
+
+              {/* Floating upload progress card */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="absolute bottom-2 sm:bottom-6 left-2 right-2 sm:left-6 sm:right-6 z-20"
+              >
+                <div className="rounded-2xl bg-card/85 backdrop-blur-2xl border border-border/60 shadow-premium p-4 sm:p-5">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center flex-shrink-0 shadow-glow">
+                      <FileArchive className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <div className="min-w-0">
+                          <div className="text-sm sm:text-base font-bold text-foreground truncate">Project.zip</div>
+                          <div className="text-[11px] sm:text-xs text-muted-foreground">2.4 GB • Uploaded</div>
+                        </div>
+                        <span className="text-xs sm:text-sm font-bold text-primary flex-shrink-0">100%</span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-muted/50 overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: '100%' }}
+                          transition={{ delay: 0.6, duration: 1.4, ease: 'easeOut' }}
+                          className="h-full rounded-full bg-gradient-to-r from-primary to-primary-glow"
+                        />
+                      </div>
+                    </div>
+                    <CheckCircle2 className="h-6 w-6 text-success flex-shrink-0" />
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
+        </section>
+
         
         {/* Upload Section */}
         <div id="upload-section" className="mb-16 sm:mb-24 md:mb-36 scroll-mt-20 relative z-10">
