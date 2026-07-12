@@ -327,7 +327,7 @@ const Index = () => {
                 <Button
                   size="lg"
                   onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="group h-14 px-7 rounded-full bg-gradient-to-r from-primary to-primary-glow hover:shadow-premium hover:scale-[1.02] transition-all text-base font-bold shadow-glow"
+                  className="group h-14 px-7 rounded-full bg-gradient-to-r from-primary to-primary-glow hover:shadow-lg hover:scale-[1.02] transition-all text-base font-bold"
                 >
                   Start Sharing Now
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -383,7 +383,7 @@ const Index = () => {
             <div className="relative flex items-center justify-center min-h-[420px] lg:min-h-[560px]">
               {/* Glow backdrop */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-[85%] h-[85%] rounded-full bg-gradient-to-br from-primary/25 via-primary-glow/15 to-transparent blur-3xl" />
+                <div className="w-[75%] h-[75%] rounded-full bg-gradient-to-br from-primary/10 via-primary-glow/5 to-transparent blur-3xl" />
               </div>
 
               {/* 3D Cloud illustration */}
@@ -392,7 +392,7 @@ const Index = () => {
                 alt="Cloud file sharing illustration"
                 width={1024}
                 height={1024}
-                className="relative z-10 w-full max-w-md lg:max-w-lg drop-shadow-[0_25px_50px_hsl(var(--primary)/0.35)]"
+                className="relative z-10 w-full max-w-md lg:max-w-lg drop-shadow-[0_15px_30px_hsl(var(--primary)/0.15)]"
                 animate={{ y: [0, -14, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               />
