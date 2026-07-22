@@ -144,15 +144,13 @@ const Support = () => {
     const fetchWallSupporters = async () => {
       try {
         const { data, error } = await supabase
-          .from('donations')
+          .from('donation_wall' as any)
           .select('id, name, amount, message, completed_at')
-          .eq('show_on_wall', true)
-          .eq('status', 'completed')
           .order('completed_at', { ascending: false })
           .limit(12);
 
         if (!error && data) {
-          setWallSupporters(data);
+          setWallSupporters(data as any);
         }
       } catch (err) {
         console.error('Error fetching wall supporters:', err);
@@ -169,14 +167,13 @@ const Support = () => {
     const fetchLeaderboard = async () => {
       try {
         const { data, error } = await supabase
-          .from('donations')
+          .from('donation_wall' as any)
           .select('name, amount, completed_at')
-          .eq('status', 'completed')
           .order('amount', { ascending: false });
 
         if (!error && data) {
           // Aggregate by name
-          const aggregated = data.reduce((acc: Record<string, LeaderboardEntry>, donation) => {
+          const aggregated = (data as any[]).reduce((acc: Record<string, LeaderboardEntry>, donation: any) => {
             const name = donation.name || 'Anonymous';
             if (!acc[name]) {
               acc[name] = {
@@ -194,7 +191,7 @@ const Support = () => {
             return acc;
           }, {});
 
-          const sorted = Object.values(aggregated)
+          const sorted = (Object.values(aggregated) as LeaderboardEntry[])
             .sort((a, b) => b.total_amount - a.total_amount)
             .slice(0, 10);
 

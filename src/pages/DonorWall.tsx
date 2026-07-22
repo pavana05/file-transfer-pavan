@@ -42,13 +42,11 @@ const DonorWall = () => {
 
   const loadDonations = async () => {
     const { data, error } = await supabase
-      .from('donations')
+      .from('donation_wall' as any)
       .select('id, name, amount, message, created_at')
-      .eq('status', 'completed')
-      .eq('show_on_wall', true)
       .order('amount', { ascending: false });
 
-    if (!error && data) setDonations(data);
+    if (!error && data) setDonations(data as unknown as Donation[]);
     setLoading(false);
   };
 
