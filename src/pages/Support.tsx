@@ -665,7 +665,7 @@ const Support = () => {
                   </div>
                 </motion.div>
                 <div>
-                  <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">Show Some Love</h1>
+                  <div className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">Show Some Love</div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">Support FileShare Pro</p>
                 </div>
               </div>
