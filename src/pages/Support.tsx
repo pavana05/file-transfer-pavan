@@ -558,14 +558,14 @@ const Support = () => {
             </div>
           </motion.div>
 
-          <motion.h1 
+          <motion.h2 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground mb-6"
           >
             You're <span className="bg-gradient-to-r from-pink-500 via-rose-500 to-red-500 bg-clip-text text-transparent">Amazing!</span> 🎉
-          </motion.h1>
+          </motion.h2>
 
           <motion.p 
             initial={{ y: 20, opacity: 0 }}
