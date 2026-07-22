@@ -46,7 +46,7 @@ const DonorWall = () => {
       .select('id, name, amount, message, created_at')
       .order('amount', { ascending: false });
 
-    if (!error && data) setDonations(data);
+    if (!error && data) setDonations(data as unknown as Donation[]);
     setLoading(false);
   };
 
