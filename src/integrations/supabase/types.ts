@@ -773,6 +773,10 @@ export type Database = {
         }
         Returns: string
       }
+      is_file_downloadable: {
+        Args: { p_storage_path: string }
+        Returns: boolean
+      }
       log_file_access: {
         Args: {
           p_event_type: string
