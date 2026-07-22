@@ -232,7 +232,7 @@ const Dashboard = () => {
                 <FolderOpen className="w-5 h-5 text-white" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="font-bold text-lg">My Files</h1>
+                <div className="font-bold text-lg">My Files</div>
                 <p className="text-xs text-muted-foreground">Manage your shared files</p>
               </div>
             </div>
