@@ -188,7 +188,7 @@ const Index = () => {
                 <span className="font-semibold">FileShare Pro</span>
               </DrawerTitle>
               <DrawerClose asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="Close menu">
                   <X className="h-5 w-5" />
                 </Button>
               </DrawerClose>
