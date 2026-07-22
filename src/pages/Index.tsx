@@ -12,6 +12,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import ScrollReveal from '@/components/animations/ScrollReveal';
 import { motion } from 'framer-motion';
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { SEO } from "@/components/SEO";
+import { Helmet } from "react-helmet-async";
 
 // Lazy load heavy below-the-fold components
 const FileUploadManager = lazy(() => import('@/components/upload/FileUploadManager').then(m => ({ default: m.FileUploadManager })));
