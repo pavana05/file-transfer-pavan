@@ -191,7 +191,7 @@ const Support = () => {
             return acc;
           }, {});
 
-          const sorted = Object.values(aggregated)
+          const sorted = (Object.values(aggregated) as LeaderboardEntry[])
             .sort((a, b) => b.total_amount - a.total_amount)
             .slice(0, 10);
 
