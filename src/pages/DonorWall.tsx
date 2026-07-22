@@ -9,6 +9,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
+import { SEO } from '@/components/SEO';
 
 interface Donation {
   id: string;
@@ -57,6 +58,7 @@ const DonorWall = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      <SEO title="Donor Wall — FileShare Pro Supporters" description="Meet the supporters keeping FileShare Pro fast, secure, and free." path="/donors" />
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-pink-500/10 via-primary/5 to-transparent rounded-full blur-[120px]" />

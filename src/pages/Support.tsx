@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
+import { SEO } from '@/components/SEO';
   Heart, Sparkles, Coffee, Star, Gift, Zap, 
   ArrowLeft, Check, Crown, Rocket, PartyPopper,
   Users, Trophy, ThumbsUp, Loader2, MessageCircle,
@@ -613,6 +614,7 @@ const Support = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      <SEO title="Support FileShare Pro" description="Support FileShare Pro with a donation and keep secure file sharing free for everyone." path="/support" />
       {/* Premium Animated Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-background to-purple-500/5" />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
+import { SEO } from '@/components/SEO';
   Mail, 
   MessageSquare, 
   Send, 
@@ -183,6 +184,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 relative">
+      <SEO title="Contact FileShare Pro" description="Get in touch with the FileShare Pro team for support, feedback, or partnership inquiries." path="/contact" />
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-48 -right-48 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />

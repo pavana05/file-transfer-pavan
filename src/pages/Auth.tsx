@@ -14,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import PasswordStrengthMeter from '@/components/upload/PasswordStrengthMeter';
 import { Upload, Shield, Lock, Eye, EyeOff, Mail, ArrowLeft, Sparkles, Github, ArrowRight } from 'lucide-react';
+import { SEO } from '@/components/SEO';
 
 // Google Icon Component
 const GoogleIcon = () => (
@@ -345,6 +346,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      <SEO title="Sign in — FileShare Pro" description="Sign in or create a free FileShare Pro account to manage your uploads and unlock premium features." path="/auth" />
       {/* Professional Dual-Panel Background System */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/5" />

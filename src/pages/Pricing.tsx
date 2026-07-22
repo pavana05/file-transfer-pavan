@@ -15,6 +15,7 @@ import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Variants } from 'framer-motion';
 import { FeatureComparison } from '@/components/pricing/FeatureComparison';
+import { SEO } from '@/components/SEO';
 
 interface PremiumPlan {
   id: string;
@@ -200,6 +201,7 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-hidden scroll-smooth">
+      <SEO title="Pricing — FileShare Pro Plans up to 100GB" description="Compare FileShare Pro plans: Free (10GB), Trial (20GB), Pro (50GB) and Business (100GB) with encrypted secure sharing." path="/pricing" />
       {/* Premium Blue Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Glowing orbs - Blue theme */}
