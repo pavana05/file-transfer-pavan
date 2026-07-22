@@ -18,6 +18,7 @@ import SocialShareButtons from '@/components/share/SocialShareButtons';
 import RealtimeCollaboration from '@/components/collaboration/RealtimeCollaboration';
 import { downloadFileWithProgress, addToAccessHistory, DownloadProgress as IDownloadProgress } from '@/lib/download-utils';
 import { motion } from 'framer-motion';
+import { SEO } from '@/components/SEO';
 
 interface FileInfo {
   id: string;
@@ -128,6 +129,7 @@ const PinAccess = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      <SEO title="Enter PIN — FileShare Pro" description="Enter a 4-digit PIN to access a shared file securely on FileShare Pro." path="/pin" />
       {downloading && downloadProgress && (
         <DownloadProgress
           fileName={fileInfo?.original_name || ''}

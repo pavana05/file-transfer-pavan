@@ -1,0 +1,20 @@
+# FileShare Pro
+
+> Secure, fast file sharing with PIN protection, end-to-end encryption, and social share tools. Free tier supports files up to 10GB.
+
+FileShare Pro is a web app for sharing files instantly with anyone — no signup required. Files can be protected by PIN or password, and paid tiers unlock larger file sizes and longer retention.
+
+## Pages
+
+- [Home](/): Upload files and get a shareable link or PIN.
+- [Pricing](/pricing): Free, Trial, Pro, and Business plans with file size limits and features.
+- [PIN Access](/pin): Enter a 4-digit PIN to open a shared collection.
+- [Scan QR](/scan): Scan a QR code to open a shared file on another device.
+- [Install](/install): Install FileShare Pro as a PWA.
+- [Contact](/contact): Get in touch with the FileShare Pro team.
+- [Support](/support): Support the project with a donation.
+- [Donor Wall](/donors): Public wall of supporters.
+
+## Optional
+
+- [Sign in](/auth): Sign in or create an account to manage uploads.

@@ -12,6 +12,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import ScrollReveal from '@/components/animations/ScrollReveal';
 import { motion } from 'framer-motion';
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { SEO } from "@/components/SEO";
+import { Helmet } from "react-helmet-async";
 
 // Lazy load heavy below-the-fold components
 const FileUploadManager = lazy(() => import('@/components/upload/FileUploadManager').then(m => ({ default: m.FileUploadManager })));
@@ -79,6 +81,26 @@ const Index = () => {
     }
   };
   return <div className="min-h-screen bg-background relative overflow-hidden">
+      <SEO
+        title="FileShare Pro — Secure File Sharing up to 10GB Free"
+        description="Share files instantly with PIN protection, end-to-end encryption, and QR codes. Free plan supports files up to 10GB — no signup required."
+        path="/"
+      />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            { "@type": "Organization", name: "FileShare Pro", url: "https://file-share-05.lovable.app", logo: "https://file-share-05.lovable.app/icon-512.png" },
+            { "@type": "WebSite", name: "FileShare Pro", url: "https://file-share-05.lovable.app" },
+            { "@type": "WebApplication", name: "FileShare Pro", url: "https://file-share-05.lovable.app", applicationCategory: "UtilitiesApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
+            { "@type": "FAQPage", mainEntity: [
+              { "@type": "Question", name: "How large can files be?", acceptedAnswer: { "@type": "Answer", text: "Free accounts support up to 10GB per file. Paid plans go up to 100GB." } },
+              { "@type": "Question", name: "Are shared files encrypted?", acceptedAnswer: { "@type": "Answer", text: "Yes. Files are encrypted in transit and at rest, with optional password and PIN protection." } },
+              { "@type": "Question", name: "Do recipients need an account?", acceptedAnswer: { "@type": "Answer", text: "No. Anyone with the share link or PIN can download the file." } }
+            ]}
+          ]
+        })}</script>
+      </Helmet>
       {/* Enhanced Premium Background Effects */}
       <div className="absolute inset-0 bg-gradient-mesh opacity-60"></div>
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-radial from-primary/20 via-primary/5 to-transparent blur-3xl"></div>
@@ -101,9 +123,9 @@ const Index = () => {
                 <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground transition-transform duration-500 group-hover:rotate-[-8deg]" />
               </div>
               <div className="hidden xs:block min-w-0">
-                <h1 className="text-base sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                <div className="text-base sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
                   FileShare Pro
-                </h1>
+                </div>
                 <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">
                   Enterprise File Sharing
                 </p>
@@ -188,7 +210,7 @@ const Index = () => {
                 <span className="font-semibold">FileShare Pro</span>
               </DrawerTitle>
               <DrawerClose asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="Close menu">
                   <X className="h-5 w-5" />
                 </Button>
               </DrawerClose>

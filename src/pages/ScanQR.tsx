@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
+import { SEO } from '@/components/SEO';
 
 const ScanQR = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -113,6 +114,7 @@ const ScanQR = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      <SEO title="Scan QR — FileShare Pro" description="Scan a QR code to instantly open a shared file on your device with FileShare Pro." path="/scan" />
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background"></div>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-primary-glow/5 via-transparent to-transparent"></div>

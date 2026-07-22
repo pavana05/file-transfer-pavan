@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Download, Smartphone, CheckCircle, Share2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { SEO } from '@/components/SEO';
 
 const Install = () => {
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ const Install = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <SEO title="Install FileShare Pro" description="Install FileShare Pro as an app for one-tap access to secure file sharing on any device." path="/install" />
       <Card className="max-w-2xl w-full p-8 md:p-12 space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">

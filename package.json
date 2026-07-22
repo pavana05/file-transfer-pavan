@@ -60,6 +60,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.3.8",
+    "react-helmet-async": "^3.0.0",
     "react-hook-form": "^7.53.0",
     "react-markdown": "^10.1.0",
     "react-pdf": "^10.2.0",

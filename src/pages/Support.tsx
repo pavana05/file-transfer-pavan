@@ -19,6 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+import { SEO } from '@/components/SEO';
 
 interface SupportAmount {
   amount: number;
@@ -558,14 +559,14 @@ const Support = () => {
             </div>
           </motion.div>
 
-          <motion.h1 
+          <motion.h2 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground mb-6"
           >
             You're <span className="bg-gradient-to-r from-pink-500 via-rose-500 to-red-500 bg-clip-text text-transparent">Amazing!</span> 🎉
-          </motion.h1>
+          </motion.h2>
 
           <motion.p 
             initial={{ y: 20, opacity: 0 }}
@@ -613,6 +614,7 @@ const Support = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      <SEO title="Support FileShare Pro" description="Support FileShare Pro with a donation and keep secure file sharing free for everyone." path="/support" />
       {/* Premium Animated Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-background to-purple-500/5" />
@@ -651,7 +653,7 @@ const Support = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 sm:h-16 items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="h-9 w-9">
+              <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="h-9 w-9" aria-label="Back to home">
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
               <div className="flex items-center gap-2 sm:gap-3">
@@ -665,7 +667,7 @@ const Support = () => {
                   </div>
                 </motion.div>
                 <div>
-                  <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">Show Some Love</h1>
+                  <div className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">Show Some Love</div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">Support FileShare Pro</p>
                 </div>
               </div>
