@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-import { SEO } from '@/components/SEO';
   Heart, Sparkles, Coffee, Star, Gift, Zap, 
   ArrowLeft, Check, Crown, Rocket, PartyPopper,
   Users, Trophy, ThumbsUp, Loader2, MessageCircle,
@@ -20,6 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+import { SEO } from '@/components/SEO';
 
 interface SupportAmount {
   amount: number;
