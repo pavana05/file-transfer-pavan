@@ -651,7 +651,7 @@ const Support = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 sm:h-16 items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="h-9 w-9">
+              <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="h-9 w-9" aria-label="Back to home">
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
               <div className="flex items-center gap-2 sm:gap-3">
