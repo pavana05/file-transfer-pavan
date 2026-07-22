@@ -167,9 +167,8 @@ const Support = () => {
     const fetchLeaderboard = async () => {
       try {
         const { data, error } = await supabase
-          .from('donations')
+          .from('donation_wall' as any)
           .select('name, amount, completed_at')
-          .eq('status', 'completed')
           .order('amount', { ascending: false });
 
         if (!error && data) {
