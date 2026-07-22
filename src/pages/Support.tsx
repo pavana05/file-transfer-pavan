@@ -144,15 +144,13 @@ const Support = () => {
     const fetchWallSupporters = async () => {
       try {
         const { data, error } = await supabase
-          .from('donations')
+          .from('donation_wall' as any)
           .select('id, name, amount, message, completed_at')
-          .eq('show_on_wall', true)
-          .eq('status', 'completed')
           .order('completed_at', { ascending: false })
           .limit(12);
 
         if (!error && data) {
-          setWallSupporters(data);
+          setWallSupporters(data as any);
         }
       } catch (err) {
         console.error('Error fetching wall supporters:', err);
