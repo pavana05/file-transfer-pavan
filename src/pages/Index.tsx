@@ -81,6 +81,26 @@ const Index = () => {
     }
   };
   return <div className="min-h-screen bg-background relative overflow-hidden">
+      <SEO
+        title="FileShare Pro — Secure File Sharing up to 10GB Free"
+        description="Share files instantly with PIN protection, end-to-end encryption, and QR codes. Free plan supports files up to 10GB — no signup required."
+        path="/"
+      />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            { "@type": "Organization", name: "FileShare Pro", url: "https://file-share-05.lovable.app", logo: "https://file-share-05.lovable.app/icon-512.png" },
+            { "@type": "WebSite", name: "FileShare Pro", url: "https://file-share-05.lovable.app" },
+            { "@type": "WebApplication", name: "FileShare Pro", url: "https://file-share-05.lovable.app", applicationCategory: "UtilitiesApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
+            { "@type": "FAQPage", mainEntity: [
+              { "@type": "Question", name: "How large can files be?", acceptedAnswer: { "@type": "Answer", text: "Free accounts support up to 10GB per file. Paid plans go up to 100GB." } },
+              { "@type": "Question", name: "Are shared files encrypted?", acceptedAnswer: { "@type": "Answer", text: "Yes. Files are encrypted in transit and at rest, with optional password and PIN protection." } },
+              { "@type": "Question", name: "Do recipients need an account?", acceptedAnswer: { "@type": "Answer", text: "No. Anyone with the share link or PIN can download the file." } }
+            ]}
+          ]
+        })}</script>
+      </Helmet>
       {/* Enhanced Premium Background Effects */}
       <div className="absolute inset-0 bg-gradient-mesh opacity-60"></div>
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-radial from-primary/20 via-primary/5 to-transparent blur-3xl"></div>
