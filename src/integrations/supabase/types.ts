@@ -516,7 +516,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      donation_wall: {
+        Row: {
+          amount: number | null
+          completed_at: string | null
+          created_at: string | null
+          id: string | null
+          message: string | null
+          name: string | null
+          show_on_wall: boolean | null
+          status: string | null
+        }
+        Insert: {
+          amount?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string | null
+          message?: string | null
+          name?: string | null
+          show_on_wall?: boolean | null
+          status?: string | null
+        }
+        Update: {
+          amount?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string | null
+          message?: string | null
+          name?: string | null
+          show_on_wall?: boolean | null
+          status?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       can_access_file: {
