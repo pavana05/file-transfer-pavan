@@ -173,7 +173,7 @@ const Support = () => {
 
         if (!error && data) {
           // Aggregate by name
-          const aggregated = data.reduce((acc: Record<string, LeaderboardEntry>, donation) => {
+          const aggregated = (data as any[]).reduce((acc: Record<string, LeaderboardEntry>, donation: any) => {
             const name = donation.name || 'Anonymous';
             if (!acc[name]) {
               acc[name] = {
