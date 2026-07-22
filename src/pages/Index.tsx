@@ -101,9 +101,9 @@ const Index = () => {
                 <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground transition-transform duration-500 group-hover:rotate-[-8deg]" />
               </div>
               <div className="hidden xs:block min-w-0">
-                <h1 className="text-base sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                <div className="text-base sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
                   FileShare Pro
-                </h1>
+                </div>
                 <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">
                   Enterprise File Sharing
                 </p>
